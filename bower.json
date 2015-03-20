@@ -1,0 +1,34 @@
+{
+  "name": "dc-leaflet",
+  "version": "0.1.0",
+  "homepage": "https://github.com/intellipharm/dc.leaflet.js",
+  "authors": [
+    "Timothy Ruhle <timothy.ruhle@intellipharm.com.au>"
+  ],
+  "description": "This extension provides support for DC.js charts in a Leaflet.js map.",
+  "main": "dist/dc-leaflet.min.js",
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "dc",
+    "dcjs",
+    "dc.js",
+    "leaflet",
+    "leaflet.js",
+    "map"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "dcjs": "https://github.com/dc-js/dc.js.git#develop",
+    "leaflet": "~0.7.3",
+    "leaflet.markercluster": "~0.4.0"
+  }
+}
