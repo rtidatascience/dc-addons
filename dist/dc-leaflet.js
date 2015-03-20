@@ -1,10 +1,10 @@
 /*!
- * dc-leaflet v0.1.0
+ * dc-leaflet v0.1.1
  * http://intellipharm.com/
  *
  * Copyright 2015 Intellipharm
  *
- * 2015-03-20 15:29:51
+ * 2015-03-20 15:47:04
  *
  */
 dc.baseLeafletChart = function(_chart) {
