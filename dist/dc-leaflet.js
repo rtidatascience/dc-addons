@@ -1,10 +1,10 @@
 /*!
- * dc-leaflet v0.1.1
+ * dc-leaflet v0.1.2
  * http://intellipharm.com/
  *
  * Copyright 2015 Intellipharm
  *
- * 2015-03-20 15:47:04
+ * 2015-03-20 15:53:48
  *
  */
 dc.baseLeafletChart = function(_chart) {
@@ -79,7 +79,7 @@ dc.baseLeafletChart = function(_chart) {
 };
 
 dc.leafletChoroplethChart = function(parent, chartGroup) {
-  var _chart = dc.colorChart(dc.leafletChart({}));
+  var _chart = dc.colorChart(dc.baseLeafletChart({}));
 
   var _geojsonLayer = false;
   var _dataMap = [];
@@ -202,7 +202,7 @@ dc.leafletChoroplethChart = function(parent, chartGroup) {
 };
 
 dc.leafletMarkerChart = function(parent, chartGroup) {
-  var _chart = dc.leafletChart({});
+  var _chart = dc.baseLeafletChart({});
 
   var _renderPopup = true;
   var _cluster = false; // requires leaflet.markerCluster
