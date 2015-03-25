@@ -1,7 +1,7 @@
 {
   "name": "dc-leaflet",
   "description": "This extension provides support for DC.js charts in a Leaflet.js map.",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "homepage": "https://github.com/intellipharm/dc.leaflet.js",
   "repository": {
     "type": "git",
