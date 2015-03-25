@@ -8,8 +8,8 @@ module.exports = {
         unused: true,
         globals: {
             // js globals
-            angular: true,
-            _: true,
+            dc: true,
+            L: true,
             console: true,
             // grunt globals
             module: true,
