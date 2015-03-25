@@ -1,5 +1,11 @@
 module.exports = {
     options: {
+        curly: true, // don't allow non curly statements,
+        eqeqeq: true,
+        futurehostile: true,
+        maxdepth: 3,
+        notypeof: true,
+        unused: true,
         globals: {
             // js globals
             angular: true,
@@ -11,7 +17,14 @@ module.exports = {
             process: true,
         }
     },
-    lib: ['<%= config.lib %>/**/*.js'],
-    tests: ['karma.conf.js', '<%= config.tests %>/**/*.js'],
-    grunt: ['Gruntfile.js', '<%= config.grunt %>/**/*.js']
+    lib: [
+        '<%= config.lib %>/**/*.js',
+    ],
+    tests: [
+        '<%= config.tests %>/**/*.js'
+    ],
+    grunt: [
+        'Gruntfile.js',
+        '<%= config.grunt %>/**/*.js'
+    ]
 };
