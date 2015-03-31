@@ -22,5 +22,9 @@ module.exports = {
             '<%= config.src %>/google-choropleth-chart.js',
             '<%= config.src %>/google-marker-chart.js',
         ]
-    }
+    },
+    build: {
+        dest: '<%= config.dist %>/dc-addons.js',
+        src: '<%= config.dist %>/*.js'
+    },
 };

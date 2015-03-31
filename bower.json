@@ -11,7 +11,7 @@
     "Intellipharm <damian@intellipharm.com.au>",
     "Timothy Ruhle <timothy.ruhle@intellipharm.com.au>"
   ],
-  "main": ["dist/dc-leaflet.min.js", "dist/dc-google.min.js"],
+  "main": ["dist/dc-addons.min.js"],
   "moduleType": [
     "globals"
   ],
