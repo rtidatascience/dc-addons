@@ -1,10 +1,15 @@
-(function(module) {
+(function (module) {
 
     'use strict';
 
     module.exports = function (grunt) {
         // if this variable exists we have already set up grunt
-        if (!grunt || !grunt.config || !grunt.config.data || !grunt.config.data.config || !grunt.config.data.config.dev) {
+        if (
+            !grunt ||
+            !grunt.config ||
+            !grunt.config.data ||
+            !grunt.config.data.config
+        ) {
             // Load grunt modules from package.json automatically
             require('load-grunt-tasks')(grunt);
 
@@ -12,7 +17,7 @@
             var gruntConfig = {config: {
                 // base folders
                 dist: 'dist',
-                lib: 'lib',
+                src: 'lib',
                 tests: 'tests',
                 grunt: 'grunt',
                 pkg: grunt.file.readJSON('package.json'),
@@ -30,7 +35,7 @@
         var object = {};
         var key;
 
-        glob.sync('*', {cwd: path}).forEach(function(option) {
+        glob.sync('*', {cwd: path}).forEach(function (option) {
             key = option.replace(/\.js$/, '');
             object[key] = require(process.cwd() + path.replace('.', '') + option);
             if (typeof object[key] === 'function') {

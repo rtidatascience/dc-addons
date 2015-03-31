@@ -1,15 +1,15 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
     grunt.registerTask('build', [
         'notify:build',
-        'jshint:lib',
+        'jshint:src',
         'jshint:tests',
         'jshint:grunt',
-        'jscs:lib',
+        'jscs:src',
         'jscs:tests',
         'jscs:grunt',
         //'karma:build',
         'clean:build',
-        'concat:build',
+        'concat',
         'uglify:build',
         'notify:buildComplete'
     ]);
