@@ -1,7 +1,7 @@
-(function() {
+(function () {
     'use strict';
 
-    dc.baseMapChart = function(_chart) {
+    dc.baseMapChart = function (_chart) {
         _chart = dc.baseChart(_chart);
 
         var _map;
@@ -12,7 +12,7 @@
         var _defaultZoom = false;
         var _brushOn = false;
 
-        var _tiles = function(map) {
+        var _tiles = function (map) {
             L.tileLayer(
                 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
                 {
@@ -21,23 +21,23 @@
             ).addTo(map);
         };
 
-        var _popup = function(d) {
+        var _popup = function (d) {
             return _chart.title()(d);
         };
 
-        _chart._doRender = function() {
+        _chart._doRender = function () {
             // abstract
         };
 
-        _chart._postRender = function() {
+        _chart._postRender = function () {
             // abstract
         };
 
-        _chart.toLocArray = function() {
+        _chart.toLocArray = function () {
             // abstract
         };
 
-        _chart.mapOptions = function(_) {
+        _chart.mapOptions = function (_) {
             if (!arguments.length) {
                 return _mapOptions;
             }
@@ -46,7 +46,7 @@
             return _chart;
         };
 
-        _chart.center = function(_) {
+        _chart.center = function (_) {
             if (!arguments.length) {
                 return _defaultCenter;
             }
@@ -55,7 +55,7 @@
             return _chart;
         };
 
-        _chart.zoom = function(_) {
+        _chart.zoom = function (_) {
             if (!arguments.length) {
                 return _defaultZoom;
             }
@@ -64,7 +64,7 @@
             return _chart;
         };
 
-        _chart.tiles = function(_) {
+        _chart.tiles = function (_) {
             if (!arguments.length) {
                 return _tiles;
             }
@@ -73,7 +73,7 @@
             return _chart;
         };
 
-        _chart.map = function(_) {
+        _chart.map = function (_) {
             if (!arguments.length) {
                 return _map;
             }
@@ -82,7 +82,7 @@
             return _map;
         };
 
-        _chart.popup = function(_) {
+        _chart.popup = function (_) {
             if (!arguments.length) {
                 return _popup;
             }
@@ -91,7 +91,7 @@
             return _chart;
         };
 
-        _chart.renderPopup = function(_) {
+        _chart.renderPopup = function (_) {
             if (!arguments.length) {
                 return _renderPopup;
             }
@@ -100,7 +100,7 @@
             return _chart;
         };
 
-        _chart.brushOn = function(_) {
+        _chart.brushOn = function (_) {
             if (!arguments.length) {
                 return _brushOn;
             }

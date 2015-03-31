@@ -17,7 +17,7 @@
             var gruntConfig = {config: {
                 // base folders
                 dist: 'dist',
-                src: 'lib',
+                src: 'src',
                 tests: 'tests',
                 grunt: 'grunt',
                 pkg: grunt.file.readJSON('package.json'),

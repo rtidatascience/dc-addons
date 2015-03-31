@@ -26,6 +26,9 @@
         "global": false,
         "module": false,
         "process": false,
-        "require": false
+        "require": false,
+        "L": false,
+        "google": false,
+        "MarkerClusterer": false
     }
 }

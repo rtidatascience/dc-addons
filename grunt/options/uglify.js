@@ -1,12 +1,18 @@
 module.exports = {
     options: {
         sourceMap: true,
-        sourceMapName: '<%= config.dist %>/dc-leaflet.min.map',
+        screwIE8: true,
         preserveComments: 'some'
     },
     build: {
-        files: {
-            '<%= config.dist %>/dc-leaflet.min.js': '<%= config.dist %>/dc-leaflet.js'
-        }
+        files: [{
+            expand: true,
+            cwd: '<%= config.dist %>/',
+            src: '*.js',
+            dest: '<%= config.dist %>/',
+            rename: function (dest, src) {
+                return dest + src.replace('.js', '.min.js');
+            }
+      }]
     }
 };

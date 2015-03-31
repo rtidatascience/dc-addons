@@ -1,10 +1,10 @@
-(function() {
+(function () {
     'use strict';
 
-    dc.baseGoogleChart = function(_chart) {
+    dc.baseGoogleChart = function (_chart) {
         _chart = dc.baseMapChart(_chart);
 
-        _chart._doRender = function() {
+        _chart._doRender = function () {
             var _map = new google.maps.Map(_chart.root().node(), _chart.mapOptions());
 
             if (_chart.center() && _chart.zoom()) {
@@ -19,7 +19,7 @@
             return _chart._doRedraw();
         };
 
-        _chart.toLocArray = function(value) {
+        _chart.toLocArray = function (value) {
             if (typeof value === 'string') {
                 // expects '11.111,1.111'
                 value = value.split(',');

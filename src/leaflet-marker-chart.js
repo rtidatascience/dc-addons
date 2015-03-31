@@ -1,7 +1,7 @@
-(function() {
+(function () {
     'use strict';
 
-    dc.leafletMarkerChart = function(parent, chartGroup) {
+    dc.leafletMarkerChart = function (parent, chartGroup) {
         var _chart = dc.baseLeafletChart({});
 
         var _cluster = false; // requires leaflet.markerCluster
@@ -22,11 +22,11 @@
 
         _chart.renderTitle(true);
 
-        var _location = function(d) {
+        var _location = function (d) {
             return _chart.keyAccessor()(d);
         };
 
-        var _marker = function(d) {
+        var _marker = function (d) {
             var marker = new L.Marker(
                 _chart.toLocArray(_chart.locationAccessor()(d)),
                     {
@@ -41,11 +41,11 @@
             return marker;
         };
 
-        var _icon = function() {
+        var _icon = function () {
             return new L.Icon.Default();
         };
 
-        _chart._postRender = function() {
+        _chart._postRender = function () {
             if (_chart.brushOn()) {
                 if (_filterByArea) {
                     _chart.filterHandler(doFilterByArea);
@@ -69,7 +69,7 @@
             _chart.map().addLayer(_layerGroup);
         };
 
-        _chart._doRedraw = function() {
+        _chart._doRedraw = function () {
             var groups = _chart._computeOrderedGroups(_chart.data()).filter(function (d) {
                 return _chart.valueAccessor()(d) !== 0;
             });
@@ -83,10 +83,10 @@
             _layerGroup.clearLayers();
 
             var addList = [];
-            var feature_group = [];
+            var featureGroup = [];
             _markerListFilterd = [];
 
-            groups.forEach(function(v) {
+            groups.forEach(function (v) {
                 if (v.value) {
                     var key = _chart.keyAccessor()(v);
                     var marker = null;
@@ -97,7 +97,7 @@
                         marker = createmarker(v, key);
                     }
 
-                    feature_group.push(marker);
+                    featureGroup.push(marker);
 
                     if (!_chart.cluster()) {
                         _layerGroup.addLayer(marker);
@@ -113,10 +113,10 @@
                 _layerGroup.addLayers(addList);
             }
 
-            if (feature_group.length) {
+            if (featureGroup.length) {
                 if (_fitOnRender || (_fitOnRedraw && !_disableFitOnRedraw)) {
-                    feature_group = new L.featureGroup(feature_group);
-                    _chart.map().fitBounds(feature_group.getBounds());//.pad(0.5));
+                    featureGroup = new L.featureGroup(featureGroup);
+                    _chart.map().fitBounds(featureGroup.getBounds());//.pad(0.5));
                 }
             }
 
@@ -124,7 +124,7 @@
             _fitOnRender = false;
         };
 
-        _chart.locationAccessor = function(_) {
+        _chart.locationAccessor = function (_) {
             if (!arguments.length) {
                 return _location;
             }
@@ -133,7 +133,7 @@
             return _chart;
         };
 
-        _chart.marker = function(_) {
+        _chart.marker = function (_) {
             if (!arguments.length) {
                 return _marker;
             }
@@ -142,7 +142,7 @@
             return _chart;
         };
 
-        _chart.icon = function(_) {
+        _chart.icon = function (_) {
             if (!arguments.length) {
                 return _icon;
             }
@@ -151,8 +151,7 @@
             return _chart;
         };
 
-
-        _chart.cluster = function(_) {
+        _chart.cluster = function (_) {
             if (!arguments.length) {
                 return _cluster;
             }
@@ -161,7 +160,7 @@
             return _chart;
         };
 
-        _chart.clusterOptions = function(_) {
+        _chart.clusterOptions = function (_) {
             if (!arguments.length) {
                 return _clusterOptions;
             }
@@ -170,7 +169,7 @@
             return _chart;
         };
 
-        _chart.rebuildMarkers = function(_) {
+        _chart.rebuildMarkers = function (_) {
             if (!arguments.length) {
                 return _rebuildMarkers;
             }
@@ -179,7 +178,7 @@
             return _chart;
         };
 
-        _chart.brushOn = function(_) {
+        _chart.brushOn = function (_) {
             if (!arguments.length) {
                 return _brushOn;
             }
@@ -188,7 +187,7 @@
             return _chart;
         };
 
-        _chart.filterByArea = function(_) {
+        _chart.filterByArea = function (_) {
             if (!arguments.length) {
                 return _filterByArea;
             }
@@ -197,7 +196,7 @@
             return _chart;
         };
 
-        _chart.fitOnRender = function(_) {
+        _chart.fitOnRender = function (_) {
             if (!arguments.length) {
                 return _fitOnRender;
             }
@@ -206,7 +205,7 @@
             return _chart;
         };
 
-        _chart.fitOnRedraw = function(_) {
+        _chart.fitOnRedraw = function (_) {
             if (!arguments.length) {
                 return _fitOnRedraw;
             }
@@ -215,11 +214,11 @@
             return _chart;
         };
 
-        _chart.markerGroup = function() {
+        _chart.markerGroup = function () {
             return _layerGroup;
         };
 
-        _chart.markers = function(filtered) {
+        _chart.markers = function (filtered) {
             if (filtered) {
                 return _markerListFilterd;
             }
@@ -227,7 +226,7 @@
             return _markerList;
         };
 
-        var createmarker = function(v, k) {
+        var createmarker = function (v, k) {
             var marker = _marker(v);
             marker.key = k;
 
@@ -244,11 +243,11 @@
             return marker;
         };
 
-        var zoomStart = function() {
+        var zoomStart = function () {
             _zooming = true;
         };
 
-        var zoomFilter = function(e) {
+        var zoomFilter = function (e) {
             if (e.type === 'moveend' && (_zooming || e.hard)) {
                 return;
             }
@@ -288,7 +287,7 @@
             ) {
                 dc.events.trigger(function () {
                     _chart.filter(null);
-                    if (_renderPopup) {
+                    if (_chart.renderPopup()) {
                         _chart.map().closePopup();
                     }
 
@@ -297,12 +296,12 @@
             }
         };
 
-        var doFilterByArea = function(dimension, filters) {
+        var doFilterByArea = function (dimension, filters) {
             _disableFitOnRedraw = true;
             _chart.dimension().filter(null);
 
             if (filters && filters.length > 0) {
-                _chart.dimension().filterFunction(function(d) {
+                _chart.dimension().filterfunction (function (d) {
                     if (!(d in _markerList)) {
                         return false;
                     }
@@ -316,7 +315,7 @@
             }
         };
 
-        var selectFilter = function(e) {
+        var selectFilter = function (e) {
             if (!e.target) {
                 return;
             }

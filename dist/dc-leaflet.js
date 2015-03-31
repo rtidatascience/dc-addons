@@ -1,54 +1,131 @@
 /*!
- * dc-leaflet v0.3.0
- * http://intellipharm.com/
+ * dc-addons v0.3.0
  *
- * Copyright 2015 Intellipharm
- *
- * 2015-03-27 10:44:37
+ * 2015-04-01 09:05:41
  *
  */
-(function() {
+(function () {
     'use strict';
 
-    dc.baseGoogleChart = function(_chart) {
-        _chart = dc.baseMapChart(_chart);
+    dc.baseMapChart = function (_chart) {
+        _chart = dc.baseChart(_chart);
 
-        _chart._doRender = function() {
-            var _map = new google.maps.Map(_chart.root().node(), _chart.mapOptions());
+        var _map;
 
-            if (_chart.center() && _chart.zoom()) {
-                _map.setCenter(_chart.toLocArray(_chart.center()));
-                _map.setZoom(_chart.zoom());
-            }
+        var _renderPopup = true;
+        var _mapOptions = false;
+        var _defaultCenter = false;
+        var _defaultZoom = false;
+        var _brushOn = false;
 
-            _chart.map(_map);
-
-            _chart._postRender();
-
-            return _chart._doRedraw();
+        var _tiles = function (map) {
+            L.tileLayer(
+                'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
+                {
+                    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                }
+            ).addTo(map);
         };
 
-        _chart.toLocArray = function(value) {
-            if (typeof value === 'string') {
-                // expects '11.111,1.111'
-                value = value.split(',');
+        var _popup = function (d) {
+            return _chart.title()(d);
+        };
+
+        _chart._doRender = function () {
+            // abstract
+        };
+
+        _chart._postRender = function () {
+            // abstract
+        };
+
+        _chart.toLocArray = function () {
+            // abstract
+        };
+
+        _chart.mapOptions = function (_) {
+            if (!arguments.length) {
+                return _mapOptions;
             }
 
-            // else expects [11.111,1.111]
-            return new google.maps.LatLng(value[0], value[1]);
+            _mapOptions = _;
+            return _chart;
+        };
+
+        _chart.center = function (_) {
+            if (!arguments.length) {
+                return _defaultCenter;
+            }
+
+            _defaultCenter = _;
+            return _chart;
+        };
+
+        _chart.zoom = function (_) {
+            if (!arguments.length) {
+                return _defaultZoom;
+            }
+
+            _defaultZoom = _;
+            return _chart;
+        };
+
+        _chart.tiles = function (_) {
+            if (!arguments.length) {
+                return _tiles;
+            }
+
+            _tiles = _;
+            return _chart;
+        };
+
+        _chart.map = function (_) {
+            if (!arguments.length) {
+                return _map;
+            }
+
+            _map = _;
+            return _map;
+        };
+
+        _chart.popup = function (_) {
+            if (!arguments.length) {
+                return _popup;
+            }
+
+            _popup = _;
+            return _chart;
+        };
+
+        _chart.renderPopup = function (_) {
+            if (!arguments.length) {
+                return _renderPopup;
+            }
+
+            _renderPopup = _;
+            return _chart;
+        };
+
+        _chart.brushOn = function (_) {
+            if (!arguments.length) {
+                return _brushOn;
+            }
+
+            _brushOn = _;
+            return _chart;
         };
 
         return _chart;
     };
 })();
 
-(function() {
+(function () {
     'use strict';
 
-    dc.baseLeafletChart = function(_chart) {
+    dc.baseLeafletChart = function (_chart) {
         _chart = dc.baseMapChart(_chart);
 
-        _chart._doRender = function() {
+        _chart._doRender = function () {
             var _map = L.map(_chart.root().node(), _chart.mapOptions());
 
             if (_chart.center() && _chart.zoom()) {
@@ -64,7 +141,7 @@
             return _chart._doRedraw();
         };
 
-        _chart.toLocArray = function(value) {
+        _chart.toLocArray = function (value) {
             if (typeof value === 'string') {
                 // expects '11.111,1.111'
                 value = value.split(',');
@@ -77,449 +154,10 @@
     };
 })();
 
-(function() {
+(function () {
     'use strict';
 
-    dc.baseMapChart = function(_chart) {
-        _chart = dc.baseChart(_chart);
-
-        var _map;
-
-        var _renderPopup = true;
-        var _mapOptions = false;
-        var _defaultCenter = false;
-        var _defaultZoom = false;
-
-        var _tiles = function(map) {
-            L.tileLayer(
-                'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
-                {
-                    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                }
-            ).addTo(map);
-        };
-
-        var _popup = function(d) {
-            return _chart.title()(d);
-        };
-
-        _chart._doRender = function() {
-            // abstract
-        };
-
-        _chart._postRender = function() {
-            // abstract
-        };
-
-        _chart.toLocArray = function() {
-            // abstract
-        };
-
-        _chart.mapOptions = function(_) {
-            if (!arguments.length) {
-                return _mapOptions;
-            }
-
-            _mapOptions = _;
-            return _chart;
-        };
-
-        _chart.center = function(_) {
-            if (!arguments.length) {
-                return _defaultCenter;
-            }
-
-            _defaultCenter = _;
-            return _chart;
-        };
-
-        _chart.zoom = function(_) {
-            if (!arguments.length) {
-                return _defaultZoom;
-            }
-
-            _defaultZoom = _;
-            return _chart;
-        };
-
-        _chart.tiles = function(_) {
-            if (!arguments.length) {
-                return _tiles;
-            }
-
-            _tiles = _;
-            return _chart;
-        };
-
-        _chart.map = function(_) {
-            if (!arguments.length) {
-                return _map;
-            }
-
-            _map = _;
-            return _map;
-        };
-
-        _chart.popup = function(_) {
-            if (!arguments.length) {
-                return _popup;
-            }
-
-            _popup = _;
-            return _chart;
-        };
-
-        _chart.renderPopup = function(_) {
-            if (!arguments.length) {
-                return _renderPopup;
-            }
-
-            _renderPopup = _;
-            return _chart;
-        };
-
-        return _chart;
-    };
-})();
-
-(function() {
-    'use strict';
-
-    dc.googleMarkerChart = function(parent, chartGroup) {
-        var _chart = dc.baseGoogleChart({});
-
-        var _cluster = false; // requires leaflet.markerCluster
-        var _clusterOptions = false;
-        var _rebuildMarkers = false;
-        var _brushOn = true;
-        var _filterByArea = false;
-        var _fitOnRender = true;
-        var _fitOnRedraw = false;
-        var _disableFitOnRedraw = false;
-
-        var _innerFilter = false;
-        var _layerGroup = false;
-        var _markerList = [];
-        var _markerListFilterd = [];
-        var _currentGroups = false;
-
-        _chart.renderTitle(true);
-
-        var _location = function(d) {
-            return _chart.keyAccessor()(d);
-        };
-
-        var _marker = function(d) {
-            var marker = new google.maps.Marker({
-                position: _chart.toLocArray(_chart.locationAccessor()(d)),
-                map: _chart.map(),
-                title: _chart.renderTitle() ? _chart.title()(d) : '',
-                clickable: _chart.renderPopup() || (_chart.brushOn() && !_filterByArea),
-                draggable: false
-            });
-
-            return marker;
-        };
-
-        _chart._postRender = function() {
-            if (_chart.brushOn()) {
-                if (_filterByArea) {
-                    _chart.filterHandler(doFilterByArea);
-                }
-
-                google.maps.event.addListener(_chart.map(), 'zoom_changed', function() {
-                    zoomFilter('zoom');
-                }, this);
-                google.maps.event.addListener(_chart.map(), 'dragend', function() {
-                    zoomFilter('drag');
-                }, this);
-
-                if (!_filterByArea) {
-                    google.maps.event.addListener(_chart.map(), 'click', function() {
-                        zoomFilter('click');
-                    }, this);
-                }
-            }
-
-            // if (_cluster) {
-            //     _layerGroup = new L.MarkerClusterGroup(_clusterOptions ? _clusterOptions : null);
-            // } else {
-            //    _layerGroup = new L.LayerGroup();
-            // }
-
-            // _chart.map().addLayer(_layerGroup);
-        };
-
-        _chart._doRedraw = function() {
-            var groups = _chart._computeOrderedGroups(_chart.data()).filter(function (d) {
-                return _chart.valueAccessor()(d) !== 0;
-            });
-
-            _currentGroups = groups;
-
-            if (_rebuildMarkers) {
-                _markerList = [];
-            }
-
-            // _layerGroup.clearLayers();
-
-            var addList = [];
-            var feature_group = [];
-            var bounds = new google.maps.LatLngBounds();
-            _markerListFilterd = [];
-
-            groups.forEach(function(v) {
-                var key = _chart.keyAccessor()(v);
-                var marker = null;
-
-                if (!_rebuildMarkers && key in _markerList) {
-                    marker = _markerList[key];
-                }
-
-                if (v.value) {
-                    if (marker === null) {
-                        marker = createmarker(v, key);
-                    } else {
-                        marker.setVisible(true);
-                    }
-
-                    bounds.extend(marker.getPosition());
-                    feature_group.push(marker);
-
-                    if (!_chart.cluster()) {
-                        // _layerGroup.addLayer(marker);
-                    } else {
-                        addList.push(marker);
-                    }
-
-                    _markerListFilterd.push(marker);
-                } else {
-                    if (marker !== null) {
-                        marker.setVisible(false);
-                    }
-                }
-            });
-
-            if (_chart.cluster() && addList.length > 0) {
-                // _layerGroup.addLayers(addList);
-
-            }
-
-            if (feature_group.length) {
-                if (_fitOnRender || (_fitOnRedraw && !_disableFitOnRedraw)) {
-                    _chart.map().fitBounds(bounds);
-                }
-            }
-
-            _disableFitOnRedraw = false;
-            _fitOnRender = false;
-        };
-
-        _chart.locationAccessor = function(_) {
-            if (!arguments.length) {
-                return _location;
-            }
-
-            _location =  _;
-            return _chart;
-        };
-
-        _chart.marker = function(_) {
-            if (!arguments.length) {
-                return _marker;
-            }
-
-            _marker = _;
-            return _chart;
-        };
-
-        _chart.icon = function(_) {
-            if (!arguments.length) {
-                return _icon;
-            }
-
-            _icon = _;
-            return _chart;
-        };
-
-
-        _chart.cluster = function(_) {
-            if (!arguments.length) {
-                return _cluster;
-            }
-
-            _cluster = _;
-            return _chart;
-        };
-
-        _chart.clusterOptions = function(_) {
-            if (!arguments.length) {
-                return _clusterOptions;
-            }
-
-            _clusterOptions = _;
-            return _chart;
-        };
-
-        _chart.rebuildMarkers = function(_) {
-            if (!arguments.length) {
-                return _rebuildMarkers;
-            }
-
-            _rebuildMarkers = _;
-            return _chart;
-        };
-
-        _chart.brushOn = function(_) {
-            if (!arguments.length) {
-                return _brushOn;
-            }
-
-            _brushOn = _;
-            return _chart;
-        };
-
-        _chart.filterByArea = function(_) {
-            if (!arguments.length) {
-                return _filterByArea;
-            }
-
-            _filterByArea = _;
-            return _chart;
-        };
-
-        _chart.fitOnRender = function(_) {
-            if (!arguments.length) {
-                return _fitOnRender;
-            }
-
-            _fitOnRender = _;
-            return _chart;
-        };
-
-        _chart.fitOnRedraw = function(_) {
-            if (!arguments.length) {
-                return _fitOnRedraw;
-            }
-
-            _fitOnRedraw = _;
-            return _chart;
-        };
-
-        _chart.markerGroup = function() {
-            return _layerGroup;
-        };
-
-        _chart.markers = function(filtered) {
-            if (filtered) {
-                return _markerListFilterd;
-            }
-
-            return _markerList;
-        };
-
-        var createmarker = function(v, k) {
-            var marker = _marker(v);
-            marker.key = k;
-
-            if (_chart.renderPopup()) {
-                google.maps.event.addListener(marker, 'click', function() {
-                    _chart.popup()(v, marker).open(_chart.map(), marker);
-                });
-            }
-
-            if (_chart.brushOn() && !_filterByArea) {
-                marker.on('click', selectFilter);
-            }
-
-            _markerList[k] = marker;
-
-            return marker;
-        };
-
-        var zoomFilter = function(type) {
-            _disableFitOnRedraw = true;
-            if (_filterByArea) {
-                var filter;
-                if (_chart.map().getCenter().equals(_chart.toLocArray(_chart.center())) && _chart.map().getZoom() === _chart.zoom()) {
-                    filter = null;
-                } else {
-                    filter = _chart.map().getBounds();
-                }
-
-                dc.events.trigger(function () {
-                    _chart.filter(null);
-
-                    if (filter) {
-                        _innerFilter = true;
-                        _chart.filter(filter);
-                        _innerFilter = false;
-                    }
-
-                    dc.redrawAll(_chart.chartGroup());
-                });
-            } else if (
-                _chart.filter() &&
-                (
-                    type === 'click' ||
-                    (
-                        _chart.filter() in _markerList &&
-                        !_chart.map().getBounds().contains(_markerList[_chart.filter()].getLatLng())
-                    )
-                )
-            ) {
-                dc.events.trigger(function () {
-                    _chart.filter(null);
-                    if (_renderPopup) {
-                        _chart.map().closePopup();
-                    }
-
-                    dc.redrawAll(_chart.chartGroup());
-                });
-            }
-        };
-
-        var doFilterByArea = function(dimension, filters) {
-            _disableFitOnRedraw = true;
-            _chart.dimension().filter(null);
-
-            if (filters && filters.length > 0) {
-                _chart.dimension().filterFunction(function(d) {
-                    if (!(d in _markerList)) {
-                        return false;
-                    }
-                    var locO = _markerList[d].position;
-                    return locO && filters[0].contains(locO);
-                });
-
-                if (!_innerFilter && _chart.map().getBounds().toString !== filters[0].toString()) {
-                    _chart.map().fitBounds(filters[0]);
-                }
-            }
-        };
-
-        var selectFilter = function(e) {
-            if (!e.target) {
-                return;
-            }
-
-            _disableFitOnRedraw = true;
-            var filter = e.target.key;
-
-            dc.events.trigger(function () {
-                _chart.filter(filter);
-                dc.redrawAll(_chart.chartGroup());
-            });
-        };
-
-        return _chart.anchor(parent, chartGroup);
-    };
-})();
-
-(function() {
-    'use strict';
-
-    dc.leafletChoroplethChart = function(parent, chartGroup) {
+    dc.leafletChoroplethChart = function (parent, chartGroup) {
         var _chart = dc.colorChart(dc.baseLeafletChart({}));
 
         var _geojsonLayer = false;
@@ -534,11 +172,11 @@
             weight: 1
         };
 
-        var _featureKey = function(feature) {
+        var _featureKey = function (feature) {
             return feature.key;
         };
 
-        var _featureStyle = function(feature) {
+        var _featureStyle = function (feature) {
             var options = _chart.featureOptions();
             if (options instanceof Function) {
                 options = options(feature);
@@ -555,7 +193,7 @@
             return options;
         };
 
-        _chart._postRender = function() {
+        _chart._postRender = function () {
             _geojsonLayer = L.geoJson(_chart.geojson(), {
                 style: _chart.featureStyle(),
                 onEachFeature: processFeatures
@@ -563,7 +201,7 @@
             _chart.map().addLayer(_geojsonLayer);
         };
 
-        _chart._doRedraw = function() {
+        _chart._doRedraw = function () {
             _geojsonLayer.clearLayers();
             _dataMap = [];
             _chart._computeOrderedGroups(_chart.data()).forEach(function (d, i) {
@@ -572,7 +210,7 @@
             _geojsonLayer.addData(_chart.geojson());
         };
 
-        _chart.geojson = function(_) {
+        _chart.geojson = function (_) {
             if (!arguments.length) {
                 return _geojson;
             }
@@ -581,7 +219,7 @@
             return _chart;
         };
 
-        _chart.featureOptions = function(_) {
+        _chart.featureOptions = function (_) {
             if (!arguments.length) {
                 return _featureOptions;
             }
@@ -590,7 +228,7 @@
             return _chart;
         };
 
-        _chart.featureKeyAccessor = function(_) {
+        _chart.featureKeyAccessor = function (_) {
             if (!arguments.length) {
                 return _featureKey;
             }
@@ -599,7 +237,7 @@
             return _chart;
         };
 
-        _chart.featureStyle = function(_) {
+        _chart.featureStyle = function (_) {
             if (!arguments.length) {
                 return _featureStyle;
             }
@@ -623,7 +261,7 @@
             }
         };
 
-        var selectFilter = function(e) {
+        var selectFilter = function (e) {
             if (!e.target) {
                 return;
             }
@@ -639,10 +277,10 @@
     };
 })();
 
-(function() {
+(function () {
     'use strict';
 
-    dc.leafletMarkerChart = function(parent, chartGroup) {
+    dc.leafletMarkerChart = function (parent, chartGroup) {
         var _chart = dc.baseLeafletChart({});
 
         var _cluster = false; // requires leaflet.markerCluster
@@ -663,11 +301,11 @@
 
         _chart.renderTitle(true);
 
-        var _location = function(d) {
+        var _location = function (d) {
             return _chart.keyAccessor()(d);
         };
 
-        var _marker = function(d) {
+        var _marker = function (d) {
             var marker = new L.Marker(
                 _chart.toLocArray(_chart.locationAccessor()(d)),
                     {
@@ -682,11 +320,11 @@
             return marker;
         };
 
-        var _icon = function() {
+        var _icon = function () {
             return new L.Icon.Default();
         };
 
-        _chart._postRender = function() {
+        _chart._postRender = function () {
             if (_chart.brushOn()) {
                 if (_filterByArea) {
                     _chart.filterHandler(doFilterByArea);
@@ -710,7 +348,7 @@
             _chart.map().addLayer(_layerGroup);
         };
 
-        _chart._doRedraw = function() {
+        _chart._doRedraw = function () {
             var groups = _chart._computeOrderedGroups(_chart.data()).filter(function (d) {
                 return _chart.valueAccessor()(d) !== 0;
             });
@@ -724,10 +362,10 @@
             _layerGroup.clearLayers();
 
             var addList = [];
-            var feature_group = [];
+            var featureGroup = [];
             _markerListFilterd = [];
 
-            groups.forEach(function(v) {
+            groups.forEach(function (v) {
                 if (v.value) {
                     var key = _chart.keyAccessor()(v);
                     var marker = null;
@@ -738,7 +376,7 @@
                         marker = createmarker(v, key);
                     }
 
-                    feature_group.push(marker);
+                    featureGroup.push(marker);
 
                     if (!_chart.cluster()) {
                         _layerGroup.addLayer(marker);
@@ -754,10 +392,10 @@
                 _layerGroup.addLayers(addList);
             }
 
-            if (feature_group.length) {
+            if (featureGroup.length) {
                 if (_fitOnRender || (_fitOnRedraw && !_disableFitOnRedraw)) {
-                    feature_group = new L.featureGroup(feature_group);
-                    _chart.map().fitBounds(feature_group.getBounds());//.pad(0.5));
+                    featureGroup = new L.featureGroup(featureGroup);
+                    _chart.map().fitBounds(featureGroup.getBounds());//.pad(0.5));
                 }
             }
 
@@ -765,7 +403,7 @@
             _fitOnRender = false;
         };
 
-        _chart.locationAccessor = function(_) {
+        _chart.locationAccessor = function (_) {
             if (!arguments.length) {
                 return _location;
             }
@@ -774,7 +412,7 @@
             return _chart;
         };
 
-        _chart.marker = function(_) {
+        _chart.marker = function (_) {
             if (!arguments.length) {
                 return _marker;
             }
@@ -783,7 +421,7 @@
             return _chart;
         };
 
-        _chart.icon = function(_) {
+        _chart.icon = function (_) {
             if (!arguments.length) {
                 return _icon;
             }
@@ -792,8 +430,7 @@
             return _chart;
         };
 
-
-        _chart.cluster = function(_) {
+        _chart.cluster = function (_) {
             if (!arguments.length) {
                 return _cluster;
             }
@@ -802,7 +439,7 @@
             return _chart;
         };
 
-        _chart.clusterOptions = function(_) {
+        _chart.clusterOptions = function (_) {
             if (!arguments.length) {
                 return _clusterOptions;
             }
@@ -811,7 +448,7 @@
             return _chart;
         };
 
-        _chart.rebuildMarkers = function(_) {
+        _chart.rebuildMarkers = function (_) {
             if (!arguments.length) {
                 return _rebuildMarkers;
             }
@@ -820,7 +457,7 @@
             return _chart;
         };
 
-        _chart.brushOn = function(_) {
+        _chart.brushOn = function (_) {
             if (!arguments.length) {
                 return _brushOn;
             }
@@ -829,7 +466,7 @@
             return _chart;
         };
 
-        _chart.filterByArea = function(_) {
+        _chart.filterByArea = function (_) {
             if (!arguments.length) {
                 return _filterByArea;
             }
@@ -838,7 +475,7 @@
             return _chart;
         };
 
-        _chart.fitOnRender = function(_) {
+        _chart.fitOnRender = function (_) {
             if (!arguments.length) {
                 return _fitOnRender;
             }
@@ -847,7 +484,7 @@
             return _chart;
         };
 
-        _chart.fitOnRedraw = function(_) {
+        _chart.fitOnRedraw = function (_) {
             if (!arguments.length) {
                 return _fitOnRedraw;
             }
@@ -856,11 +493,11 @@
             return _chart;
         };
 
-        _chart.markerGroup = function() {
+        _chart.markerGroup = function () {
             return _layerGroup;
         };
 
-        _chart.markers = function(filtered) {
+        _chart.markers = function (filtered) {
             if (filtered) {
                 return _markerListFilterd;
             }
@@ -868,7 +505,7 @@
             return _markerList;
         };
 
-        var createmarker = function(v, k) {
+        var createmarker = function (v, k) {
             var marker = _marker(v);
             marker.key = k;
 
@@ -885,11 +522,11 @@
             return marker;
         };
 
-        var zoomStart = function() {
+        var zoomStart = function () {
             _zooming = true;
         };
 
-        var zoomFilter = function(e) {
+        var zoomFilter = function (e) {
             if (e.type === 'moveend' && (_zooming || e.hard)) {
                 return;
             }
@@ -929,7 +566,7 @@
             ) {
                 dc.events.trigger(function () {
                     _chart.filter(null);
-                    if (_renderPopup) {
+                    if (_chart.renderPopup()) {
                         _chart.map().closePopup();
                     }
 
@@ -938,12 +575,12 @@
             }
         };
 
-        var doFilterByArea = function(dimension, filters) {
+        var doFilterByArea = function (dimension, filters) {
             _disableFitOnRedraw = true;
             _chart.dimension().filter(null);
 
             if (filters && filters.length > 0) {
-                _chart.dimension().filterFunction(function(d) {
+                _chart.dimension().filterfunction (function (d) {
                     if (!(d in _markerList)) {
                         return false;
                     }
@@ -957,7 +594,7 @@
             }
         };
 
-        var selectFilter = function(e) {
+        var selectFilter = function (e) {
             if (!e.target) {
                 return;
             }

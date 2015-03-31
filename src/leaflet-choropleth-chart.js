@@ -1,7 +1,7 @@
-(function() {
+(function () {
     'use strict';
 
-    dc.leafletChoroplethChart = function(parent, chartGroup) {
+    dc.leafletChoroplethChart = function (parent, chartGroup) {
         var _chart = dc.colorChart(dc.baseLeafletChart({}));
 
         var _geojsonLayer = false;
@@ -16,11 +16,11 @@
             weight: 1
         };
 
-        var _featureKey = function(feature) {
+        var _featureKey = function (feature) {
             return feature.key;
         };
 
-        var _featureStyle = function(feature) {
+        var _featureStyle = function (feature) {
             var options = _chart.featureOptions();
             if (options instanceof Function) {
                 options = options(feature);
@@ -37,7 +37,7 @@
             return options;
         };
 
-        _chart._postRender = function() {
+        _chart._postRender = function () {
             _geojsonLayer = L.geoJson(_chart.geojson(), {
                 style: _chart.featureStyle(),
                 onEachFeature: processFeatures
@@ -45,7 +45,7 @@
             _chart.map().addLayer(_geojsonLayer);
         };
 
-        _chart._doRedraw = function() {
+        _chart._doRedraw = function () {
             _geojsonLayer.clearLayers();
             _dataMap = [];
             _chart._computeOrderedGroups(_chart.data()).forEach(function (d, i) {
@@ -54,7 +54,7 @@
             _geojsonLayer.addData(_chart.geojson());
         };
 
-        _chart.geojson = function(_) {
+        _chart.geojson = function (_) {
             if (!arguments.length) {
                 return _geojson;
             }
@@ -63,7 +63,7 @@
             return _chart;
         };
 
-        _chart.featureOptions = function(_) {
+        _chart.featureOptions = function (_) {
             if (!arguments.length) {
                 return _featureOptions;
             }
@@ -72,7 +72,7 @@
             return _chart;
         };
 
-        _chart.featureKeyAccessor = function(_) {
+        _chart.featureKeyAccessor = function (_) {
             if (!arguments.length) {
                 return _featureKey;
             }
@@ -81,7 +81,7 @@
             return _chart;
         };
 
-        _chart.featureStyle = function(_) {
+        _chart.featureStyle = function (_) {
             if (!arguments.length) {
                 return _featureStyle;
             }
@@ -105,7 +105,7 @@
             }
         };
 
-        var selectFilter = function(e) {
+        var selectFilter = function (e) {
             if (!e.target) {
                 return;
             }

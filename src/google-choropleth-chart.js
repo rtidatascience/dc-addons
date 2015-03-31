@@ -1,10 +1,9 @@
-(function() {
+(function () {
     'use strict';
 
-    dc.googleChoroplethChart = function(parent, chartGroup) {
+    dc.googleChoroplethChart = function (parent, chartGroup) {
         var _chart = dc.colorChart(dc.baseGoogleChart({}));
 
-        var _geojsonLayer = false;
         var _dataMap = [];
 
         var _geojson = false;
@@ -18,11 +17,11 @@
         };
         var _infoWindow = null;
 
-        var _featureKey = function(feature) {
+        var _featureKey = function (feature) {
             return feature.key;
         };
 
-        var _featureStyle = function(feature) {
+        var _featureStyle = function (feature) {
             var options = _chart.featureOptions();
             if (options instanceof Function) {
                 options = options(feature);
@@ -39,7 +38,7 @@
             return options;
         };
 
-        _chart._postRender = function() {
+        _chart._postRender = function () {
             if (typeof _geojson === 'string') {
                 _feature = _chart.map().data.loadGeoJson(_geojson);
             } else {
@@ -50,17 +49,15 @@
             processFeatures();
         };
 
-        _chart._doRedraw = function() {
-            // _geojsonLayer.clearLayers();
+        _chart._doRedraw = function () {
             _dataMap = [];
             _chart._computeOrderedGroups(_chart.data()).forEach(function (d, i) {
                 _dataMap[_chart.keyAccessor()(d)] = {d: d, i: i};
             });
             _chart.map().data.setStyle(_chart.featureStyle());
-            // _geojsonLayer.addData(_chart.geojson());
         };
 
-        _chart.geojson = function(_) {
+        _chart.geojson = function (_) {
             if (!arguments.length) {
                 return _geojson;
             }
@@ -69,7 +66,7 @@
             return _chart;
         };
 
-        _chart.featureOptions = function(_) {
+        _chart.featureOptions = function (_) {
             if (!arguments.length) {
                 return _featureOptions;
             }
@@ -78,7 +75,7 @@
             return _chart;
         };
 
-        _chart.featureKeyAccessor = function(_) {
+        _chart.featureKeyAccessor = function (_) {
             if (!arguments.length) {
                 return _featureKey;
             }
@@ -87,7 +84,7 @@
             return _chart;
         };
 
-        _chart.featureStyle = function(_) {
+        _chart.featureStyle = function (_) {
             if (!arguments.length) {
                 return _featureStyle;
             }
@@ -98,7 +95,7 @@
 
         var processFeatures = function (feature, layer) {
             if (_chart.renderPopup()) {
-                _chart.map().data.addListener('click', function(event) {
+                _chart.map().data.addListener('click', function (event) {
                     var anchor = new google.maps.MVCObject(),
                         data = _dataMap[_chart.featureKeyAccessor()(event.feature)];
 
@@ -128,7 +125,7 @@
             }
         };
 
-        var selectFilter = function(event) {
+        var selectFilter = function (event) {
             console.log(event);
             if (!event.feature) {
                 return;
