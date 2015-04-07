@@ -23,8 +23,23 @@ module.exports = {
             '<%= config.src %>/google-marker-chart.js',
         ]
     },
+    tooltip: {
+        dest: '<%= config.dist %>/dc-tooltip-mixin.js',
+        src: [
+            '<%= config.src %>/tooltip-mixin.js',
+        ]
+    },
     build: {
         dest: '<%= config.dist %>/dc-addons.js',
-        src: '<%= config.dist %>/*.js'
+        src: [
+            '<%= config.src %>/base-map-chart.js',
+            '<%= config.src %>/base-leaflet-chart.js',
+            '<%= config.src %>/leaflet-choropleth-chart.js',
+            '<%= config.src %>/leaflet-marker-chart.js',
+            '<%= config.src %>/base-google-chart.js',
+            '<%= config.src %>/google-choropleth-chart.js',
+            '<%= config.src %>/google-marker-chart.js',
+            '<%= config.src %>/tooltip-mixin.js',
+        ]
     },
 };

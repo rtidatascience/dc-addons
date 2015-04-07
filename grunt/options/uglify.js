@@ -13,6 +13,6 @@ module.exports = {
             rename: function (dest, src) {
                 return dest + src.replace('.js', '.min.js');
             }
-      }]
+        }]
     }
 };

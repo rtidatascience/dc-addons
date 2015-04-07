@@ -11,7 +11,9 @@
     "Intellipharm <damian@intellipharm.com.au>",
     "Timothy Ruhle <timothy.ruhle@intellipharm.com.au>"
   ],
-  "main": ["dist/dc-addons.min.js"],
+  "main": [
+    "dist/dc-addons.min.js"
+  ],
   "moduleType": [
     "globals"
   ],
@@ -24,6 +26,9 @@
     "leaflet.js",
     "google",
     "map",
+    "tooltip",
+    "tool",
+    "tip",
     "addons"
   ],
   "license": "MIT",
@@ -35,6 +40,7 @@
   "dependencies": {
     "dcjs": "https://github.com/dc-js/dc.js.git#develop",
     "leaflet": "~0.7.3",
-    "leaflet.markercluster": "~0.4.0"
+    "leaflet.markercluster": "~0.4.0",
+    "d3-tip": "~0.6.6"
   }
 }
