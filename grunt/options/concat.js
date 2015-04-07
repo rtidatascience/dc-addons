@@ -8,38 +8,38 @@ module.exports = {
     leaflet: {
         dest: '<%= config.dist %>/dc-leaflet.js',
         src: [
-            '<%= config.src %>/base-map-chart.js',
-            '<%= config.src %>/base-leaflet-chart.js',
-            '<%= config.src %>/leaflet-choropleth-chart.js',
-            '<%= config.src %>/leaflet-marker-chart.js',
+            '<%= config.src %>/<%= config.scripts %>/base-map-chart.js',
+            '<%= config.src %>/<%= config.scripts %>/base-leaflet-chart.js',
+            '<%= config.src %>/<%= config.scripts %>/leaflet-choropleth-chart.js',
+            '<%= config.src %>/<%= config.scripts %>/leaflet-marker-chart.js',
         ]
     },
     google: {
         dest: '<%= config.dist %>/dc-google.js',
         src: [
-            '<%= config.src %>/base-map-chart.js',
-            '<%= config.src %>/base-google-chart.js',
-            '<%= config.src %>/google-choropleth-chart.js',
-            '<%= config.src %>/google-marker-chart.js',
+            '<%= config.src %>/<%= config.scripts %>/base-map-chart.js',
+            '<%= config.src %>/<%= config.scripts %>/base-google-chart.js',
+            '<%= config.src %>/<%= config.scripts %>/google-choropleth-chart.js',
+            '<%= config.src %>/<%= config.scripts %>/google-marker-chart.js',
         ]
     },
     tooltip: {
         dest: '<%= config.dist %>/dc-tooltip-mixin.js',
         src: [
-            '<%= config.src %>/tooltip-mixin.js',
+            '<%= config.src %>/<%= config.scripts %>/tooltip-mixin.js',
         ]
     },
     build: {
         dest: '<%= config.dist %>/dc-addons.js',
         src: [
-            '<%= config.src %>/base-map-chart.js',
-            '<%= config.src %>/base-leaflet-chart.js',
-            '<%= config.src %>/leaflet-choropleth-chart.js',
-            '<%= config.src %>/leaflet-marker-chart.js',
-            '<%= config.src %>/base-google-chart.js',
-            '<%= config.src %>/google-choropleth-chart.js',
-            '<%= config.src %>/google-marker-chart.js',
-            '<%= config.src %>/tooltip-mixin.js',
+            '<%= config.src %>/<%= config.scripts %>/base-map-chart.js',
+            '<%= config.src %>/<%= config.scripts %>/base-leaflet-chart.js',
+            '<%= config.src %>/<%= config.scripts %>/leaflet-choropleth-chart.js',
+            '<%= config.src %>/<%= config.scripts %>/leaflet-marker-chart.js',
+            '<%= config.src %>/<%= config.scripts %>/base-google-chart.js',
+            '<%= config.src %>/<%= config.scripts %>/google-choropleth-chart.js',
+            '<%= config.src %>/<%= config.scripts %>/google-marker-chart.js',
+            '<%= config.src %>/<%= config.scripts %>/tooltip-mixin.js',
         ]
     },
 };

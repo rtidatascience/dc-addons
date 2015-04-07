@@ -13,13 +13,17 @@
             // Load grunt modules from package.json automatically
             require('load-grunt-tasks')(grunt);
 
-            // config variables, these are accessible like '<%= config.dev %>'
+            // config variables, these are accessible like '<%= config.src %>'
             var gruntConfig = {config: {
                 // base folders
                 dist: 'dist',
                 src: 'src',
                 tests: 'tests',
                 grunt: 'grunt',
+
+                scripts: 'scripts',
+                less: 'less',
+
                 pkg: grunt.file.readJSON('package.json'),
             }};
 

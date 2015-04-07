@@ -11,6 +11,8 @@ module.exports = function (grunt) {
         'clean:build',
         'concat',
         'uglify:build',
+        'less',
+        'cssmin',
         'notify:buildComplete'
     ]);
 };
