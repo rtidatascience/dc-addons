@@ -29,6 +29,12 @@ module.exports = {
             '<%= config.src %>/<%= config.scripts %>/tooltip-mixin.js',
         ]
     },
+    bubble: {
+        dest: '<%= config.dist %>/dc-bubble-cloud.js',
+        src: [
+            '<%= config.src %>/<%= config.scripts %>/bubble-cloud.js',
+        ]
+    },
     build: {
         dest: '<%= config.dist %>/dc-addons.js',
         src: [
@@ -40,6 +46,7 @@ module.exports = {
             '<%= config.src %>/<%= config.scripts %>/google-choropleth-chart.js',
             '<%= config.src %>/<%= config.scripts %>/google-marker-chart.js',
             '<%= config.src %>/<%= config.scripts %>/tooltip-mixin.js',
+            '<%= config.src %>/<%= config.scripts %>/bubble-cloud.js',
         ]
     },
 };
