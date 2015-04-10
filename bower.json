@@ -41,6 +41,10 @@
     "dcjs": "https://github.com/dc-js/dc.js.git#develop",
     "leaflet": "~0.7.3",
     "leaflet.markercluster": "~0.4.0",
-    "d3-tip": "~0.6.6"
+    "d3-tip": "~0.6.6",
+    "d3": "~3.5.5"
+  },
+  "resolutions": {
+    "d3": "~3.5.5"
   }
 }
