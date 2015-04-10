@@ -1,10 +1,10 @@
 {
   "name": "dc-addons",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "dependencies": {},
   "repository": {
     "type": "git",
-    "url": "git://github.com/Intellipharm/angular-cakephp.git"
+    "url": "git://github.com/Intellipharm/dc-addons.git"
   },
   "devDependencies": {
     "glob": "~5.0.0",

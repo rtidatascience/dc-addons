@@ -1,7 +1,7 @@
 /*!
- * dc-addons v0.5.0
+ * dc-addons v0.6.0
  *
- * 2015-04-07 16:00:37
+ * 2015-04-10 12:36:14
  *
  */
 (function () {
@@ -11,12 +11,16 @@
 
         if (_chart) {
             _chart.tip = function () {
-                var selector = 'rect.bar,circle.dot,g.pie-slice path',
+                var selector = 'rect.bar,circle.dot,g.pie-slice path,circle.bubble',
                     svg = _chart.svg(),
                     tip = d3.tip()
                         .attr('class', 'tip')
                         .html(function (d) {
-                            return _chart.title()(d.data);
+                            if (d.data) {
+                                return _chart.title()(d.data);
+                            }
+
+                            return _chart.title()(d);
                         });
 
                 svg.selectAll(selector).call(tip);
