@@ -1,7 +1,7 @@
 /*!
- * dc-addons v0.6.0
+ * dc-addons v0.6.1
  *
- * 2015-04-10 12:36:14
+ * 2015-04-15 09:56:44
  *
  */
 // Code copied and changed from https://github.com/vlandham/gates_bubbles
@@ -10,12 +10,13 @@
     'use strict';
 
     dc.bubbleCloud = function (parent, chartGroup) {
-        var _chart = dc.bubbleMixin(dc.coordinateGridMixin({}));
+        var _chart = dc.bubbleMixin(dc.capMixin(dc.bubbleChart()));
 
         var LAYOUT_GRAVITY = 0.2;
         var RADIUS_TRANSITION = 1500;
         var FRICTION = 0.5;
         var PADDING = 10;
+        var MIN_RADIUS = 5;
 
         var _force = null;
         var _circles = [];
@@ -41,6 +42,13 @@
         };
 
         function drawChart() {
+
+            if (_chart.elasticRadius()) {
+                _chart.r().domain([_chart.rMin(), _chart.rMax()]);
+            }
+
+            _chart.r().range([MIN_RADIUS, _chart.xAxisLength() * _chart.maxBubbleRelativeSize()]);
+
             if (_circles.length === 0) {
                 createBubbles();
             } else {
@@ -61,7 +69,9 @@
                     _circles
                         .each(moveTowardsCenter(e.alpha))
                         .attr('cx', function (d) {
-                            d3.select(this.parentNode).attr('transform', 'translate(' + d.x + ',' + d.y + ')');
+                            if (d.x && d.y) {
+                                d3.select(this.parentNode).attr('transform', 'translate(' + d.x + ',' + d.y + ')');
+                            }
                             // return d.x;
                             return 0;
                         })
@@ -72,10 +82,6 @@
                 });
 
             _force.start();
-
-            setTimeout(function () {
-                _force.stop();
-            }, 2000);
         }
 
         function createBubbles() {
@@ -84,11 +90,12 @@
                 .data(_chart.data())
                 .enter()
                 .append('g')
+                .attr('class', _chart.BUBBLE_NODE_CLASS)
                 .on('click', _chart.onClick);
 
             _circles = _gs
                 .append('circle')
-                .attr('class', 'bubble')
+                .attr('class', _chart.BUBBLE_CLASS)
                 .attr('r', 0)
                 .attr('fill-opacity', 1)
                 .attr('fill', function (d, i) {
@@ -103,14 +110,7 @@
                 });
 
             _chart._doRenderLabel(_gs);
-
-            _circles
-                .append('title')
-                .text(function (d) {
-                    if (_chart.renderTitle()) {
-                        return _chart.title()(d);
-                    }
-                });
+            _chart._doRenderTitles(_gs);
 
             _circles.transition().duration(RADIUS_TRANSITION).attr('r', function (d) {
                 d.radius = _chart.bubbleR(d);
@@ -128,6 +128,7 @@
                 });
 
             _chart.doUpdateLabels(_gs);
+            _chart.doUpdateTitles(_gs);
         }
 
         function moveTowardsCenter(alpha) {
