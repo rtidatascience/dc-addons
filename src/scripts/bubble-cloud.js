@@ -4,7 +4,7 @@
     'use strict';
 
     dc.bubbleCloud = function (parent, chartGroup) {
-        var _chart = dc.capMixin(dc.bubbleChart());
+        var _chart = dc.bubbleMixin(dc.capMixin(dc.bubbleChart()));
 
         var LAYOUT_GRAVITY = 0.2;
         var RADIUS_TRANSITION = 1500;
