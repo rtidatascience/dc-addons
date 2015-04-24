@@ -244,7 +244,7 @@
             }
 
             if (_chart.brushOn() && !_filterByArea) {
-                marker.on('click', selectFilter);
+                google.maps.event.addListener(marker, 'click', selectFilter);
             }
 
             _markerList[k] = marker;

@@ -1,26 +1,24 @@
 <!doctype html>
 <html>
     <head>
-        <title>dc.js leaflet marker</title>
+        <title>dc.js google marker</title>
 
         <link rel="stylesheet" href="../bower_components/dcjs/dc.css">
-        <link rel="stylesheet" href="../bower_components/leaflet/dist/leaflet.css">
-        <link rel="stylesheet" href="../bower_components/leaflet.markercluster/dist/MarkerCluster.css">
-        <link rel="stylesheet" href="../bower_components/leaflet.markercluster/dist/MarkerCluster.Default.css">
 
         <script src="../bower_components/d3/d3.min.js"></script>
         <script src="../bower_components/crossfilter/crossfilter.min.js"></script>
         <script src="../bower_components/dcjs/dc.js"></script>
-        <script src="../bower_components/leaflet/dist/leaflet.js"></script>
-        <script src="../bower_components/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+        <!-- <script src="https://maps.googleapis.com/maps/api/js?key=API_KEY"></script> -->
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCLashRsAacU5z2ZZxrdNTrRGeCAj1-C_w"></script>
+        <script src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer.js"></script>
 
-        <script src="../dist/leaflet-map/dc-leaflet.js"></script>
+        <!-- <script src="../dist/google-map/dc-google.js"></script> -->
 
         <!-- use src for testing -->
-        <!-- <script src="../src/scripts/base-map-chart.js"></script>
-        <script src="../src/scripts/base-leaflet-chart.js"></script>
-        <script src="../src/scripts/leaflet-marker-chart.js"></script>
-        <script src="../src/scripts/leaflet-choropleth-chart.js"></script> -->
+        <script src="../src/scripts/base-map-chart.js"></script>
+        <script src="../src/scripts/base-google-chart.js"></script>
+        <script src="../src/scripts/google-marker-chart.js"></script>
+        <script src="../src/scripts/google-choropleth-chart.js"></script>
 
         <style>
             #holder {
@@ -41,7 +39,7 @@
           </style>
     </head>
     <body>
-        <h1>dc.js leaflet marker</h1>
+        <h1>dc.js google marker</h1>
         <p>Copied and modified from http://opendata.yurukov.net/demo/dcjs_leaflet/</p>
 
         <div id="holder">
@@ -81,7 +79,7 @@
                 var facilities = xf.dimension(function(d) { return d.geo; });
                 var facilitiesGroup = facilities.group().reduceCount();
 
-              dc.leafletMarkerChart("#demo1 .map",groupname)
+              dc.googleMarkerChart("#demo1 .map",groupname)
                   .dimension(facilities)
                   .group(facilitiesGroup)
                   .width(600)
@@ -117,7 +115,7 @@
                 var facilities = xf.dimension(function(d) { return d.geo; });
                 var facilitiesGroup = facilities.group().reduceCount();
 
-              dc.leafletMarkerChart("#demo2 .map",groupname)
+              dc.googleMarkerChart("#demo2 .map",groupname)
                   .dimension(facilities)
                   .group(facilitiesGroup)
                   .width(600)
@@ -179,7 +177,7 @@
               var groupname = "Choropleth";
                 var facilities = xf.dimension(function(d) { return d.code; });
                 var facilitiesGroup = facilities.group().reduceSum(function(d) { return d.value;});
-                var chart = dc.leafletChoroplethChart("#demo3 .map",groupname);
+                var chart = dc.googleChoroplethChart("#demo3 .map",groupname);
 
                 chart.dimension(facilities)
                   .group(facilitiesGroup)
@@ -197,11 +195,11 @@
                     return d.value;
                   })
                   .featureKeyAccessor(function(feature) {
-                    return feature.properties.code;
+                    return feature.k.code;
                   })
                   .renderPopup(true)
                   .popup(function(d,feature) {
-                    return feature.properties.nameEn+" : "+d.value;
+                    return feature.k.nameEn+" : "+d.value;
                   });
 
                 var types = xf.dimension(function(d) { return d.type; });

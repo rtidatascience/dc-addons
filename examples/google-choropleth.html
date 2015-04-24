@@ -1,25 +1,26 @@
 <!doctype html>
 <html>
     <head>
-        <title>dc.js leaflet choropleth</title>
+        <title>dc.js google choropleth</title>
 
         <link rel="stylesheet" href="../bower_components/dcjs/dc.css">
-        <link rel="stylesheet" href="../bower_components/leaflet/dist/leaflet.css">
 
         <script src="../bower_components/d3/d3.min.js"></script>
         <script src="../bower_components/crossfilter/crossfilter.min.js"></script>
         <script src="../bower_components/dcjs/dc.js"></script>
-        <script src="../bower_components/leaflet/dist/leaflet.js"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=API_KEY"></script>
+        <script src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer.js"></script>
 
-        <script src="../dist/leaflet-map/dc-leaflet.js"></script>
+        <script src="../dist/google-map/dc-google.js"></script>
 
         <!-- use src for testing -->
         <!-- <script src="../src/scripts/base-map-chart.js"></script>
-        <script src="../src/scripts/base-leaflet-chart.js"></script>
-        <script src="../src/scripts/leaflet-choropleth-chart.js"></script> -->
+        <script src="../src/scripts/base-google-chart.js"></script>
+        <script src="../src/scripts/google-marker-chart.js"></script>
+        <script src="../src/scripts/google-choropleth-chart.js"></script> -->
     </head>
     <body>
-        <h1>dc.js leaflet choropleth</h1>
+        <h1>dc.js google choropleth</h1>
         <p>Copied and modified from http://dc-js.github.io/dc.js/vc/index.html</p>
         <h2>US Venture Capital Landscape 2011</h2>
 
@@ -72,7 +73,7 @@
         <script>
             var numberFormat = d3.format(".2f");
 
-            var usChart = dc.leafletChoroplethChart("#us-chart");
+            var usChart = dc.googleChoroplethChart("#us-chart");
             var industryChart = dc.bubbleChart("#industry-chart");
             var roundChart = dc.bubbleChart("#round-chart");
 
@@ -137,9 +138,9 @@
                         .colors(d3.scale.quantize().range(["#E2F2FF", "#C4E4FF", "#9ED2FF", "#81C5FF", "#6BBAFF", "#51AEFF", "#36A2FF", "#1E96FF", "#0089FF", "#0061B5"]))
                         .colorDomain([0, 200])
                         .colorCalculator(function (d) { return d ? usChart.colors()(d.value) : '#ccc'; })
-                        .geojson(statesJson.features)
+                        .geojson(statesJson)
                         .featureKeyAccessor(function(feature) {
-                            return feature.properties.name;
+                            return feature.k.name;
                         })
                         .title(function (d) {
                             return "State: " + d.key + "\nTotal Amount Raised: " + numberFormat(d.value ? d.value : 0) + "M";
