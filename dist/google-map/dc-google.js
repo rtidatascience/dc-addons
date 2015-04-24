@@ -1,7 +1,7 @@
 /*!
- * dc-addons v0.6.1
+ * dc-addons v0.6.2
  *
- * 2015-04-24 10:15:20
+ * 2015-04-24 14:39:11
  *
  */
 (function () {
@@ -603,7 +603,7 @@
             _chart.dimension().filter(null);
 
             if (filters && filters.length > 0) {
-                _chart.dimension().filterfunction (function (d) {
+                _chart.dimension().filter(function (d) {
                     if (!(d in _markerList)) {
                         return false;
                     }
