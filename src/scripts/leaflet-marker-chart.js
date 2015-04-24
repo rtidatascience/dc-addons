@@ -301,7 +301,7 @@
             _chart.dimension().filter(null);
 
             if (filters && filters.length > 0) {
-                _chart.dimension().filterfunction (function (d) {
+                _chart.dimension().filter(function (d) {
                     if (!(d in _markerList)) {
                         return false;
                     }

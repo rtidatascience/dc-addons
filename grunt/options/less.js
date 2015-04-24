@@ -4,7 +4,7 @@ module.exports = function () {
             strictMath: true,
         },
         tooltip: {
-            dest: '<%= config.dist %>/dc-tooltip-mixin.css',
+            dest: '<%= config.dist %>/tooltip/dc-tooltip-mixin.css',
             src: [
                 '<%= config.src %>/<%= config.less %>/tooltip-mixin.less'
             ]

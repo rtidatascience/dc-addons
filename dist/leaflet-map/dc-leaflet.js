@@ -1,7 +1,7 @@
 /*!
  * dc-addons v0.6.1
  *
- * 2015-04-15 09:56:44
+ * 2015-04-24 10:00:16
  *
  */
 (function () {
@@ -122,16 +122,17 @@
 (function () {
     'use strict';
 
-    dc.baseGoogleChart = function (_chart) {
+    dc.baseLeafletChart = function (_chart) {
         _chart = dc.baseMapChart(_chart);
 
         _chart._doRender = function () {
-            var _map = new google.maps.Map(_chart.root().node(), _chart.mapOptions());
+            var _map = L.map(_chart.root().node(), _chart.mapOptions());
 
             if (_chart.center() && _chart.zoom()) {
-                _map.setCenter(_chart.toLocArray(_chart.center()));
-                _map.setZoom(_chart.zoom());
+                _map.setView(_chart.toLocArray(_chart.center()), _chart.zoom());
             }
+
+            _chart.tiles()(_map);
 
             _chart.map(_map);
 
@@ -145,9 +146,8 @@
                 // expects '11.111,1.111'
                 value = value.split(',');
             }
-
             // else expects [11.111,1.111]
-            return new google.maps.LatLng(value[0], value[1]);
+            return value;
         };
 
         return _chart;
@@ -157,13 +157,13 @@
 (function () {
     'use strict';
 
-    dc.googleChoroplethChart = function (parent, chartGroup) {
-        var _chart = dc.colorChart(dc.baseGoogleChart({}));
+    dc.leafletChoroplethChart = function (parent, chartGroup) {
+        var _chart = dc.colorChart(dc.baseLeafletChart({}));
 
+        var _geojsonLayer = false;
         var _dataMap = [];
 
         var _geojson = false;
-        var _feature = false;
         var _featureOptions = {
             fillColor: 'black',
             color: 'gray',
@@ -171,7 +171,6 @@
             fillOpacity: 0.6,
             weight: 1
         };
-        var _infoWindow = null;
 
         var _featureKey = function (feature) {
             return feature.key;
@@ -195,22 +194,20 @@
         };
 
         _chart._postRender = function () {
-            if (typeof _geojson === 'string') {
-                _feature = _chart.map().data.loadGeoJson(_geojson);
-            } else {
-                _feature = _chart.map().data.addGeoJson(_geojson);
-            }
-
-            _chart.map().data.setStyle(_chart.featureStyle());
-            processFeatures();
+            _geojsonLayer = L.geoJson(_chart.geojson(), {
+                style: _chart.featureStyle(),
+                onEachFeature: processFeatures
+            });
+            _chart.map().addLayer(_geojsonLayer);
         };
 
         _chart._doRedraw = function () {
+            _geojsonLayer.clearLayers();
             _dataMap = [];
             _chart._computeOrderedGroups(_chart.data()).forEach(function (d, i) {
                 _dataMap[_chart.keyAccessor()(d)] = {d: d, i: i};
             });
-            _chart.map().data.setStyle(_chart.featureStyle());
+            _geojsonLayer.addData(_chart.geojson());
         };
 
         _chart.geojson = function (_) {
@@ -250,45 +247,26 @@
         };
 
         var processFeatures = function (feature, layer) {
-            if (_chart.renderPopup()) {
-                _chart.map().data.addListener('click', function (event) {
-                    var anchor = new google.maps.MVCObject(),
-                        data = _dataMap[_chart.featureKeyAccessor()(event.feature)];
+            var v = _dataMap[_chart.featureKeyAccessor()(feature)];
+            if (v && v.d) {
+                layer.key = v.d.key;
 
-                    if (_infoWindow) {
-                        _infoWindow.close();
-                    }
+                if (_chart.renderPopup()) {
+                    layer.bindPopup(_chart.popup()(v.d, feature));
+                }
 
-                    if (!data) {
-                        data = {};
-                    }
-
-                    if (!data.d) {
-                        data.d = {};
-                    }
-
-                    _infoWindow = new google.maps.InfoWindow({
-                        content: _chart.popup()(data.d, event.feature)
-                    });
-
-                    anchor.set('position', event.latLng);
-                    _infoWindow.open(_chart.map(), anchor);
-                });
-            }
-
-            if (_chart.brushOn()) {
-                _chart.map().data.addListener('click', selectFilter);
+                if (_chart.brushOn()) {
+                    layer.on('click', selectFilter);
+                }
             }
         };
 
-        var selectFilter = function (event) {
-            console.log(event);
-            if (!event.feature) {
+        var selectFilter = function (e) {
+            if (!e.target) {
                 return;
             }
 
-            var filter = _chart.featureKeyAccessor()(event.feature);
-
+            var filter = e.target.key;
             dc.events.trigger(function () {
                 _chart.filter(filter);
                 dc.redrawAll(_chart.chartGroup());
@@ -302,10 +280,10 @@
 (function () {
     'use strict';
 
-    dc.googleMarkerChart = function (parent, chartGroup) {
-        var _chart = dc.baseGoogleChart({});
+    dc.leafletMarkerChart = function (parent, chartGroup) {
+        var _chart = dc.baseLeafletChart({});
 
-        var _cluster = false; // requires js-marker-clusterer
+        var _cluster = false; // requires leaflet.markerCluster
         var _clusterOptions = false;
         var _rebuildMarkers = false;
         var _brushOn = true;
@@ -315,11 +293,11 @@
         var _disableFitOnRedraw = false;
 
         var _innerFilter = false;
+        var _zooming = false;
         var _layerGroup = false;
         var _markerList = [];
         var _markerListFilterd = [];
         var _currentGroups = false;
-        var _icon = false;
 
         _chart.renderTitle(true);
 
@@ -328,15 +306,22 @@
         };
 
         var _marker = function (d) {
-            var marker = new google.maps.Marker({
-                position: _chart.toLocArray(_chart.locationAccessor()(d)),
-                map: _chart.map(),
-                title: _chart.renderTitle() ? _chart.title()(d) : '',
-                clickable: _chart.renderPopup() || (_chart.brushOn() && !_filterByArea),
-                draggable: false
-            });
+            var marker = new L.Marker(
+                _chart.toLocArray(_chart.locationAccessor()(d)),
+                    {
+                        title: _chart.renderTitle() ? _chart.title()(d) : '',
+                        alt: _chart.renderTitle() ? _chart.title()(d) : '',
+                        icon: _icon(),
+                        clickable: _chart.renderPopup() || (_chart.brushOn() && !_filterByArea),
+                        draggable: false
+                    }
+                );
 
             return marker;
+        };
+
+        var _icon = function () {
+            return new L.Icon.Default();
         };
 
         _chart._postRender = function () {
@@ -345,26 +330,22 @@
                     _chart.filterHandler(doFilterByArea);
                 }
 
-                google.maps.event.addListener(_chart.map(), 'zoom_changed', function () {
-                    zoomFilter('zoom');
-                }, this);
-                google.maps.event.addListener(_chart.map(), 'dragend', function () {
-                    zoomFilter('drag');
-                }, this);
+                _chart.map().on('zoomend moveend', zoomFilter, this);
 
                 if (!_filterByArea) {
-                    google.maps.event.addListener(_chart.map(), 'click', function () {
-                        zoomFilter('click');
-                    }, this);
+                    _chart.map().on('click', zoomFilter, this);
                 }
+
+                _chart.map().on('zoomstart', zoomStart, this);
             }
 
             if (_cluster) {
-                _layerGroup = new MarkerClusterer(_chart.map());
+                _layerGroup = new L.MarkerClusterGroup(_clusterOptions ? _clusterOptions : null);
             } else {
-                _layerGroup = new google.maps.OverlayView();
-                _layerGroup.setMap(_chart.map());
+                _layerGroup = new L.LayerGroup();
             }
+
+            _chart.map().addLayer(_layerGroup);
         };
 
         _chart._doRedraw = function () {
@@ -378,53 +359,43 @@
                 _markerList = [];
             }
 
-            _layerGroup.clearMarkers();
+            _layerGroup.clearLayers();
 
             var addList = [];
             var featureGroup = [];
-            var bounds = new google.maps.LatLngBounds();
             _markerListFilterd = [];
 
             groups.forEach(function (v) {
-                var key = _chart.keyAccessor()(v);
-                var marker = null;
-
-                if (!_rebuildMarkers && key in _markerList) {
-                    marker = _markerList[key];
-                }
-
                 if (v.value) {
-                    if (marker === null) {
-                        marker = createmarker(v, key);
+                    var key = _chart.keyAccessor()(v);
+                    var marker = null;
+
+                    if (!_rebuildMarkers && key in _markerList) {
+                        marker = _markerList[key];
                     } else {
-                        marker.setVisible(true);
+                        marker = createmarker(v, key);
                     }
 
-                    bounds.extend(marker.getPosition());
                     featureGroup.push(marker);
 
                     if (!_chart.cluster()) {
-                        _layerGroup.addMarker(marker);
+                        _layerGroup.addLayer(marker);
                     } else {
                         addList.push(marker);
                     }
 
                     _markerListFilterd.push(marker);
-                } else {
-                    if (marker !== null) {
-                        marker.setVisible(false);
-                    }
                 }
             });
 
             if (_chart.cluster() && addList.length > 0) {
-                _layerGroup.addMarkers(addList);
-
+                _layerGroup.addLayers(addList);
             }
 
             if (featureGroup.length) {
                 if (_fitOnRender || (_fitOnRedraw && !_disableFitOnRedraw)) {
-                    _chart.map().fitBounds(bounds);
+                    featureGroup = new L.featureGroup(featureGroup);
+                    _chart.map().fitBounds(featureGroup.getBounds());//.pad(0.5));
                 }
             }
 
@@ -539,9 +510,7 @@
             marker.key = k;
 
             if (_chart.renderPopup()) {
-                google.maps.event.addListener(marker, 'click', function () {
-                    _chart.popup()(v, marker).open(_chart.map(), marker);
-                });
+                marker.bindPopup(_chart.popup()(v, marker));
             }
 
             if (_chart.brushOn() && !_filterByArea) {
@@ -553,14 +522,22 @@
             return marker;
         };
 
-        var zoomFilter = function (type) {
+        var zoomStart = function () {
+            _zooming = true;
+        };
+
+        var zoomFilter = function (e) {
+            if (e.type === 'moveend' && (_zooming || e.hard)) {
+                return;
+            }
+
+            _zooming = false;
+
             _disableFitOnRedraw = true;
+
             if (_filterByArea) {
                 var filter;
-                if (
-                    _chart.map().getCenter().equals(_chart.toLocArray(_chart.center())) &&
-                    _chart.map().getZoom() === _chart.zoom()
-                ) {
+                if (_chart.map().getCenter().equals(_chart.center()) && _chart.map().getZoom() === _chart.zoom()) {
                     filter = null;
                 } else {
                     filter = _chart.map().getBounds();
@@ -580,7 +557,7 @@
             } else if (
                 _chart.filter() &&
                 (
-                    type === 'click' ||
+                    e.type === 'click' ||
                     (
                         _chart.filter() in _markerList &&
                         !_chart.map().getBounds().contains(_markerList[_chart.filter()].getLatLng())
@@ -603,11 +580,11 @@
             _chart.dimension().filter(null);
 
             if (filters && filters.length > 0) {
-                _chart.dimension().filterfunction (function (d) {
+                _chart.dimension().filter(function (d) {
                     if (!(d in _markerList)) {
                         return false;
                     }
-                    var locO = _markerList[d].position;
+                    var locO = _markerList[d].getLatLng();
                     return locO && filters[0].contains(locO);
                 });
 

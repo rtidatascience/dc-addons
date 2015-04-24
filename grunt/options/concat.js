@@ -6,7 +6,7 @@ module.exports = {
                 '*\n * <%= grunt.template.today("yyyy-mm-dd HH:MM:ss") %>\n *\n */\n'
     },
     leaflet: {
-        dest: '<%= config.dist %>/dc-leaflet.js',
+        dest: '<%= config.dist %>/leaflet-map/dc-leaflet.js',
         src: [
             '<%= config.src %>/<%= config.scripts %>/base-map-chart.js',
             '<%= config.src %>/<%= config.scripts %>/base-leaflet-chart.js',
@@ -15,7 +15,7 @@ module.exports = {
         ]
     },
     google: {
-        dest: '<%= config.dist %>/dc-google.js',
+        dest: '<%= config.dist %>/google-map/dc-google.js',
         src: [
             '<%= config.src %>/<%= config.scripts %>/base-map-chart.js',
             '<%= config.src %>/<%= config.scripts %>/base-google-chart.js',
@@ -24,13 +24,13 @@ module.exports = {
         ]
     },
     tooltip: {
-        dest: '<%= config.dist %>/dc-tooltip-mixin.js',
+        dest: '<%= config.dist %>/tooltip/dc-tooltip-mixin.js',
         src: [
             '<%= config.src %>/<%= config.scripts %>/tooltip-mixin.js',
         ]
     },
     bubble: {
-        dest: '<%= config.dist %>/dc-bubble-cloud.js',
+        dest: '<%= config.dist %>/bubble-cloud/dc-bubble-cloud.js',
         src: [
             '<%= config.src %>/<%= config.scripts %>/bubble-cloud.js',
         ]

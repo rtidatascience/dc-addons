@@ -1,6 +1,6 @@
 module.exports = {
     options: {
-        sourceMap: true,
+        sourceMap: false,
         screwIE8: true,
         preserveComments: 'some'
     },
@@ -8,11 +8,12 @@ module.exports = {
         files: [{
             expand: true,
             cwd: '<%= config.dist %>/',
-            src: '*.js',
+            src: '**/*.js',
             dest: '<%= config.dist %>/',
-            rename: function (dest, src) {
-                return dest + src.replace('.js', '.min.js');
-            }
+            ext: '.min.js'
+            // rename: function (dest, src) {
+            //     return dest + src.replace('.js', '.min.js');
+            // }
         }]
     }
 };
