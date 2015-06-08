@@ -5,7 +5,7 @@
 
         if (_chart) {
             _chart.tip = function () {
-                var selector = 'rect.bar,circle.dot,g.pie-slice path,circle.bubble',
+                var selector = 'rect.bar,circle.dot,g.pie-slice path,circle.bubble,g.row rect',
                     svg = _chart.svg(),
                     tip = d3.tip()
                         .attr('class', 'tip')
