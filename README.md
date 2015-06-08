@@ -7,6 +7,7 @@ These [dc.js](http://dc-js.github.io/dc.js/) addons provide new charts for the d
   * [Google Maps](#google-maps)
   * [Tooltip Mixin](#tooltip-mixin)
   * [Bubble Cloud](#bubble-cloud)
+  * [Paired Row](#paired-row)
 
 ## Installation
 ```js
@@ -260,4 +261,76 @@ None
 If you want to include individually
 ```html
 <script src="bower_components/dc-addons/dist/dc-bubble-cloud.min.js"></script>
+```
+
+
+## Paired Row
+Two row charts beside each other, usually used for gender/age breakdowns
+
+#### Usage
+```js
+var chart = dc.pairedRowChart('#chart');
+
+// the dimension is required to return an array
+var ndx = crossfilter(experiments),
+    ageGenderDimension = ndx.dimension(function(d) {
+        var age_range = 'Unknown';
+
+        if (d.age <= 9) {
+            age_range = '0 - 9';
+        } else if (d.age <= 19) {
+            age_range = '10 - 19';
+        } else if (d.age <= 29) {
+            age_range = '20 - 29';
+        } else if (d.age <= 39) {
+            age_range = '30 - 39';
+        } else if (d.age <= 49) {
+            age_range = '40 - 49';
+        } else if (d.age <= 59) {
+            age_range = '50 - 59';
+        } else if (d.age <= 69) {
+            age_range = '60 - 69';
+        } else if (d.age <= 79) {
+            age_range = '70 - 79';
+        } else if (d.age <= 89) {
+            age_range = '80 - 89';
+        } else if (d.age <= 99) {
+            age_range = '90 - 99';
+        } else if (d.age >= 100) {
+            age_range = '100+';
+        }
+
+        return [d.gender, age_range];
+    }),
+    ageGenderGroup = ageGenderDimension.group().reduceCount();
+
+// required options
+chart
+    .width(500)
+    .height(500)
+    .dimension(dimension)
+    .group(group)
+    // tells the left chart to filter the data based on this function
+    .leftKeyFilter(function(d) {
+        return d.key[0] === 'Male';
+    })
+    // tells the right chart to filter the data based on this function
+    .rightKeyFilter(function(d) {
+        return d.key[0] === 'Female';
+    })
+
+// optional options - this chart extends dc.rowChart, so it has all the same options.
+
+```
+
+#### Demo
+Coming soon...
+
+
+#### Requirements
+None
+
+If you want to include individually
+```html
+<script src="bower_components/dc-addons/dist/dc-paired-row-chart.min.js"></script>
 ```

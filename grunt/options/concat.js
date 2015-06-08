@@ -35,6 +35,12 @@ module.exports = {
             '<%= config.src %>/<%= config.scripts %>/bubble-cloud.js',
         ]
     },
+    pairedRow: {
+        dest: '<%= config.dist %>/paired-row/dc-paired-row-chart.js',
+        src: [
+            '<%= config.src %>/<%= config.scripts %>/paired-row-chart.js',
+        ]
+    },
     build: {
         dest: '<%= config.dist %>/dc-addons.js',
         src: [
@@ -47,6 +53,7 @@ module.exports = {
             '<%= config.src %>/<%= config.scripts %>/google-marker-chart.js',
             '<%= config.src %>/<%= config.scripts %>/tooltip-mixin.js',
             '<%= config.src %>/<%= config.scripts %>/bubble-cloud.js',
+            '<%= config.src %>/<%= config.scripts %>/paired-row-chart.js',
         ]
     },
 };
