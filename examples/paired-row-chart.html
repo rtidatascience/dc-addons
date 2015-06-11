@@ -11,8 +11,8 @@
         <script src="../bower_components/crossfilter/crossfilter.min.js"></script>
         <script src="../bower_components/dcjs/dc.js"></script>
 
-         <script src="../dist/paired-row/dc-paired-row-chart.js"></script>
-         <script src="../dist/tooltip/dc-tooltip-mixin.js"></script>
+        <script src="../dist/paired-row/dc-paired-row-chart.js"></script>
+        <script src="../dist/tooltip/dc-tooltip-mixin.js"></script>
 
         <!-- use src for testing -->
         <!-- <script src="../src/scripts/paired-row-chart.js"></script>
@@ -93,6 +93,13 @@
                     // display
                     width: 500,
                     height: 500,
+                    colorCalculator: function(d) {
+                        if (d.key[0] === 'Male') {
+                            return '#5A9BCA';
+                        }
+
+                        return '#C95AC7';
+                    },
 
                     // data
                     dimension: ageGenderDimension,
@@ -106,8 +113,8 @@
                     label: function(d) {
                         return d.key[0] + ': ' + d.key[1];
                     },
-                    cap: 5,
-                    elasticX: true,
+                    //cap: 5,
+                    //elasticX: true,
 
                     // custom
                     leftKeyFilter: function(d) {
