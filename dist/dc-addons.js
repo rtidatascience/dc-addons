@@ -1,7 +1,7 @@
 /*!
- * dc-addons v0.7.0
+ * dc-addons v0.7.1
  *
- * 2015-06-09 09:34:24
+ * 2015-06-11 10:34:14
  *
  */
 (function () {
@@ -1379,15 +1379,29 @@
         };
 
         _leftChart.data(function (data) {
-            return data.all().filter(function (d) {
+            var cap = _leftChart.cap(),
+                d = data.all().filter(function (d) {
                 return _chart.leftKeyFilter()(d);
             });
+
+            if (cap === Infinity) {
+                return d;
+            }
+
+            return d.slice(0, cap);
         });
 
         _rightChart.data(function (data) {
-            return data.all().filter(function (d) {
+            var cap = _rightChart.cap(),
+                d = data.all().filter(function (d) {
                 return _chart.rightKeyFilter()(d);
             });
+
+            if (cap === Infinity) {
+                return d;
+            }
+
+            return d.slice(0, cap);
         });
 
         _chart.leftKeyFilter = function (_) {
@@ -1459,8 +1473,30 @@
         _chart.margins(_margins);
         _leftChart.useRightYAxis(true);
 
+        // svg
+
         _chart.svg = function () {
             return d3.selectAll([_leftChart.svg()[0][0], _rightChart.svg()[0][0]]);
+        };
+
+        // domain
+
+        _chart.group = function (_) {
+            if (!arguments.length) {
+                return _leftChart.group();
+            }
+            _leftChart.group(_);
+            _rightChart.group(_);
+
+            // set the new x axis scale
+            var extent = d3.extent(_.all(), _chart.cappedValueAccessor);
+            if (extent[0] > 0) {
+                extent[0] = 0;
+            }
+            _leftChart.x(d3.scale.linear().domain(extent).range([_leftChart.effectiveWidth(), 0]));
+            _rightChart.x(d3.scale.linear().domain(extent).range([0, _rightChart.effectiveWidth()]));
+
+            return _chart;
         };
 
         // functions that you just want to pass on to both sub charts
@@ -1475,7 +1511,7 @@
             // y axis
             'keyAccessor', 'labelOffsetY',
             // data
-            'cap', 'ordering' , 'dimension', 'group', 'othersGrouper', 'data'
+            'cap', 'ordering' , 'dimension', 'othersGrouper', 'data'
         ];
 
         function addGetterSetterFunction(functionName) {

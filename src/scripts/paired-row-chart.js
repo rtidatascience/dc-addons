@@ -136,7 +136,7 @@
 
         // domain
 
-        _chart.group = function(_) {
+        _chart.group = function (_) {
             if (!arguments.length) {
                 return _leftChart.group();
             }
