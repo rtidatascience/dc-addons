@@ -11,12 +11,12 @@
         <script src="../bower_components/crossfilter/crossfilter.min.js"></script>
         <script src="../bower_components/dcjs/dc.js"></script>
 
-        <script src="../dist/paired-row/dc-paired-row-chart.js"></script>
-        <script src="../dist/tooltip/dc-tooltip-mixin.js"></script>
+        <!-- <script src="../dist/paired-row/dc-paired-row-chart.js"></script>
+        <script src="../dist/tooltip/dc-tooltip-mixin.js"></script> -->
 
         <!-- use src for testing -->
-        <!-- <script src="../src/scripts/paired-row-chart.js"></script>
-        <script src="../src/scripts/tooltip-mixin.js"></script> -->
+        <script src="../src/scripts/paired-row-chart.js"></script>
+        <script src="../src/scripts/tooltip-mixin.js"></script>
     </head>
     <body>
         <h1>dc.js paired row chart</h1>
@@ -113,8 +113,10 @@
                     label: function(d) {
                         return d.key[0] + ': ' + d.key[1];
                     },
-                    //cap: 5,
-                    //elasticX: true,
+                    cap: 15,
+
+                    // if elastic is set than the sub charts will have different extent ranges, which could mean the data is interpreted incorrectly
+                    elasticX: true,
 
                     // custom
                     leftKeyFilter: function(d) {

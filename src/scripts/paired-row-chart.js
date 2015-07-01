@@ -5,26 +5,16 @@
         var _chart = dc.capMixin(dc.marginMixin(dc.colorMixin(dc.baseMixin({}))));
 
         var _leftChartWrapper = d3.select(parent).append('div');
-        var _rightChartWrapper = d3.select(parent).append('div').style('border-left', '1px solid #000000');
+        var _rightChartWrapper = d3.select(parent).append('div');
 
         var _leftChart = dc.rowChart(_leftChartWrapper[0][0], chartGroup);
         var _rightChart = dc.rowChart(_rightChartWrapper[0][0], chartGroup);
 
-        // on redraw and render pass onto child charts
-        _chart._doRedraw = function () {
-            _leftChart._doRedraw();
-            _rightChart._doRedraw();
-            return _chart;
-        };
-
-        _chart._doRender = function () {
-            _leftChart._doRender();
-            _rightChart._doRender();
-            return _chart;
-        };
+        _leftChart.useRightYAxis(true);
 
         // data filtering
 
+        // we need a way to know which data belongs on the left chart and which data belongs on the right
         var _leftKeyFilter = function (d) {
             return d.key[0];
         };
@@ -33,6 +23,51 @@
             return d.key[0];
         };
 
+        /**
+        #### .leftKeyFilter([value]) - **mandatory**
+        Set or get the left key filter attribute of a chart.
+
+        For example
+        function(d) {
+            return d.key[0] === 'Male';
+        }
+
+        If a value is given, then it will be used as the new left key filter. If no value is specified then
+        the current left key filter will be returned.
+
+        **/
+        _chart.leftKeyFilter = function (_) {
+            if (!arguments.length) {
+                return _leftKeyFilter;
+            }
+
+            _leftKeyFilter = _;
+            return _chart;
+        };
+
+        /**
+        #### .rightKeyFilter([value]) - **mandatory**
+        Set or get the right key filter attribute of a chart.
+
+        For example
+        function(d) {
+            return d.key[0] === 'Female';
+        }
+
+        If a value is given, then it will be used as the new right key filter. If no value is specified then
+        the current right key filter will be returned.
+
+        **/
+        _chart.rightKeyFilter = function (_) {
+            if (!arguments.length) {
+                return _rightKeyFilter;
+            }
+
+            _rightKeyFilter = _;
+            return _chart;
+        };
+
+        // when trying to get the data for the left chart then filter all data using the leftKeyFilter function
         _leftChart.data(function (data) {
             var cap = _leftChart.cap(),
                 d = data.all().filter(function (d) {
@@ -46,6 +81,7 @@
             return d.slice(0, cap);
         });
 
+        // when trying to get the data for the right chart then filter all data using the rightKeyFilter function
         _rightChart.data(function (data) {
             var cap = _rightChart.cap(),
                 d = data.all().filter(function (d) {
@@ -59,27 +95,10 @@
             return d.slice(0, cap);
         });
 
-        _chart.leftKeyFilter = function (_) {
-            if (!arguments.length) {
-                return _leftKeyFilter;
-            }
-
-            _leftKeyFilter = _;
-            return _chart;
-        };
-
-        _chart.rightKeyFilter = function (_) {
-            if (!arguments.length) {
-                return _rightKeyFilter;
-            }
-
-            _rightKeyFilter = _;
-            return _chart;
-        };
-
         // chart filtering
+        // on clicking either chart then filter both
 
-        _leftChart.onClick = function (d) {
+        _leftChart.onClick = _rightChart.onClick = function(d) {
             var filter = _leftChart.keyAccessor()(d);
             dc.events.trigger(function () {
                 _leftChart.filter(filter);
@@ -88,17 +107,10 @@
             });
         };
 
-        _rightChart.onClick = function (d) {
-            var filter = _rightChart.keyAccessor()(d);
-            dc.events.trigger(function () {
-                _rightChart.filter(filter);
-                _leftChart.filter(filter);
-                _rightChart.redrawGroup();
-            });
-        };
-
         // margins
-        var _margins = _chart.margins();
+        // the margins between the charts need to be set to 0 so that they sit together
+
+        var _margins = _chart.margins(); // get the default margins
 
         _chart.margins = function (_) {
             if (!arguments.length) {
@@ -125,36 +137,47 @@
             return _chart;
         };
 
-        _chart.margins(_margins);
-        _leftChart.useRightYAxis(true);
+        _chart.margins(_margins); // set the new margins
 
         // svg
+        // return an array of both the sub chart svgs
 
         _chart.svg = function () {
             return d3.selectAll([_leftChart.svg()[0][0], _rightChart.svg()[0][0]]);
         };
 
-        // domain
+        // data
+        // we need to make sure that the extent is the same for both charts
 
-        _chart.group = function (_) {
-            if (!arguments.length) {
-                return _leftChart.group();
-            }
-            _leftChart.group(_);
-            _rightChart.group(_);
+        // this way we need a new function that is overridable
+        if (_leftChart.calculateAxisScaleData) {
+            _leftChart.calculateAxisScaleData = _rightChart.calculateAxisScaleData = function() {
+                return _leftChart.data().concat(_rightChart.data());
+            };
+        // this way we can use the current dc.js library but we can't use elasticX
+        } else {
+            _chart.group = function (_) {
+                if (!arguments.length) {
+                    return _leftChart.group();
+                }
+                _leftChart.group(_);
+                _rightChart.group(_);
 
-            // set the new x axis scale
-            var extent = d3.extent(_.all(), _chart.cappedValueAccessor);
-            if (extent[0] > 0) {
-                extent[0] = 0;
-            }
-            _leftChart.x(d3.scale.linear().domain(extent).range([_leftChart.effectiveWidth(), 0]));
-            _rightChart.x(d3.scale.linear().domain(extent).range([0, _rightChart.effectiveWidth()]));
+                // set the new x axis scale
+                var extent = d3.extent(_.all(), _chart.cappedValueAccessor);
+                if (extent[0] > 0) {
+                    extent[0] = 0;
+                }
+                _leftChart.x(d3.scale.linear().domain(extent).range([_leftChart.effectiveWidth(), 0]));
+                _rightChart.x(d3.scale.linear().domain(extent).range([0, _rightChart.effectiveWidth()]));
 
-            return _chart;
-        };
+                return _chart;
+            };
+        }
 
-        // functions that you just want to pass on to both sub charts
+
+        // functions that we just want to pass on to both sub charts
+
         var _getterSetterPassOn = [
             // display
             'height', 'width', 'minHeight', 'minWidth', 'renderTitleLabel', 'fixedBarHeight', 'gap', 'othersLabel',
@@ -166,7 +189,7 @@
             // y axis
             'keyAccessor', 'labelOffsetY',
             // data
-            'cap', 'ordering' , 'dimension', 'othersGrouper', 'data'
+            'cap', 'ordering' , 'dimension', 'group', 'othersGrouper', 'data'
         ];
 
         function addGetterSetterFunction(functionName) {
@@ -185,7 +208,7 @@
         }
 
         var _passOnFunctions = [
-            'render', 'redraw', 'calculateColorDomain', 'filterAll', 'resetSvg', 'expireCache'
+            '_doRedraw', 'redraw', '_doRender', 'render', 'calculateColorDomain', 'filterAll', 'resetSvg', 'expireCache'
         ];
 
         function addPassOnFunctions(functionName) {
