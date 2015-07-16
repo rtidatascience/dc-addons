@@ -22,10 +22,12 @@
         <h1>dc.js paired row chart</h1>
         <div id="chart"></div>
         <div id="filter"></div>
+        <div id="state"></div>
 
         <script>
             var chart = dc.pairedRowChart('#chart');
             var filter = dc.pieChart('#filter');
+            var state = dc.pieChart('#state');
 
             d3.csv('data/demo3.csv', function(error, experiments) {
                 var ndx = crossfilter(experiments),
@@ -60,7 +62,9 @@
                     }),
                     ageGenderGroup = ageGenderDimension.group().reduceCount(),
                     genderDimension = ndx.dimension(function(d) {return d.gender;}),
-                    genderGroup = genderDimension.group().reduceCount();
+                    genderGroup = genderDimension.group().reduceCount(),
+                    stateDimension = ndx.dimension(function(d) {return d.state;}),
+                    stateGroup = stateDimension.group().reduceCount();
 
                 group = {
                     all: function() {
@@ -134,6 +138,12 @@
                 filter.options({
                     dimension: genderDimension,
                     group: genderGroup
+                })
+                .render();
+
+                state.options({
+                    dimension: stateDimension,
+                    group: stateGroup
                 })
                 .render();
             });
