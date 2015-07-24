@@ -1,6 +1,21 @@
 (function () {
     'use strict';
 
+    var duration = 350;
+    var ease = 'quad-in';
+    var pieRegEx = new RegExp([
+        'M ?([\\d\\.e-]+) ?, ?([\\d\\.e-]+) ?', // move to starting point
+        // see https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths#Arcs
+        'A ?', // start arc
+            '[\\d\\.e-]+ ?, ?[\\d\\.e-]+ ?,? ', // arc x radius and y radius
+            '\\d ,? ?', // arc x-axis-rotation
+            '\\d ?,? ?', // arc large-arc-flag
+            '\\d ?,? ?', // arc sweep-flag
+            '([\\d\\.e-]+) ?,? ?([\\d\\.e-]+) ?', // arc finishing points
+        'L ?([\\d\\.e-]+) ?,? ?([\\d\\.e-]+)', // draw line too
+        'Z', // close off
+    ].join(''));
+
     dc.serverChart.redrawPieChart = function (chartIndex, chartWrapper, nextWrapper) {
         var svg = chartWrapper.select('svg'),
             currentSlices = chartWrapper.selectAll('g.pie-slice'),
@@ -8,29 +23,28 @@
 
         chartWrapper
             .selectAll('text')
-            .each(function(d, i) {
-                var nextText = filterNextItem(nextWrapper.selectAll('text'), i);
+            .each(function (textData, textIndex) {
+                var textElement = d3.select(this),
+                    nextText = filterNextItem(nextWrapper.selectAll('text'), textIndex);
 
-                d3
-                    .select(this)
+                textElement
                     .text(nextText.text())
                     .transition()
-                        .duration(350)
-                        .ease('linear')
+                        .duration(duration)
+                        .ease(ease)
                         .attr('transform', nextText.attr('transform'));
             });
 
-
         currentSlices
-            .attr('class', function(d, i) {
-                return filterNextItem(nextSlices, i)
+            .attr('class', function (sliceData, sliceIndex) {
+                return filterNextItem(nextSlices, sliceIndex)
                     .attr('class');
             });
 
         currentSlices
             .select('title')
-            .text(function(d, i) {
-                return filterNextItem(nextSlices, i)
+            .text(function (titleData, titleIndex) {
+                return filterNextItem(nextSlices, titleIndex)
                     .select('title')
                     .text();
             });
@@ -38,74 +52,16 @@
         currentSlices
             .select('path')
             .transition()
-                .duration(350)
-                .ease('linear')
-                .attrTween('d', function (d, i, a) {
+                .duration(duration)
+                .ease(ease)
+                .attrTween('d', function (pathData, pathIndex, attrValue) {
                     var radius = d3.min([svg.attr('width'), svg.attr('height')]) / 2,
                         arc = d3.svg.arc().outerRadius(radius).innerRadius(0),
-                        next_d = filterNextItem(nextSlices, i)
-                            .select('path')
-                            .attr('d'),
-                        interpolate = d3.interpolate(pathToInterpolateAngles(a), pathToInterpolateAngles(next_d));
-
-                    function pathToInterpolateAngles(path) {
-                        // get the points of the pie slice
-                        var p = path.match(/M ?([\d\.e-]+) ?, ?([\d\.e-]+) ?A ?[\d\.e-]+ ?, ?[\d\.e-]+ ?,? \d ,? ?\d ?,? ?\d ?,? ?([\d\.e-]+) ?,? ?([\d\.e-]+) ?L ?([\d\.e-]+) ?,? ?([\d\.e-]+)Z/);
-
-                        if (!p) {
-                            return {
-                                startAngle: 0,
-                                endAngle: 0,
-                            };
-                        }
-
-                        var coords = {
-                            x1: parseFloat(p[5]),
-                            y1: parseFloat(p[6]),
-                            x2: parseFloat(p[1]),
-                            y2: parseFloat(p[2]),
-                            x3: parseFloat(p[3]),
-                            y3: parseFloat(p[4]),
-                        };
-
-                        // convert the points into angles
-                        var angles = {
-                            startAngle: switchRadians(Math.atan2((coords.y2 - coords.y1), (coords.x2 - coords.x1))),
-                            endAngle:   switchRadians(Math.atan2((coords.y3 - coords.y1), (coords.x3 - coords.x1))),
-                        };
-
-                        if (angles.startAngle < 0) {
-                            angles.startAngle = 0;
-                        }
-
-                        if (angles.endAngle > (Math.PI * 2) || angles.endAngle < angles.startAngle) {
-                            angles.endAngle = Math.PI * 2;
-                        }
-
-                        return angles;
-                    }
-
-                    // since silly maths makes the following angles we have to convert it from
-                    //      -90               -(PI / 2)
-                    // -180     0   or    -PI             0
-                    //       90                  PI / 2
-                    //
-                    // to
-                    //     360                   PI * 2
-                    // 270     90   or    PI * 1.5     PI / 2
-                    //     180                      PI
-                    function switchRadians(angle) {
-                        var quarter     = Math.PI * 0.5;
-
-                        if (angle >= 0) {
-                            return quarter + angle;
-                        } else if (angle >= -quarter) {
-                            return quarter - Math.abs(angle);
-                        }
-
-                        return (Math.PI * 2.5) - Math.abs(angle);
-                    }
-
+                        nextD = filterNextItem(nextSlices, pathIndex).select('path').attr('d'),
+                        interpolate = d3.interpolate(
+                            pathToInterpolateAngles(attrValue),
+                            pathToInterpolateAngles(nextD)
+                        );
 
                     return function (t) {
                         return arc(interpolate(t));
@@ -118,88 +74,102 @@
             nextBars = nextWrapper.selectAll('rect.bar');
 
         currentBars
-            .attr('class', function(d, i) {
-                return filterNextItem(nextBars, i)
-                    .attr('class');
-            })
-            .attr('fill', function(d, i) {
-                return filterNextItem(nextBars, i)
-                    .attr('fill');
-            })
-            .transition()
-                .duration(350)
-                .ease('linear')
-                .attr('x', function(d, i) {
-                    return filterNextItem(nextBars, i)
-                        .attr('x');
-                })
-                .attr('y', function(d, i) {
-                    return filterNextItem(nextBars, i)
-                        .attr('y');
-                })
-                .attr('width', function(d, i) {
-                    return filterNextItem(nextBars, i)
-                        .attr('width');
-                })
-                .attr('height', function(d, i) {
-                    return filterNextItem(nextBars, i)
-                        .attr('height');
-                });
+            .each(function (barData, barIndex) {
+                var barElement = d3.select(this),
+                    nextBar = filterNextItem(nextBars, barIndex);
+
+                barElement
+                    .attr('class', nextBar.attr('class'))
+                    .attr('fill', nextBar.attr('fill'))
+                    .transition()
+                        .duration(duration)
+                        .ease(ease)
+                        .attr('x', nextBar.attr('x'))
+                        .attr('y', nextBar.attr('y'))
+                        .attr('width', nextBar.attr('width'))
+                        .attr('height', nextBar.attr('height'));
+            });
 
         currentBars
             .select('title')
-            .text(function(d, i) {
-                return filterNextItem(nextBars, i)
-                    .select('title')
-                    .text();
+            .each(function (titleData, titleIndex) {
+                var titleElement = d3.select(this),
+                    nextTitle = filterNextItem(nextBars, titleIndex).select('title');
+
+                titleElement
+                    .text(nextTitle.text());
             });
 
         redrawAxis(chartIndex, chartWrapper, nextWrapper);
-        redrawGridLine(chartIndex, chartWrapper, nextWrapper);
     };
 
     dc.serverChart.redrawRowChart = function (chartIndex, chartWrapper, nextWrapper) {
         chartWrapper
             .selectAll('g.row')
-            .each(function(d, i) {
-                var row = d3.select(this),
-                    nextRow = filterNextItem(nextWrapper.selectAll('g.row'), i),
+            .each(function (rowData, rowIndex) {
+                var rowElement = d3.select(this),
+                    nextRow = filterNextItem(nextWrapper.selectAll('g.row'), rowIndex),
                     nextRect = nextRow.select('rect'),
                     nextText = nextRow.select('text'),
                     nextTitle = nextRow.select('title');
 
-                row.transition()
-                    .duration(350)
-                    .ease('linear')
+                rowElement
+                    .transition()
+                    .duration(duration)
+                    .ease(ease)
                     .attr('transform', nextRow.attr('transform'));
 
-                row
+                rowElement
                     .select('rect')
                     .attr('class', nextRect.attr('class'))
                     .transition()
-                        .duration(350)
-                        .ease('linear')
+                        .duration(duration)
+                        .ease(ease)
                         .attr('width', nextRect.attr('width'))
                         .attr('height', nextRect.attr('height'))
                         .attr('fill', nextRect.attr('fill'))
                         .attr('transform', nextRect.attr('transform'));
 
-                row
+                rowElement
                     .select('text')
                     .text(nextText.text())
                     .transition()
-                        .duration(350)
-                        .ease('linear')
+                        .duration(duration)
+                        .ease(ease)
                         .attr('x', nextText.attr('x'))
                         .attr('y', nextText.attr('y'))
                         .attr('dy', nextText.attr('dy'))
                         .attr('transform', nextText.attr('transform'));
 
-                row
+                rowElement
                     .select('title')
                     .text(nextTitle.text());
-            })
+            });
 
+        redrawAxis(chartIndex, chartWrapper, nextWrapper);
+    };
+
+    dc.serverChart.redrawLineChart = function (chartIndex, chartWrapper, nextWrapper) {
+        chartWrapper
+            .selectAll('g.stack')
+            .each(function (stackData, stackIndex) {
+                var stackElement = d3.select(this),
+                    nextStack = filterNextItem(nextWrapper.selectAll('g.stack'), stackIndex);
+
+                stackElement
+                    .selectAll('path')
+                    .each(function (pathData, pathIndex) {
+                        var pathElement = d3.select(this),
+                            nextPath = filterNextItem(nextStack.selectAll('path'), pathIndex);
+
+                        pathElement
+                            .transition()
+                                .duration(duration)
+                                .ease(ease)
+                                .attr('stroke', nextPath.attr('stroke'))
+                                .attr('d', nextPath.attr('d'));
+                    });
+            });
 
         redrawAxis(chartIndex, chartWrapper, nextWrapper);
     };
@@ -207,137 +177,291 @@
     function redrawAxis (chartIndex, chartWrapper, nextWrapper) {
         chartWrapper
             .selectAll('.axis')
-            .each(function(d, axisIndex) {
-                var el = d3.select(this),
-                    nextAxis = filterNextItem(nextWrapper.selectAll('.axis'), axisIndex);
+            .each(function (axisData, axisIndex) {
+                var axisElement = d3.select(this),
+                    axisBBox = axisElement.select('path.domain').node().getBBox(),
+                    axisTicks = axisElement.selectAll('g.tick'),
+                    isHorizontal = /translate\([\d.]+,0\)/i.exec(d3.select(axisTicks[0][1]).attr('transform')) !== null,
+                    nextAxis = filterNextItem(nextWrapper.selectAll('.axis'), axisIndex),
+                    nextTicks = nextAxis.selectAll('g.tick'),
+                    minTickValue = parseFloat(d3.select(nextTicks[0][0]).select('text').text()),
+                    maxTickValue = parseFloat(d3.select(nextTicks[0][nextTicks[0].length - 1]).select('text').text()),
+                    grid = chartWrapper.select(isHorizontal ? '.grid-line.vertical' : '.grid-line.horizontal'),
+                    nextGrid = nextWrapper.select(isHorizontal ? '.grid-line.vertical' : '.grid-line.horizontal');
 
-                el.transition()
-                    .duration(350)
-                    .ease('linear')
-                    .attr('transform', nextAxis.attr('transform'));
-            })
-            .selectAll('g.tick')
-            .each(function(d, i, axisIndex) {
-                var el = d3.select(this),
-                    nextTick = filterNextItem(filterNextItem(nextWrapper.selectAll('.axis'), axisIndex).selectAll('g.tick'), i);
+                axisElement
+                    .transition()
+                        .duration(duration)
+                        .ease(ease)
+                        .attr('transform', nextAxis.attr('transform'));
 
-                if (nextTick[0].length > 0) {
-                    el
+                if (!grid.empty()) {
+                    grid
                         .transition()
-                            .duration(350)
-                            .ease('linear')
-                            .attr('transform', nextTick.attr('transform'))
-                            .attr('opacity', nextTick.attr('opacity'));
-
-                    el
-                        .select('text')
-                        .text(nextTick.select('text').text());
-                } else {
-                    el.remove();
+                            .duration(duration)
+                            .ease(ease)
+                            .attr('transform', nextGrid.attr('transform'));
                 }
+
+                axisTicks
+                    .each(function (tickData, tickIndex) {
+                        var tickElement = d3.select(this),
+                            tickText = tickElement.select('text'),
+                            tickValue = parseFloat(tickText.text()),
+                            tickPercentage = (tickValue - minTickValue) / (maxTickValue - minTickValue) * 100,
+                            matched = false;
+
+                        nextTicks
+                            .each(function (nextData, nextIndex) {
+                                var nextTick = d3.select(this),
+                                    nextText = nextTick.select('text');
+
+                                if (parseFloat(nextText.text()) === tickValue) {
+                                    matched = true;
+
+                                    tickElement
+                                        .transition()
+                                            .duration(duration)
+                                            .ease(ease)
+                                            .attr('transform', nextTick.attr('transform'))
+                                            .attr('opacity', null)
+                                            .style('opacity', nextTick.attr('opacity'))
+                                        .each('end', function () {
+                                            tickElement
+                                                .select('text')
+                                                .text(nextTick.select('text').text());
+                                        });
+
+                                    if (!grid.empty()) {
+                                        var gridLine = filterNextItem(grid.selectAll('line'), tickIndex),
+                                            nextGridLine = filterNextItem(nextGrid.selectAll('line'), nextIndex);
+
+                                        gridLine
+                                            .transition()
+                                                .duration(duration)
+                                                .ease(ease)
+                                                .attr('x1', nextGridLine.attr('x1'))
+                                                .attr('y1', nextGridLine.attr('y1'))
+                                                .attr('x2', nextGridLine.attr('x2'))
+                                                .attr('y2', nextGridLine.attr('y2'))
+                                                .attr('transform', null)
+                                                .style('opacity', nextGridLine.attr('opacity'));
+                                    }
+
+                                }
+                            });
+
+                        if (!matched) {
+                            var transform = '';
+
+                            if (isHorizontal) {
+                                transform = 'translate(' + (axisBBox.width * tickPercentage / 100) + ', 0)';
+                            } else {
+                                transform = 'translate(0, ' +
+                                    (axisBBox.height - (axisBBox.height * tickPercentage / 100)) +
+                                ')';
+                            }
+
+                            tickElement
+                                .transition()
+                                    .duration(duration)
+                                    .ease(ease)
+                                    .attr('transform', transform)
+                                    .style('opacity', 0)
+                                .each('end', function () {
+                                    tickElement.remove();
+                                });
+
+                            if (!grid.empty()) {
+                                var gridLine = filterNextItem(grid.selectAll('line'), tickIndex);
+
+                                gridLine
+                                    .transition()
+                                        .duration(duration)
+                                        .ease(ease)
+                                        .attr('transform', transform)
+                                        .style('opacity', 0)
+                                    .each('end', function () {
+                                        gridLine.remove();
+                                    });
+                            }
+                        }
+                    });
             });
 
         nextWrapper
             .selectAll('.axis')
-            .selectAll('g.tick')
-            .each(function(d, i, gridLineIndex) {
-                var el = d3.select(this),
-                    currentGrid = filterNextItem(chartWrapper.selectAll('.axis'), gridLineIndex),
-                    currentGridLine = filterNextItem(currentGrid.selectAll('g.tick'), i);
+            .each(function (d, axisIndex, tickIndex) {
+                var nextAxis = d3.select(this),
+                    nextTicks = nextAxis.selectAll('g.tick'),
+                    isHorizontal = /translate\([\d.]+,0\)/i.exec(d3.select(nextTicks[0][1]).attr('transform')) !== null,
+                    axisElement = filterNextItem(chartWrapper.selectAll('.axis'), axisIndex),
+                    axisBBox = axisElement.select('path.domain').node().getBBox(),
+                    axisTicks = axisElement.selectAll('g.tick'),
+                    minTickValue = parseFloat(d3.select(axisTicks[0][0]).select('text').text()),
+                    maxTickValue = parseFloat(d3.select(axisTicks[0][axisTicks[0].length - 1]).select('text').text()),
+                    grid = chartWrapper.select(isHorizontal ? '.grid-line.vertical' : '.grid-line.horizontal'),
+                    nextGrid = nextWrapper.select(isHorizontal ? '.grid-line.vertical' : '.grid-line.horizontal');
 
-                if (currentGridLine[0].length === 0) {
-                    var nextTick = currentGrid
-                        .append('g')
-                        .attr('class', 'tick')
-                        .attr('opacity', el.attr('opacity'))
-                        .attr('transform', el.attr('transform'));
+                nextTicks
+                    .each(function (nextData, nextIndex) {
+                        var nextTick = d3.select(this),
+                            nextText = nextTick.select('text'),
+                            nextLine = nextTick.select('line'),
+                            nextValue = parseFloat(nextText.text()),
+                            tickPercentage = (nextValue - minTickValue) / (maxTickValue - minTickValue) * 100,
+                            matched = false;
 
-                    var nextLine = el.select('line');
-                    nextTick
-                        .append('line')
-                        .attr('x2', nextLine.attr('x2'))
-                        .attr('y2', nextLine.attr('y2'));
+                        axisTicks
+                            .each(function (tickData, tickIndex) {
+                                var tickElement = d3.select(this),
+                                    tickText = tickElement.select('text');
 
-                    var nextText = el.select('text');
-                    nextTick
-                        .append('text')
-                        .attr('x', nextText.attr('x'))
-                        .attr('y', nextText.attr('y'))
-                        .attr('dy', nextText.attr('dy'))
-                        .attr('style', nextText.attr('style'))
-                        .text(nextText.text());
+                                if (parseFloat(tickText.text()) === nextValue) {
+                                    matched = true;
+                                }
+                            });
 
-                    // some charts have the grid line inside the tick (i.e. a row chart but not a bar chart)
-                    var nextGridLine = el.select('line.grid-line');
+                        if (!matched) {
+                            var translate = 0,
+                                transform = '',
+                                gridLineTransform = '',
+                                nextGridLine = null;
 
-                    if (nextGridLine[0].length > 0 && nextGridLine[0][0]) {
-                        nextTick
-                            .append('line')
-                            .attr('class', 'grid-line')
-                            .attr('x1', nextGridLine.attr('x1'))
-                            .attr('y1', nextGridLine.attr('y1'))
-                            .attr('x2', nextGridLine.attr('x2'))
-                            .attr('y2', nextGridLine.attr('y2'));
-                    }
-                }
-            });
-    };
+                            if (grid.empty()) {
+                                nextGridLine = nextTick.select('line.grid-line');
+                            } else {
+                                nextGridLine = filterNextItem(nextGrid.selectAll('line'), nextIndex);
+                            }
 
-    function redrawGridLine (chartIndex, chartWrapper, nextWrapper) {
-        chartWrapper
-            .selectAll('g.grid-line')
-            .each(function(d, i) {
-                var el = d3.select(this),
-                    nextGridLine = filterNextItem(nextWrapper.selectAll('.grid-line'), i);
+                            if (isHorizontal) {
+                                translate = axisBBox.width * tickPercentage / 100;
+                                transform = 'translate(' + translate + ', 0)';
+                                gridLineTransform = 'translate(' + (translate - nextGridLine.attr('x1')) + ', 0)';
+                            } else {
+                                translate = axisBBox.height - (axisBBox.height * tickPercentage / 100);
+                                transform = 'translate(0, ' + translate + ')';
+                                gridLineTransform = 'translate(0, ' + (translate - nextGridLine.attr('y1')) + ')';
+                            }
 
-                el.transition()
-                    .duration(350)
-                    .ease('linear')
-                    .attr('transform', nextGridLine.attr('transform'));
-            })
-            .selectAll('line')
-            .each(function(d, i, gridLineIndex) {
-                var el = d3.select(this),
-                    nextGridLine = filterNextItem(filterNextItem(nextWrapper.selectAll('.grid-line'), gridLineIndex).selectAll('line'), i);
+                            var addedTick = axisElement
+                                .append('g')
+                                .attr('class', 'tick')
+                                .attr('transform', transform)
+                                .attr('opacity', 0);
 
-                if (nextGridLine[0].length > 0) {
-                    el
-                        .transition()
-                            .duration(350)
-                            .ease('linear')
-                            .attr('x1', nextGridLine.attr('x1'))
-                            .attr('y1', nextGridLine.attr('y1'))
-                            .attr('x2', nextGridLine.attr('x2'))
-                            .attr('y2', nextGridLine.attr('y2'))
-                            .attr('opacity', nextGridLine.attr('opacity'));
-                } else {
-                    el.remove();
-                }
-            });
+                            addedTick
+                                .transition()
+                                    .duration(duration)
+                                    .ease(ease)
+                                    .attr('transform', nextTick.attr('transform'))
+                                    .style('opacity', 1);
 
-        nextWrapper
-            .selectAll('g.grid-line')
-            .selectAll('line')
-            .each(function(d, i, gridLineIndex) {
-                var el = d3.select(this),
-                    currentGrid = filterNextItem(chartWrapper.selectAll('.grid-line'), gridLineIndex),
-                    currentGridLine = filterNextItem(currentGrid.selectAll('line'), i);
+                            addedTick
+                                .append('text')
+                                .attr('x', nextText.attr('x'))
+                                .attr('y', nextText.attr('y'))
+                                .attr('dy', nextText.attr('dy'))
+                                .attr('style', nextText.attr('style'))
+                                .text(nextText.text());
 
-                if (currentGridLine[0].length === 0) {
-                    currentGrid
-                        .append('line')
-                        .attr('x1', el.attr('x1'))
-                        .attr('y1', el.attr('y1'))
-                        .attr('x2', el.attr('x2'))
-                        .attr('y2', el.attr('y2'))
-                        .attr('opacity', el.attr('opacity'));
-                }
+                            addedTick
+                                .append('line')
+                                .attr('x1', nextLine.attr('x1'))
+                                .attr('y1', nextLine.attr('y1'))
+                                .attr('x2', nextLine.attr('x2'))
+                                .attr('y2', nextLine.attr('y2'));
+
+                            if (grid.empty()) {
+                                addedTick
+                                    .append('line')
+                                    .attr('class', nextGridLine.attr('class'))
+                                    .attr('x1', nextGridLine.attr('x1'))
+                                    .attr('y1', nextGridLine.attr('y1'))
+                                    .attr('x2', nextGridLine.attr('x2'))
+                                    .attr('y2', nextGridLine.attr('y2'));
+                            } else {
+                                grid
+                                    .append('line')
+                                    .attr('x1', nextGridLine.attr('x1'))
+                                    .attr('y1', nextGridLine.attr('y1'))
+                                    .attr('x2', nextGridLine.attr('x2'))
+                                    .attr('y2', nextGridLine.attr('y2'))
+                                    .attr('transform', gridLineTransform)
+                                    .attr('opacity', 0)
+                                    .transition()
+                                        .duration(duration)
+                                        .ease(ease)
+                                        .attr('transform', 'translate(0, 0)')
+                                        .style('opacity', 1);
+                            }
+                        }
+                    });
             });
     }
 
     function filterNextItem (next, i) {
-        return next.filter(function(d, j) {
+        return next.filter(function (d, j) {
             return j === i;
         });
+    }
+
+    function pathToInterpolateAngles(path) {
+        // get the points of the pie slice
+        var p = path.match(pieRegEx);
+
+        if (!p) {
+            return {
+                startAngle: 0,
+                endAngle: Math.PI * 2,
+            };
+        }
+
+        var coords = {
+            x1: parseFloat(p[5]),
+            y1: parseFloat(p[6]),
+            x2: parseFloat(p[1]),
+            y2: parseFloat(p[2]),
+            x3: parseFloat(p[3]),
+            y3: parseFloat(p[4]),
+        };
+
+        // convert the points into angles
+        var angles = {
+            startAngle: switchRadians(Math.atan2((coords.y2 - coords.y1), (coords.x2 - coords.x1))),
+            endAngle:   switchRadians(Math.atan2((coords.y3 - coords.y1), (coords.x3 - coords.x1))),
+        };
+
+        if (angles.startAngle < 0) {
+            angles.startAngle = 0;
+        }
+
+        if (angles.endAngle > (Math.PI * 2) || angles.endAngle < angles.startAngle) {
+            angles.endAngle = Math.PI * 2;
+        }
+
+        return angles;
+    }
+
+    // since silly maths makes the following angles we have to convert it from
+    //      -90               -(PI / 2)
+    // -180     0   or    -PI             0
+    //       90                  PI / 2
+    //
+    // to
+    //
+    //     360                   PI * 2
+    // 270     90   or    PI * 1.5     PI / 2
+    //     180                      PI
+    function switchRadians(angle) {
+        var quarter     = Math.PI * 0.5;
+
+        if (angle >= 0) {
+            return quarter + angle;
+        } else if (angle >= -quarter) {
+            return quarter - Math.abs(angle);
+        }
+
+        return (Math.PI * 2.5) - Math.abs(angle);
     }
 })();

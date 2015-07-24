@@ -22,7 +22,7 @@ module.exports = {
                         bottom: 25,
                         left: 40
                     },
-                    dimension: function(d) {
+                    dimension: function (d) {
                         if (d.gender === 0) {
                             return 'Male';
                         } else if (d.gender === 1) {
@@ -31,7 +31,7 @@ module.exports = {
 
                         return 'Unknown';
                     },
-                    group: function(dimension) {
+                    group: function (dimension) {
                         return dimension.group().reduceCount();
                     }
                 }
@@ -60,15 +60,12 @@ module.exports = {
                     elasticY: true,
                     renderHorizontalGridLines: true,
                     // data
-                    dimension: function(d) {
+                    dimension: function (d) {
                         d.age = Math.abs(moment().diff(d.dob, 'years'));
 
                         return d.age;
-                        // if (!isNaN(d.age)) {
-                        //     return Math.floor(d.age / 10) * 10;
-                        // }
                     },
-                    group: function(dimension) {
+                    group: function (dimension) {
                         return dimension.group().reduceCount();
                     }
                 }
@@ -87,14 +84,14 @@ module.exports = {
                     },
                     elasticX: true,
                     // data
-                    dimension: function(d) {
+                    dimension: function (d) {
                         d.age = Math.abs(moment().diff(d.dob, 'years'));
 
                         if (!isNaN(d.age)) {
                             return Math.floor(d.age / 10) * 10;
                         }
                     },
-                    group: function(dimension) {
+                    group: function (dimension) {
                         return dimension.group().reduceCount();
                     }
                 }
@@ -122,19 +119,18 @@ module.exports = {
                     elasticY: true,
                     renderHorizontalGridLines: true,
                     // data
-                    dimension: function(d) {
+                    dimension: function (d) {
                         d.age = Math.abs(moment().diff(d.dob, 'years'));
 
                         if (!isNaN(d.age)) {
                             return Math.floor(d.age / 10) * 10;
                         }
                     },
-                    group: function(dimension) {
+                    group: function (dimension) {
                         return dimension.group().reduceCount();
                     }
                 }
             },
-            ,
             {
                 type: 'lineChart',
                 options: {
@@ -159,18 +155,18 @@ module.exports = {
                     elasticY: true,
                     renderHorizontalGridLines: true,
                     // data
-                    dimension: function(d) {
+                    dimension: function (d) {
                         d.age = Math.abs(moment().diff(d.dob, 'years'));
 
                         if (!isNaN(d.age)) {
                             return Math.floor(d.age / 10) * 10;
                         }
                     },
-                    group: function(dimension) {
+                    group: function (dimension) {
                         return dimension.group().reduceCount();
                     }
                 }
             },
         ]
     },
-}
+};

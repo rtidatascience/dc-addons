@@ -11,12 +11,65 @@ var app = require('express')(),
 // local variables
 var timing = [];
 
+function connect(config) {
+    var connection = mysql.createConnection({
+        host:     config.host,
+        user:     config.username,
+        password: config.password,
+        database: config.database
+    });
+
+    connection.connect();
+
+    return connection;
+}
+
+function execute(connection, sql, callback) {
+    connection.query(sql, function (err, data) {
+        if (err) {
+            throw err;
+        }
+
+        console.log('Number of rows: ' + data.length);
+        callback(crossfilter(data));
+    });
+}
+
+function addTiming(name) {
+    var time = new Date().getTime(),
+        took = 0;
+
+    if (timing.length > 0) {
+        took = time - timing[timing.length - 1].time;
+    }
+
+    timing.push({name: name, took: took, time: time});
+}
+
+function logTiming() {
+    console.log('---------------');
+    console.log('Server Timing');
+    var totalTime = timing[timing.length - 1].time - timing[0].time;
+
+    for (var i = 0; i < timing.length; i++) {
+        console.log(
+            timing[i].name + ' took ' +
+            (timing[i].took / 1000) + ' seconds (' +
+            (timing[i].took / totalTime * 100).toFixed(3) + '%)'
+        );
+    }
+
+    console.log('Total time: ' + (totalTime / 1000) + ' seconds');
+    console.log('---------------');
+    timing = [];
+}
+
 // socket connections
-io.on('connection', function(socket) {
+io.on('connection', function (socket) {
     var charts = [],
         w = null;
 
-    socket.on('render', function(chartName) {
+    socket.on('render', function (chartName) {
         addTiming('start');
 
         // clear the cache for the config file
@@ -32,14 +85,14 @@ io.on('connection', function(socket) {
             features: {QuerySelector: true},
             virtualConsole: jsdom.createVirtualConsole().sendTo(console),
             html: html,
-            done: function(errors, window) {
+            done: function (errors, window) {
                 addTiming('jsdom loaded');
 
-                var connection = connect(config.connection.host, config.connection.username, config.connection.password, config.connection.database);
+                var connection = connect(config.connection);
 
                 addTiming('connected to db');
 
-                execute(connection, config.connection.sql, function(xf) {
+                execute(connection, config.connection.sql, function (xf) {
                     addTiming('sql query completed');
 
                     w = window;
@@ -48,7 +101,7 @@ io.on('connection', function(socket) {
 
                     window.dc.disableTransitions = true;
 
-                    config.charts.forEach(function(chartConfig, chartIndex) {
+                    config.charts.forEach(function (chartConfig, chartIndex) {
                         try {
                             // create the div container for the chart
                             var chartContainer = window.document.createElement('div');
@@ -77,7 +130,7 @@ io.on('connection', function(socket) {
         });
     });
 
-    socket.on('filter', function(filter) {
+    socket.on('filter', function (filter) {
         addTiming('filtering started');
         try {
             var chart = charts[filter[0]];
@@ -89,8 +142,11 @@ io.on('connection', function(socket) {
                     var width = chart.effectiveWidth(),
                         domain = chart.x().domain();
 
-                    var range = [filter[1][0] / width * (domain[1] - domain[0]) + domain[0], filter[1][1] / width * (domain[1] - domain[0]) + domain[0]];
-                    console.log(filter[1], [0, width], domain, range);
+                    var range = [
+                        filter[1][0] / width * (domain[1] - domain[0]) + domain[0],
+                        filter[1][1] / width * (domain[1] - domain[0]) + domain[0]
+                    ];
+
                     range.isFiltered = function (value) {
                         return value >= this[0] && value < this[1];
                     };
@@ -112,61 +168,11 @@ io.on('connection', function(socket) {
         }
     });
 
-    socket.on('disconnect', function() {
+    socket.on('disconnect', function () {
         console.log('user disconnected');
     });
 });
 
-
-
-http.listen(3000, function(){
+http.listen(3000, function () {
     console.log('Listening on http://127.0.0.1:3000/');
 });
-
-
-function connect(host, username, password, database) {
-    var connection = mysql.createConnection({
-        host:     host,
-        user:     username,
-        password: password,
-        database: database
-    });
-
-    connection.connect();
-
-    return connection;
-}
-
-function execute(connection, sql, callback) {
-    connection.query(sql, function(err, data) {
-        if (err) {
-            throw err;
-        }
-
-        console.log('Number of rows: ' + data.length);
-        callback(crossfilter(data));
-    });
-}
-
-function addTiming(name) {
-    var time = new Date().getTime(),
-        took = 0;
-
-    if (timing.length > 0) {
-        took = time - timing[timing.length - 1].time;
-    }
-
-    timing.push({name: name, took: took, time: time});
-}
-
-function logTiming() {
-    console.log('---------------');
-    console.log('Server Timing');
-    var total_time = timing[timing.length - 1].time - timing[0].time
-    for (var i = 0; i < timing.length; i++) {
-        console.log(timing[i].name + ' took ' + (timing[i].took / 1000) + ' seconds (' + (timing[i].took / total_time * 100).toFixed(3) + '%)');
-    }
-    console.log('Total time: ' + (total_time / 1000) + ' seconds');
-    console.log('---------------');
-    timing = [];
-}

@@ -28,7 +28,7 @@
         Set or get the left key filter attribute of a chart.
 
         For example
-        function(d) {
+        function (d) {
             return d.key[0] === 'Male';
         }
 
@@ -50,7 +50,7 @@
         Set or get the right key filter attribute of a chart.
 
         For example
-        function(d) {
+        function (d) {
             return d.key[0] === 'Female';
         }
 
@@ -98,7 +98,7 @@
         // chart filtering
         // on clicking either chart then filter both
 
-        _leftChart.onClick = _rightChart.onClick = function(d) {
+        _leftChart.onClick = _rightChart.onClick = function (d) {
             var filter = _leftChart.keyAccessor()(d);
             dc.events.trigger(function () {
                 _leftChart.filter(filter);
@@ -151,7 +151,7 @@
 
         // this way we need a new function that is overridable
         if (_leftChart.calculateAxisScaleData) {
-            _leftChart.calculateAxisScaleData = _rightChart.calculateAxisScaleData = function() {
+            _leftChart.calculateAxisScaleData = _rightChart.calculateAxisScaleData = function () {
                 return _leftChart.data().concat(_rightChart.data());
             };
         // this way we can use the current dc.js library but we can't use elasticX
@@ -175,7 +175,6 @@
             };
         }
 
-
         // functions that we just want to pass on to both sub charts
 
         var _getterSetterPassOn = [
@@ -192,7 +191,7 @@
             'cap', 'ordering' , 'dimension', 'group', 'othersGrouper', 'data'
         ];
 
-        function addGetterSetterFunction(functionName) {
+        function addGetterSetterfunction (functionName) {
             _chart[functionName] = function (_) {
                 if (!arguments.length) {
                     return _leftChart[functionName]();
@@ -204,7 +203,7 @@
         }
 
         for (var i = 0; i < _getterSetterPassOn.length; i++) {
-            addGetterSetterFunction(_getterSetterPassOn[i]);
+            addGetterSetterfunction (_getterSetterPassOn[i]);
         }
 
         var _passOnFunctions = [
