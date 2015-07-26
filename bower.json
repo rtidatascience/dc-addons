@@ -1,7 +1,7 @@
 {
   "name": "dc-addons",
   "description": "These are additional charts that extend dc.js",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "homepage": "https://github.com/intellipharm/dc-addons",
   "repository": {
     "type": "git",
@@ -29,6 +29,7 @@
     "tooltip",
     "tool",
     "tip",
+    "server",
     "addons"
   ],
   "license": "MIT",
