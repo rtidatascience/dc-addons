@@ -304,6 +304,22 @@
             socket.emit('render', chartGroup);
         }
 
+        function preRender (charts) {
+            element.selectAll('*').remove();
+
+            for (var i = 0; i < charts.length; i++) {
+                element
+                    .append('div')
+                    .style('width', charts[i].width + 'px')
+                    .style('height', charts[i].height + 'px')
+                    .style('float', 'left')
+                    .style('text-align', 'center')
+                    .style('line-height', charts[i].height + 'px')
+                    .html(_options.loadingMessage);
+
+            }
+        }
+
         function render (response) {
             element.html(response);
             attachEvents();
@@ -323,6 +339,7 @@
 
         function init () {
             socket = io(_options.server);
+            socket.on('preRender', preRender);
             socket.on('afterRender', render);
             socket.on('afterRenderError', renderError);
             socket.on('afterFilter', redraw);

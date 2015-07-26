@@ -73,11 +73,22 @@ io.on('connection', function (socket) {
         addTiming('start');
 
         // clear the cache for the config file
-        delete require.cache[require.resolve('./config.js')];
+        delete require.cache[require.resolve('./server-config.js')];
         // load the config
-        var c = require('./config.js');
+        var c = require('./server-config.js');
         var config = c[chartName];
+        var preRender = [];
         charts = [];
+
+        config.charts.forEach(function (chartConfig, chartIndex) {
+            preRender.push({
+                type: chartConfig.type,
+                width: chartConfig.options.width,
+                height: chartConfig.options.height
+            });
+        });
+
+        socket.emit('preRender', preRender);
 
         addTiming('config loaded');
 
@@ -124,6 +135,7 @@ io.on('connection', function (socket) {
                     });
 
                     logTiming();
+
                     socket.emit('afterRender', body.innerHTML);
                 });
             }

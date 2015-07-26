@@ -41,6 +41,40 @@ module.exports = {
             '<%= config.src %>/<%= config.scripts %>/paired-row-chart.js',
         ]
     },
+    serverChart: {
+        dest: '<%= config.dist %>/server/dc-server-chart.js',
+        src: [
+            '<%= config.src %>/<%= config.scripts %>/server-chart.js',
+        ]
+    },
+    serverChartAnimations: {
+        dest: '<%= config.dist %>/server/dc-server-chart-with-animations.js',
+        src: [
+            '<%= config.src %>/<%= config.scripts %>/server-chart.js',
+            '<%= config.src %>/<%= config.scripts %>/server-chart-animations.js',
+        ]
+    },
+    server: {
+        dest: '<%= config.dist %>/server/dc-server.js',
+        src: [
+            '<%= config.src %>/<%= config.scripts %>/server.js',
+        ]
+    },
+    serverConfig: {
+        dest: '<%= config.dist %>/server/server-config.js',
+        src: [
+            '<%= config.src %>/<%= config.scripts %>/server-config.js',
+        ]
+    },
+    serverHtml: {
+        options: {
+            banner: '',
+        },
+        dest: '<%= config.dist %>/server/jsdom.html',
+        src: [
+            '<%= config.src %>/<%= config.scripts %>/jsdom.html',
+        ]
+    },
     build: {
         dest: '<%= config.dist %>/dc-addons.js',
         src: [
@@ -54,6 +88,8 @@ module.exports = {
             '<%= config.src %>/<%= config.scripts %>/tooltip-mixin.js',
             '<%= config.src %>/<%= config.scripts %>/bubble-cloud.js',
             '<%= config.src %>/<%= config.scripts %>/paired-row-chart.js',
+            '<%= config.src %>/<%= config.scripts %>/server-chart.js',
+            '<%= config.src %>/<%= config.scripts %>/server-chart-animations.js',
         ]
     },
 };
