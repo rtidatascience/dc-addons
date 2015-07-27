@@ -367,10 +367,10 @@ chart
 To get the server running
 
 ```
-iojs dist/server/dc-server ./server-config.js
+iojs index [full path to server-config.js]
 ```
 
-The server-config.js file should be in the same directory as the dc-server file and should look something like this.
+The server-config.js file should look something like this.
 
 ```js
 var dc = require('dc');
