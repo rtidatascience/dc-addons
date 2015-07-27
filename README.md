@@ -8,10 +8,12 @@ These [dc.js](http://dc-js.github.io/dc.js/) addons provide new charts for the d
   * [Tooltip Mixin](#tooltip-mixin)
   * [Bubble Cloud](#bubble-cloud)
   * [Paired Row](#paired-row)
+  * [Server](#server)
 
 ## Installation
 ```js
 bower install dc-addons --save
+npm install dc-addons --save
 ```
 
 You can either include all addons or each on individually as you need them.  To see examples of individual addons see each addon below. The following example will include all addons.
@@ -110,7 +112,7 @@ These are the requirements for the dc leaflet charts. Ther version number suppli
 
 If you want to include individually
 ```html
-<script src="bower_components/dc-addons/dist/dc-leaflet.min.js"></script>
+<script src="bower_components/dc-addons/dist/leaflet-map/dc-leaflet.min.js"></script>
 ```
 
 ## Google Maps
@@ -177,7 +179,7 @@ Coming soon...
 
 If you want to include individually
 ```html
-<script src="bower_components/dc-addons/dist/dc-google.min.js"></script>
+<script src="bower_components/dc-addons/dist/google-map/dc-google.min.js"></script>
 ```
 
 ## Tooltip Mixin
@@ -210,8 +212,8 @@ Coming soon...
 
 If you want to include individually
 ```html
-<link type="stylesheet" href="bower_components/dc-addons/dist/dc-tooltip-mixin.min.css" />
-<script src="bower_components/dc-addons/dist/dc-tooltip-mixin.min.js"></script>
+<link type="stylesheet" href="bower_components/dc-addons/dist/tooltip/dc-tooltip-mixin.min.css" />
+<script src="bower_components/dc-addons/dist/tooltip/dc-tooltip-mixin.min.js"></script>
 ```
 
 ## Bubble Cloud
@@ -260,7 +262,7 @@ None
 
 If you want to include individually
 ```html
-<script src="bower_components/dc-addons/dist/dc-bubble-cloud.min.js"></script>
+<script src="bower_components/dc-addons/dist/bubble-cloud/dc-bubble-cloud.min.js"></script>
 ```
 
 
@@ -332,5 +334,102 @@ None
 
 If you want to include individually
 ```html
-<script src="bower_components/dc-addons/dist/dc-paired-row-chart.min.js"></script>
+<script src="bower_components/dc-addons/dist/paired-row/dc-paired-row-chart.min.js"></script>
+```
+
+## Server
+Charts generated on the server for large datasets. Only the following charts currently work:
+
+  * Pie
+  * Bar
+  * Row
+  * Line
+
+#### Usage
+```js
+var chart = dc.serverChart('#chart');
+
+chart
+    .options({
+        // required options
+        server: 'http://127.0.0.1:3000/',
+        name: 'my-chart', // The name of the object in the config file
+
+        // optional options
+        errorMessage: 'A problem occurred creating the charts. Please try again later',
+        loadingMessage: 'Loading',
+        reconnectingMessage: 'There appears to be a problem connecting to the server. Retyring...',
+        connectionErrorMessage: 'Could not connect to the server.',
+    })
+    .render();
+```
+
+To get the server running
+
+```
+iojs dist/server/dc-server ./server-config.js
+```
+
+The server-config.js file should be in the same directory as the dc-server file and should look something like this.
+
+```js
+var dc = require('dc');
+
+module.exports = {
+    'my-chart': {
+        connection:  {
+            host: 'localhost',
+            username: 'root',
+            password: 'password',
+            database: 'my-database',
+            sql: 'SELECT * FROM members'
+        },
+        charts: [
+            {
+                type: 'pieChart',
+                options: {
+                    width: 250,
+                    height: 250,
+                    margins: {
+                        top: 30,
+                        right: 50,
+                        bottom: 25,
+                        left: 40
+                    },
+                    dimension: function (d) {
+                        if (d.gender === 0) {
+                            return 'Male';
+                        } else if (d.gender === 1) {
+                            return 'Female';
+                        }
+
+                        return 'Unknown';
+                    },
+                    group: function (dimension) {
+                        return dimension.group().reduceCount();
+                    }
+                }
+            }
+        ]
+    },
+};
+```
+
+#### Demo
+Coming soon...
+
+
+#### Requirements
+  * [iojs](https://iojs.org)
+```
+npm install iojs -g
+```
+  * dc-addons
+```
+npm install dc-addons --save
+```
+
+If you want to include individually
+```html
+<script src="bower_components/dc-addons/dist/server/dc-server-chart-with-animations.min.js"></script>
 ```

@@ -6,7 +6,7 @@ module.exports = {
         connection:  {
             host: '127.0.0.1',
             username: 'root',
-            password: '',
+            password: 'password',
             database: 'loyaltyone',
             sql: 'SELECT * FROM members LIMIT 100'
         },

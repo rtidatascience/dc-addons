@@ -5,17 +5,17 @@
         window.dc = {};
     }
 
-    dc.serverChart = function (parent, chartGroup) {
+    dc.serverChart = function (parent) {
         var _chart = {},
             socket = null,
             element = d3.select(parent),
             _options = {
+                name: null,
                 server: 'http://127.0.0.1:3000/',
-                errorMessage:
-                    '<div class="alert alert-danger">' +
-                        'A problem occured creating the charts. Please try again later' +
-                    '</div>',
-                loadingMessage: '<i class="fa fa-refresh fa-spin"></i>',
+                errorMessage: 'A problem occurred creating the charts. Please try again later',
+                loadingMessage: 'Loading',
+                reconnectingMessage: 'There appears to be a problem connecting to the server. Retyring...',
+                connectionErrorMessage: 'Could not connect to the server.',
             },
             mouseDownCoords = null,
             east = null,
@@ -274,6 +274,7 @@
         //---------------------
 
         _chart.render = function () {
+            init();
             sendRender();
             return _chart;
         };
@@ -301,7 +302,12 @@
 
         function sendRender () {
             onRefresh();
-            socket.emit('render', chartGroup);
+
+            if (!_options.name) {
+                throw Error('Name is a required option');
+            }
+
+            socket.emit('render', _options.name);
         }
 
         function preRender (charts) {
@@ -338,12 +344,25 @@
         }
 
         function init () {
-            socket = io(_options.server);
+            socket = io(_options.server, {
+                reconnectionDelay: 500,
+                reconnectionDelayMax: 2000,
+                reconnectionAttempts: 4,
+            });
+
             socket.on('preRender', preRender);
             socket.on('afterRender', render);
             socket.on('afterRenderError', renderError);
             socket.on('afterFilter', redraw);
             socket.on('afterFilterError', renderError);
+
+            socket.io.on('reconnecting', function() {
+                element.html(_options.reconnectingMessage);
+            });
+
+            socket.io.on('reconnect_failed', function() {
+                element.html(_options.connectionErrorMessage);
+            });
         }
 
         function getChartType (chartWrapper) {
@@ -358,8 +377,8 @@
         //---------------------
         // Init
         //---------------------
+
         onRefresh();
-        init();
 
         return _chart;
     };

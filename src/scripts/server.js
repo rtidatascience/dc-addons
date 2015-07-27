@@ -5,11 +5,19 @@ var app = require('express')(),
     jsdom = require('jsdom'),
     mysql = require('mysql'),
     crossfilter = require('crossfilter'),
-    fs = require('fs'), // filesystem
-    html = fs.readFileSync(__dirname + '/jsdom.html', 'utf8');
+    html = '<html>' +
+        '<head>' +
+            '<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>' +
+            '<script src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.11/crossfilter.min.js"></script>' +
+            '<script src="https://cdnjs.cloudflare.com/ajax/libs/dc/2.0.0-beta.12/dc.min.js"></script>' +
+        '</head>' +
+        '<body></body>' +
+    '</html>';
+
 
 // local variables
-var timing = [];
+var timing = [],
+    configFile = process.argv[2];
 
 function connect(config) {
     var connection = mysql.createConnection({
@@ -73,9 +81,9 @@ io.on('connection', function (socket) {
         addTiming('start');
 
         // clear the cache for the config file
-        delete require.cache[require.resolve('./server-config.js')];
+        delete require.cache[require.resolve(configFile)];
         // load the config
-        var c = require('./server-config.js');
+        var c = require(configFile);
         var config = c[chartName];
         var preRender = [];
         charts = [];
