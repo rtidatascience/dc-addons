@@ -1,7 +1,7 @@
 /*!
- * dc-addons v0.8.0
+ * dc-addons v0.8.1
  *
- * 2015-07-27 09:16:06
+ * 2015-07-28 08:20:40
  *
  */
 var moment = require('moment'),
@@ -12,7 +12,7 @@ module.exports = {
         connection:  {
             host: '127.0.0.1',
             username: 'root',
-            password: '',
+            password: 'password',
             database: 'loyaltyone',
             sql: 'SELECT * FROM members LIMIT 100'
         },

@@ -356,11 +356,11 @@
             socket.on('afterFilter', redraw);
             socket.on('afterFilterError', renderError);
 
-            socket.io.on('reconnecting', function() {
+            socket.io.on('reconnecting', function () {
                 element.html(_options.reconnectingMessage);
             });
 
-            socket.io.on('reconnect_failed', function() {
+            socket.io.on('reconnect_failed', function () {
                 element.html(_options.connectionErrorMessage);
             });
         }

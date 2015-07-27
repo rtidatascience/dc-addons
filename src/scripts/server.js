@@ -4,7 +4,11 @@ var app = require('express')(),
     io = require('socket.io')(http),
     jsdom = require('jsdom'),
     mysql = require('mysql'),
-    crossfilter = require('crossfilter'),
+    crossfilter = require('crossfilter');
+
+// local variables
+var timing = [],
+    configFile = process.argv[2],
     html = '<html>' +
         '<head>' +
             '<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>' +
@@ -13,11 +17,6 @@ var app = require('express')(),
         '</head>' +
         '<body></body>' +
     '</html>';
-
-
-// local variables
-var timing = [],
-    configFile = process.argv[2];
 
 function connect(config) {
     var connection = mysql.createConnection({
