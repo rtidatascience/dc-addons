@@ -8,15 +8,7 @@ var app = require('express')(),
 
 // local variables
 var timing = [],
-    configFile = process.argv[2],
-    html = '<html>' +
-        '<head>' +
-            '<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>' +
-            '<script src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.11/crossfilter.min.js"></script>' +
-            '<script src="https://cdnjs.cloudflare.com/ajax/libs/dc/2.0.0-beta.12/dc.min.js"></script>' +
-        '</head>' +
-        '<body></body>' +
-    '</html>';
+    configFile = process.argv[2];
 
 function connect(config) {
     var connection = mysql.createConnection({
@@ -97,6 +89,31 @@ io.on('connection', function (socket) {
 
         socket.emit('preRender', preRender);
 
+        if (!c.libraries) {
+            config.libraries = {};
+        }
+
+        if (!c.libraries.d3) {
+            c.libraries.d3 = 'https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js';
+        }
+
+        if (!c.libraries.crossfilter) {
+            c.libraries.crossfilter = 'https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.11/crossfilter.min.js';
+        }
+
+        if (!c.libraries.dc) {
+            c.libraries.dc = 'https://cdnjs.cloudflare.com/ajax/libs/dc/2.0.0-beta.12/dc.min.js';
+        }
+
+        var html = '<html>' +
+            '<head>' +
+                '<script src="' + c.libraries.d3 + '"></script>' +
+                '<script src="' + c.libraries.crossfilter + '"></script>' +
+                '<script src="' + c.libraries.dc + '"></script>' +
+            '</head>' +
+            '<body></body>' +
+        '</html>';
+
         addTiming('config loaded');
 
         jsdom.env({
@@ -124,6 +141,7 @@ io.on('connection', function (socket) {
                             // create the div container for the chart
                             var chartContainer = window.document.createElement('div');
                             chartContainer.setAttribute('data-type', chartConfig.type);
+                            chartContainer.className = chartContainer.className + ' dc-server-chart';
                             body.appendChild(chartContainer);
 
                             // parse the options
@@ -174,6 +192,9 @@ io.on('connection', function (socket) {
                     chart.replaceFilter(range);
                 }
             } else {
+                console.log(filter[1]);
+                console.log(chart.group().all()[filter[1]]);
+                console.log(chart.keyAccessor()(chart.group().all()[filter[1]]));
                 chart.filter(chart.keyAccessor()(chart.group().all()[filter[1]]));
             }
 

@@ -24,7 +24,8 @@
             prevWest = null,
             extentMouse = false,
             resizeEastMouse = false,
-            resizeWestMouse = false;
+            resizeWestMouse = false,
+            chartWrapperClass = '.dc-server-chart';
 
         //---------------------
         // Redraw Functions
@@ -35,18 +36,20 @@
             next.innerHTML = response;
             next = d3.select(next);
 
-            element.selectAll('.dc-chart').each(function (el, chartIndex) {
+            element.selectAll(chartWrapperClass).each(function (el, chartIndex) {
                 var chartWrapper = d3.select(this),
-                    nextWrapper = next.selectAll('.dc-chart').filter(function (d, j) {
+                    nextWrapper = next.selectAll(chartWrapperClass).filter(function (d, j) {
                         return j === chartIndex;
                     }),
                     chartType = getChartType(chartWrapper);
 
-                if (typeof dc.serverChart['redraw' + chartType] === 'function') {
-                    dc.serverChart['redraw' + chartType](chartIndex, chartWrapper, nextWrapper);
-                } else {
-                    chartWrapper.html(nextWrapper.html());
-                    attachEvents();
+                if (chartType) {
+                    if (typeof dc.serverChart['redraw' + chartType] === 'function') {
+                        dc.serverChart['redraw' + chartType](chartIndex, chartWrapper, nextWrapper);
+                    } else {
+                        chartWrapper.html(nextWrapper.html());
+                        attachEvents();
+                    }
                 }
             });
         }
@@ -56,7 +59,7 @@
         //---------------------
 
         function attachEvents () {
-            element.selectAll('.dc-chart').each(function (chartData, chartIndex) {
+            element.selectAll(chartWrapperClass).each(function (chartData, chartIndex) {
                 var chartWrapper = d3.select(this),
                     chartType = getChartType(chartWrapper);
 
@@ -85,6 +88,15 @@
         };
 
         dc.serverChart.attachEventsRowChart = function (chartIndex, chartWrapper) {
+            chartWrapper
+                .selectAll('g.row')
+                .selectAll('rect')
+                .on('click', function (rowData, rowIndex, gIndex) {
+                    sendFilter(chartIndex, gIndex);
+                });
+        };
+
+        dc.serverChart.attachEventsPairedRowChart = function (chartIndex, chartWrapper) {
             chartWrapper
                 .selectAll('g.row')
                 .selectAll('rect')
@@ -366,12 +378,13 @@
         }
 
         function getChartType (chartWrapper) {
-            var chartType = chartWrapper.attr('data-type').split('');
-
-            chartType[0] = chartType[0].toUpperCase();
-            chartType = chartType.join('');
-
-            return chartType;
+            try {
+                var chartType = chartWrapper.attr('data-type').split('');
+                chartType[0] = chartType[0].toUpperCase();
+                return chartType.join('');
+            } catch (ex) {
+                return null;
+            }
         }
 
         //---------------------

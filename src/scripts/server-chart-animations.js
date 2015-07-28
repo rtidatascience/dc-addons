@@ -16,7 +16,7 @@
         'Z', // close off
     ].join(''));
 
-    dc.serverChart.redrawPieChart = function (chartIndex, chartWrapper, nextWrapper) {
+    dc.serverChart.redrawPieCharts = function (chartIndex, chartWrapper, nextWrapper) {
         var svg = chartWrapper.select('svg'),
             currentSlices = chartWrapper.selectAll('g.pie-slice'),
             nextSlices = nextWrapper.selectAll('g.pie-slice');
@@ -27,26 +27,33 @@
                 var textElement = d3.select(this),
                     nextText = filterNextItem(nextWrapper.selectAll('text'), textIndex);
 
-                textElement
-                    .text(nextText.text())
-                    .transition()
-                        .duration(duration)
-                        .ease(ease)
-                        .attr('transform', nextText.attr('transform'));
+                if (nextText.empty()) {
+                    textElement
+                        .text('');
+                } else {
+                    textElement
+                        .text(nextText.text())
+                        .transition()
+                            .duration(duration)
+                            .ease(ease)
+                            .attr('transform', nextText.attr('transform'));
+                }
             });
 
         currentSlices
-            .attr('class', function (sliceData, sliceIndex) {
-                return filterNextItem(nextSlices, sliceIndex)
-                    .attr('class');
-            });
+            .each(function(sliceData, sliceIndex) {
+                var sliceElement = d3.select(this),
+                    nextSlice = filterNextItem(nextSlices, sliceIndex);
 
-        currentSlices
-            .select('title')
-            .text(function (titleData, titleIndex) {
-                return filterNextItem(nextSlices, titleIndex)
-                    .select('title')
-                    .text();
+                if (!nextSlice.empty()) {
+                    sliceElement
+                        .attr('class', nextSlice.attr('class'))
+                        .attr('fill',  nextSlice.attr('fill'));
+
+                    sliceElement
+                        .select('title')
+                        .text(nextSlice.select('text').text());
+                }
             });
 
         currentSlices
@@ -57,8 +64,14 @@
                 .attrTween('d', function (pathData, pathIndex, attrValue) {
                     var radius = d3.min([svg.attr('width'), svg.attr('height')]) / 2,
                         arc = d3.svg.arc().outerRadius(radius).innerRadius(0),
-                        nextD = filterNextItem(nextSlices, pathIndex).select('path').attr('d'),
-                        interpolate = d3.interpolate(
+                        nextSlice = filterNextItem(nextSlices, pathIndex),
+                        nextD = '';
+
+                    if (!nextSlice.empty()) {
+                        nextD = nextSlice.select('path').attr('d');
+                    }
+
+                    var interpolate = d3.interpolate(
                             pathToInterpolateAngles(attrValue),
                             pathToInterpolateAngles(nextD)
                         );
@@ -103,7 +116,7 @@
         redrawAxis(chartIndex, chartWrapper, nextWrapper);
     };
 
-    dc.serverChart.redrawRowChart = function (chartIndex, chartWrapper, nextWrapper) {
+    dc.serverChart.redrawRowChart = dc.serverChart.redrawPairedRowChart = function (chartIndex, chartWrapper, nextWrapper) {
         chartWrapper
             .selectAll('g.row')
             .each(function (rowData, rowIndex) {
