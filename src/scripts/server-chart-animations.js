@@ -45,7 +45,7 @@
             });
 
         currentSlices
-            .each(function(sliceData, sliceIndex) {
+            .each(function (sliceData, sliceIndex) {
                 var sliceElement = d3.select(this),
                     nextSlice = filterNextItem(nextSlices, sliceIndex);
 
@@ -65,7 +65,7 @@
 
         currentSlices
             .select('path')
-            .each(function(sliceData, sliceIndex) {
+            .each(function (sliceData, sliceIndex) {
                 var sliceElement = d3.select(this),
                     nextSlice = filterNextItem(nextSlices, sliceIndex).select('path');
 

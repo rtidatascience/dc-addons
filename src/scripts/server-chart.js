@@ -380,7 +380,7 @@
             });
 
             // socket events
-            socket.io.on('open', function() {
+            socket.io.on('open', function () {
                 connected = true;
             });
 

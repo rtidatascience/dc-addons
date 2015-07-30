@@ -66,13 +66,12 @@ module.exports = {
             '<%= config.src %>/<%= config.scripts %>/server-config.js',
         ]
     },
-    serverHtml: {
-        options: {
-            banner: '',
-        },
-        dest: '<%= config.dist %>/server/jsdom.html',
+    angular: {
+        dest: '<%= config.dist %>/angular/angular-dc.js',
         src: [
-            '<%= config.src %>/<%= config.scripts %>/jsdom.html',
+            '<%= config.src %>/<%= config.scripts %>/angular-module.js',
+            '<%= config.src %>/<%= config.scripts %>/angular-chart.js',
+            '<%= config.src %>/<%= config.scripts %>/angular-server-chart.js',
         ]
     },
     build: {

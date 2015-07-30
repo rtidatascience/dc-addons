@@ -1,12 +1,13 @@
 /*!
- * dc-addons v0.8.1
+ * dc-addons v0.9.0
  *
- * 2015-07-28 08:20:39
+ * 2015-07-31 09:56:00
  *
  */
 // node modules
 var app = require('express')(),
     http = require('http').Server(app),
+    request = require('request'),
     io = require('socket.io')(http),
     jsdom = require('jsdom'),
     mysql = require('mysql'),
@@ -14,15 +15,7 @@ var app = require('express')(),
 
 // local variables
 var timing = [],
-    configFile = process.argv[2],
-    html = '<html>' +
-        '<head>' +
-            '<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>' +
-            '<script src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.11/crossfilter.min.js"></script>' +
-            '<script src="https://cdnjs.cloudflare.com/ajax/libs/dc/2.0.0-beta.12/dc.min.js"></script>' +
-        '</head>' +
-        '<body></body>' +
-    '</html>';
+    configFile = process.argv[2];
 
 function connect(config) {
     var connection = mysql.createConnection({
@@ -80,7 +73,88 @@ function logTiming() {
 // socket connections
 io.on('connection', function (socket) {
     var charts = [],
+        config = {},
+        conditions = null,
         w = null;
+
+    function loadData() {
+        if (config.mysql) {
+            var connection = connect(config.mysql);
+
+            addTiming('connected to db');
+
+            execute(connection, config.mysql.sql, function (xf) {
+                addTiming('sql query completed');
+
+                createCharts(xf);
+            });
+        } else if (config.api) {
+            if (typeof config.api.before === 'function') {
+                config.api.before({
+                    conditions: conditions
+                });
+            }
+
+            request(config.api.options, function (error, response, body) {
+                if (!error) {
+                    addTiming('connected to api');
+
+                    createCharts(crossfilter(config.api.after(body)));
+                }
+            });
+        }
+    }
+
+    function createCharts(xf) {
+        var body = w.document.getElementsByTagName('body')[0];
+        body.innerHTML = '';
+
+        config.charts.forEach(function (chartConfig, chartIndex) {
+            try {
+                // create the div container for the chart
+                var chartContainer = w.document.createElement('div');
+                chartContainer.setAttribute('data-type', chartConfig.type);
+                chartContainer.className = chartContainer.className + ' dc-server-chart';
+                body.appendChild(chartContainer);
+
+                // parse the options
+                if (typeof chartConfig.options.dimension === 'function') {
+                    chartConfig.options.dimension = xf.dimension(chartConfig.options.dimension);
+                }
+
+                if (typeof chartConfig.options.group === 'function') {
+                    chartConfig.options.group = chartConfig.options.group(xf, chartConfig.options.dimension);
+                }
+
+                // create and render the chart
+                var chart = w.dc[chartConfig.type](chartContainer);
+                chart.options(chartConfig.options).render();
+                addTiming('chart number ' + (chartIndex + 1) + ' of ' + config.charts.length + ' rendered');
+                charts.push(chart);
+            } catch (err) {
+                console.trace();
+                console.warn(err);
+            }
+        });
+
+        logTiming();
+
+        socket.emit('afterRender', body.innerHTML);
+    }
+
+    function preRender() {
+        var pre = [];
+
+        config.charts.forEach(function (chartConfig, chartIndex) {
+            pre.push({
+                type: chartConfig.type,
+                width: chartConfig.options.width,
+                height: chartConfig.options.height
+            });
+        });
+
+        socket.emit('preRender', pre);
+    }
 
     socket.on('render', function (chartName) {
         addTiming('start');
@@ -89,19 +163,35 @@ io.on('connection', function (socket) {
         delete require.cache[require.resolve(configFile)];
         // load the config
         var c = require(configFile);
-        var config = c[chartName];
-        var preRender = [];
+        config = c[chartName];
         charts = [];
 
-        config.charts.forEach(function (chartConfig, chartIndex) {
-            preRender.push({
-                type: chartConfig.type,
-                width: chartConfig.options.width,
-                height: chartConfig.options.height
-            });
-        });
+        preRender();
 
-        socket.emit('preRender', preRender);
+        if (!c.libraries) {
+            c.libraries = {};
+        }
+
+        if (!c.libraries.d3) {
+            c.libraries.d3 = 'https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js';
+        }
+
+        if (!c.libraries.crossfilter) {
+            c.libraries.crossfilter = 'https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.11/crossfilter.min.js';
+        }
+
+        if (!c.libraries.dc) {
+            c.libraries.dc = 'https://cdnjs.cloudflare.com/ajax/libs/dc/2.0.0-beta.12/dc.min.js';
+        }
+
+        var html = '<html>' +
+            '<head>' +
+                '<script src="' + c.libraries.d3 + '"></script>' +
+                '<script src="' + c.libraries.crossfilter + '"></script>' +
+                '<script src="' + c.libraries.dc + '"></script>' +
+            '</head>' +
+            '<body></body>' +
+        '</html>';
 
         addTiming('config loaded');
 
@@ -112,45 +202,10 @@ io.on('connection', function (socket) {
             done: function (errors, window) {
                 addTiming('jsdom loaded');
 
-                var connection = connect(config.connection);
+                w = window;
+                window.dc.disableTransitions = true;
 
-                addTiming('connected to db');
-
-                execute(connection, config.connection.sql, function (xf) {
-                    addTiming('sql query completed');
-
-                    w = window;
-
-                    var body = window.document.getElementsByTagName('body')[0];
-
-                    window.dc.disableTransitions = true;
-
-                    config.charts.forEach(function (chartConfig, chartIndex) {
-                        try {
-                            // create the div container for the chart
-                            var chartContainer = window.document.createElement('div');
-                            chartContainer.setAttribute('data-type', chartConfig.type);
-                            body.appendChild(chartContainer);
-
-                            // parse the options
-                            chartConfig.options.dimension = xf.dimension(chartConfig.options.dimension);
-                            chartConfig.options.group = chartConfig.options.group(chartConfig.options.dimension);
-
-                            // create and render the chart
-                            var chart = window.dc[chartConfig.type](chartContainer);
-                            chart.options(chartConfig.options).render();
-                            addTiming('chart number ' + (chartIndex + 1) + ' of ' + config.charts.length + ' rendered');
-                            charts.push(chart);
-                        } catch (err) {
-                            console.trace();
-                            console.warn(err);
-                        }
-                    });
-
-                    logTiming();
-
-                    socket.emit('afterRender', body.innerHTML);
-                });
+                loadData();
             }
         });
     });
@@ -183,13 +238,28 @@ io.on('connection', function (socket) {
                 chart.filter(chart.keyAccessor()(chart.group().all()[filter[1]]));
             }
 
+            addTiming('charts filtered');
+
+            chart.redrawGroup();
             w.dc.redrawAll();
+
+            addTiming('charts redrawn');
+
             socket.emit('afterFilter', w.document.body.innerHTML);
             addTiming('filtering sent');
             logTiming();
         } catch (e) {
             console.log(e);
             socket.emit('afterFilterError', e);
+        }
+    });
+
+    socket.on('updateConditions', function (cond) {
+        conditions = cond;
+
+        if (w !== null) {
+            preRender();
+            loadData();
         }
     });
 

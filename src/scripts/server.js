@@ -89,7 +89,7 @@ io.on('connection', function (socket) {
                 });
             }
 
-            request(config.api.options, function(error, response, body) {
+            request(config.api.options, function (error, response, body) {
                 if (!error) {
                     addTiming('connected to api');
 
@@ -104,7 +104,7 @@ io.on('connection', function (socket) {
         body.innerHTML = '';
 
         config.charts.forEach(function (chartConfig, chartIndex) {
-            // try {
+            try {
                 // create the div container for the chart
                 var chartContainer = w.document.createElement('div');
                 chartContainer.setAttribute('data-type', chartConfig.type);
@@ -125,10 +125,10 @@ io.on('connection', function (socket) {
                 chart.options(chartConfig.options).render();
                 addTiming('chart number ' + (chartIndex + 1) + ' of ' + config.charts.length + ' rendered');
                 charts.push(chart);
-            // } catch (err) {
-            //     console.trace();
-            //     console.warn(err);
-            // }
+            } catch (err) {
+                console.trace();
+                console.warn(err);
+            }
         });
 
         logTiming();
@@ -138,7 +138,6 @@ io.on('connection', function (socket) {
 
     function preRender() {
         var pre = [];
-
 
         config.charts.forEach(function (chartConfig, chartIndex) {
             pre.push({

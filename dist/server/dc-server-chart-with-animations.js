@@ -1,7 +1,7 @@
 /*!
- * dc-addons v0.8.1
+ * dc-addons v0.9.0
  *
- * 2015-07-28 08:20:39
+ * 2015-07-31 09:56:00
  *
  */
 (function () {
@@ -14,6 +14,8 @@
     dc.serverChart = function (parent) {
         var _chart = {},
             socket = null,
+            hasInit = false,
+            connected = false,
             element = d3.select(parent),
             _options = {
                 name: null,
@@ -23,6 +25,7 @@
                 reconnectingMessage: 'There appears to be a problem connecting to the server. Retyring...',
                 connectionErrorMessage: 'Could not connect to the server.',
             },
+            _conditions = null,
             mouseDownCoords = null,
             east = null,
             west = null,
@@ -30,39 +33,15 @@
             prevWest = null,
             extentMouse = false,
             resizeEastMouse = false,
-            resizeWestMouse = false;
-
-        //---------------------
-        // Redraw Functions
-        //---------------------
-
-        function redraw (response) {
-            var next = document.createElement('div');
-            next.innerHTML = response;
-            next = d3.select(next);
-
-            element.selectAll('.dc-chart').each(function (el, chartIndex) {
-                var chartWrapper = d3.select(this),
-                    nextWrapper = next.selectAll('.dc-chart').filter(function (d, j) {
-                        return j === chartIndex;
-                    }),
-                    chartType = getChartType(chartWrapper);
-
-                if (typeof dc.serverChart['redraw' + chartType] === 'function') {
-                    dc.serverChart['redraw' + chartType](chartIndex, chartWrapper, nextWrapper);
-                } else {
-                    chartWrapper.html(nextWrapper.html());
-                    attachEvents();
-                }
-            });
-        }
+            resizeWestMouse = false,
+            chartWrapperClass = '.dc-server-chart';
 
         //---------------------
         // Browser Events
         //---------------------
 
         function attachEvents () {
-            element.selectAll('.dc-chart').each(function (chartData, chartIndex) {
+            element.selectAll(chartWrapperClass).each(function (chartData, chartIndex) {
                 var chartWrapper = d3.select(this),
                     chartType = getChartType(chartWrapper);
 
@@ -92,10 +71,18 @@
 
         dc.serverChart.attachEventsRowChart = function (chartIndex, chartWrapper) {
             chartWrapper
-                .selectAll('g.row')
                 .selectAll('rect')
-                .on('click', function (rowData, rowIndex, gIndex) {
-                    sendFilter(chartIndex, gIndex);
+                .on('click', function (rowData, rowIndex) {
+                    sendFilter(chartIndex, rowIndex);
+                });
+        };
+
+        dc.serverChart.attachEventsPairedRowChart = function (chartIndex, chartWrapper) {
+            chartWrapper
+                .selectAll('svg')
+                .selectAll('rect')
+                .on('click', function (rowData, rowIndex, svgIndex) {
+                    sendFilter(chartIndex, rowIndex * 2 - svgIndex);
                 });
         };
 
@@ -295,6 +282,18 @@
                     _options[key] = _[key];
                 }
             }
+
+            return _chart;
+        };
+
+        _chart.conditions = function (_) {
+            if (arguments.length === 0) {
+                return _conditions;
+            }
+
+            _conditions = _;
+            updateConditions();
+
             return _chart;
         };
 
@@ -342,9 +341,39 @@
             console.warn(response);
         }
 
+        function redraw (response) {
+            var next = document.createElement('div');
+            next.innerHTML = response;
+            next = d3.select(next);
+
+            element.selectAll(chartWrapperClass).each(function (el, chartIndex) {
+                var chartWrapper = d3.select(this),
+                    nextWrapper = next.selectAll(chartWrapperClass).filter(function (d, j) {
+                        return j === chartIndex;
+                    }),
+                    chartType = getChartType(chartWrapper);
+
+                if (chartType) {
+                    if (typeof dc.serverChart['redraw' + chartType] === 'function') {
+                        dc.serverChart['redraw' + chartType](chartIndex, chartWrapper, nextWrapper);
+                    } else {
+                        chartWrapper.html(nextWrapper.html());
+                        attachEvents();
+                    }
+                }
+            });
+        }
+
+        function updateConditions () {
+            if (hasInit) {
+                socket.emit('updateConditions', _conditions);
+            }
+        }
+
         //---------------------
         // Helper Functions
         //---------------------
+
         function onRefresh () {
             element.html(_options.loadingMessage);
         }
@@ -356,28 +385,41 @@
                 reconnectionAttempts: 4,
             });
 
+            // socket events
+            socket.io.on('open', function () {
+                connected = true;
+            });
+
+            socket.io.on('reconnecting', function () {
+                if (!connected) {
+                    element.html(_options.reconnectingMessage);
+                }
+            });
+
+            socket.io.on('reconnect_failed', function () {
+                if (!connected) {
+                    element.html(_options.connectionErrorMessage);
+                }
+            });
+
+            // custom events
             socket.on('preRender', preRender);
             socket.on('afterRender', render);
             socket.on('afterRenderError', renderError);
             socket.on('afterFilter', redraw);
             socket.on('afterFilterError', renderError);
 
-            socket.io.on('reconnecting', function () {
-                element.html(_options.reconnectingMessage);
-            });
-
-            socket.io.on('reconnect_failed', function () {
-                element.html(_options.connectionErrorMessage);
-            });
+            hasInit = true;
         }
 
         function getChartType (chartWrapper) {
-            var chartType = chartWrapper.attr('data-type').split('');
-
-            chartType[0] = chartType[0].toUpperCase();
-            chartType = chartType.join('');
-
-            return chartType;
+            try {
+                var chartType = chartWrapper.attr('data-type').split('');
+                chartType[0] = chartType[0].toUpperCase();
+                return chartType.join('');
+            } catch (ex) {
+                return null;
+            }
         }
 
         //---------------------
@@ -394,8 +436,8 @@
 (function () {
     'use strict';
 
-    var duration = 350;
-    var ease = 'quad-in';
+    var duration = 5000;
+    var ease = 'quad-in-out';
     var pieRegEx = new RegExp([
         'M ?([\\d\\.e-]+) ?, ?([\\d\\.e-]+) ?', // move to starting point
         // see https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths#Arcs
@@ -415,43 +457,73 @@
             nextSlices = nextWrapper.selectAll('g.pie-slice');
 
         chartWrapper
+            .select('g')
+            .attr('class', nextWrapper.select('g').attr('class'));
+
+        chartWrapper
             .selectAll('text')
             .each(function (textData, textIndex) {
                 var textElement = d3.select(this),
                     nextText = filterNextItem(nextWrapper.selectAll('text'), textIndex);
 
-                textElement
-                    .text(nextText.text())
-                    .transition()
-                        .duration(duration)
-                        .ease(ease)
-                        .attr('transform', nextText.attr('transform'));
+                if (nextText.empty()) {
+                    textElement
+                        .text('');
+                } else {
+                    textElement
+                        .text(nextText.text())
+                        .transition()
+                            .duration(duration)
+                            .ease(ease)
+                            .attr('transform', nextText.attr('transform'));
+                }
             });
 
         currentSlices
-            .attr('class', function (sliceData, sliceIndex) {
-                return filterNextItem(nextSlices, sliceIndex)
-                    .attr('class');
-            });
+            .each(function (sliceData, sliceIndex) {
+                var sliceElement = d3.select(this),
+                    nextSlice = filterNextItem(nextSlices, sliceIndex);
 
-        currentSlices
-            .select('title')
-            .text(function (titleData, titleIndex) {
-                return filterNextItem(nextSlices, titleIndex)
-                    .select('title')
-                    .text();
+                if (!nextSlice.empty()) {
+                    sliceElement
+                        .attr('class', nextSlice.attr('class'));
+
+                    var nextText = nextSlice.select('text');
+
+                    if (!nextText.empty()) {
+                        sliceElement
+                            .select('title')
+                            .text(nextText.text());
+                    }
+                }
             });
 
         currentSlices
             .select('path')
+            .each(function (sliceData, sliceIndex) {
+                var sliceElement = d3.select(this),
+                    nextSlice = filterNextItem(nextSlices, sliceIndex).select('path');
+
+                if (!nextSlice.empty()) {
+                    sliceElement
+                        .attr('class', nextSlice.attr('class'))
+                        .attr('fill', nextSlice.attr('fill'));
+                }
+            })
             .transition()
                 .duration(duration)
                 .ease(ease)
                 .attrTween('d', function (pathData, pathIndex, attrValue) {
                     var radius = d3.min([svg.attr('width'), svg.attr('height')]) / 2,
                         arc = d3.svg.arc().outerRadius(radius).innerRadius(0),
-                        nextD = filterNextItem(nextSlices, pathIndex).select('path').attr('d'),
-                        interpolate = d3.interpolate(
+                        nextSlice = filterNextItem(nextSlices, pathIndex),
+                        nextD = '';
+
+                    if (!nextSlice.empty()) {
+                        nextD = nextSlice.select('path').attr('d');
+                    }
+
+                    var interpolate = d3.interpolate(
                             pathToInterpolateAngles(attrValue),
                             pathToInterpolateAngles(nextD)
                         );
@@ -496,7 +568,7 @@
         redrawAxis(chartIndex, chartWrapper, nextWrapper);
     };
 
-    dc.serverChart.redrawRowChart = function (chartIndex, chartWrapper, nextWrapper) {
+    dc.serverChart.redrawRowChart = dc.serverChart.redrawPairedRowChart = function (chartIndex, chartWrapper, nextWrapper) {
         chartWrapper
             .selectAll('g.row')
             .each(function (rowData, rowIndex) {
@@ -567,6 +639,28 @@
         redrawAxis(chartIndex, chartWrapper, nextWrapper);
     };
 
+    dc.serverChart.redrawNumberDisplay = function (chartIndex, chartWrapper, nextWrapper) {
+        var spanElement = chartWrapper.select('span.number-display'),
+            spanText = spanElement.text(),
+            textParts = spanText.match(/([^\d]*)([\d\.]+)([^\d]*)/i),
+            currentNumber = textParts === null ? 0 : parseFloat(textParts[2]),
+            nextSpan = nextWrapper.select('span.number-display'),
+            nextText = nextSpan.text(),
+            nextParts = nextText.match(/([^\d]*)([\d\.]+)([^\d]*)/i),
+            nextNumber = nextParts === null ? 0 : parseFloat(nextParts[2]);
+
+        spanElement.transition()
+            .duration(duration)
+            .ease(ease)
+            .tween('text', function () {
+                var interp = d3.interpolateNumber(currentNumber, nextNumber);
+                return function (t) {
+                    var num = d3.format('.2s')(interp(t));
+                    this.innerHTML = nextParts[1] + num + nextParts[3];
+                };
+            });
+    };
+
     function redrawAxis (chartIndex, chartWrapper, nextWrapper) {
         chartWrapper
             .selectAll('.axis')
@@ -574,11 +668,13 @@
                 var axisElement = d3.select(this),
                     axisBBox = axisElement.select('path.domain').node().getBBox(),
                     axisTicks = axisElement.selectAll('g.tick'),
-                    isHorizontal = /translate\([\d.]+,0\)/i.exec(d3.select(axisTicks[0][1]).attr('transform')) !== null,
+                    isHorizontal = axisTicks.empty() ? null : /translate\([\d.]+,0\)/i.exec(d3.select(axisTicks[0][1]).attr('transform')) !== null,
+                    firstRow = d3.select(axisElement[0][0].nextElementSibling),
+                    isRightYAxis = firstRow.empty() ? null : /translate\(0,[\d.]+\)/i.exec(firstRow.attr('transform')) === null,
                     nextAxis = filterNextItem(nextWrapper.selectAll('.axis'), axisIndex),
                     nextTicks = nextAxis.selectAll('g.tick'),
-                    minTickValue = parseFloat(d3.select(nextTicks[0][0]).select('text').text()),
-                    maxTickValue = parseFloat(d3.select(nextTicks[0][nextTicks[0].length - 1]).select('text').text()),
+                    minTickValue = nextTicks.empty() ? 0 : parseFloat(d3.select(nextTicks[0][0]).select('text').text()),
+                    maxTickValue = nextTicks.empty() ? 1 : parseFloat(d3.select(nextTicks[0][nextTicks[0].length - 1]).select('text').text()),
                     grid = chartWrapper.select(isHorizontal ? '.grid-line.vertical' : '.grid-line.horizontal'),
                     nextGrid = nextWrapper.select(isHorizontal ? '.grid-line.vertical' : '.grid-line.horizontal');
 
@@ -648,7 +744,12 @@
                             var transform = '';
 
                             if (isHorizontal) {
-                                transform = 'translate(' + (axisBBox.width * tickPercentage / 100) + ', 0)';
+                                var translate = (axisBBox.width * tickPercentage / 100);
+                                if (isRightYAxis) {
+                                    transform = 'translate(-' + translate + ', 0)';
+                                } else {
+                                    transform = 'translate(' + translate + ', 0)';
+                                }
                             } else {
                                 transform = 'translate(0, ' +
                                     (axisBBox.height - (axisBBox.height * tickPercentage / 100)) +
@@ -686,110 +787,128 @@
             .selectAll('.axis')
             .each(function (d, axisIndex, tickIndex) {
                 var nextAxis = d3.select(this),
-                    nextTicks = nextAxis.selectAll('g.tick'),
-                    isHorizontal = /translate\([\d.]+,0\)/i.exec(d3.select(nextTicks[0][1]).attr('transform')) !== null,
-                    axisElement = filterNextItem(chartWrapper.selectAll('.axis'), axisIndex),
-                    axisBBox = axisElement.select('path.domain').node().getBBox(),
-                    axisTicks = axisElement.selectAll('g.tick'),
-                    minTickValue = parseFloat(d3.select(axisTicks[0][0]).select('text').text()),
-                    maxTickValue = parseFloat(d3.select(axisTicks[0][axisTicks[0].length - 1]).select('text').text()),
-                    grid = chartWrapper.select(isHorizontal ? '.grid-line.vertical' : '.grid-line.horizontal'),
-                    nextGrid = nextWrapper.select(isHorizontal ? '.grid-line.vertical' : '.grid-line.horizontal');
+                    nextTicks = nextAxis.selectAll('g.tick');
 
-                nextTicks
-                    .each(function (nextData, nextIndex) {
-                        var nextTick = d3.select(this),
-                            nextText = nextTick.select('text'),
-                            nextLine = nextTick.select('line'),
-                            nextValue = parseFloat(nextText.text()),
-                            tickPercentage = (nextValue - minTickValue) / (maxTickValue - minTickValue) * 100,
-                            matched = false;
+                if (!nextTicks.empty()) {
+                    var isHorizontal = /translate\([\d.]+,0\)/i.exec(d3.select(nextTicks[0][1]).attr('transform')) !== null,
+                        firstRow = d3.select(nextAxis[0][0].nextElementSibling),
+                        isRightYAxis = firstRow.empty() ? null : /translate\(0,[\d.]+\)/i.exec(firstRow.attr('transform')) === null,
+                        axisElement = filterNextItem(chartWrapper.selectAll('.axis'), axisIndex),
+                        axisBBox = axisElement.select('path.domain').node().getBBox(),
+                        axisTicks = axisElement.selectAll('g.tick'),
+                        minTickValue = axisTicks.empty() ? 0 : parseFloat(d3.select(axisTicks[0][0]).select('text').text()),
+                        maxTickValue = axisTicks.empty() ? 1 : parseFloat(d3.select(axisTicks[0][axisTicks[0].length - 1]).select('text').text()),
+                        grid = chartWrapper.select(isHorizontal ? '.grid-line.vertical' : '.grid-line.horizontal'),
+                        nextGrid = nextWrapper.select(isHorizontal ? '.grid-line.vertical' : '.grid-line.horizontal');
 
-                        axisTicks
-                            .each(function (tickData, tickIndex) {
-                                var tickElement = d3.select(this),
-                                    tickText = tickElement.select('text');
+                    nextTicks
+                        .each(function (nextData, nextIndex) {
+                            var nextTick = d3.select(this),
+                                nextText = nextTick.select('text'),
+                                nextLine = nextTick.select('line'),
+                                nextValue = parseFloat(nextText.text()),
+                                tickPercentage = (nextValue - minTickValue) / (maxTickValue - minTickValue) * 100,
+                                matched = false;
 
-                                if (parseFloat(tickText.text()) === nextValue) {
-                                    matched = true;
+                            axisTicks
+                                .each(function (tickData, tickIndex) {
+                                    var tickElement = d3.select(this),
+                                        tickText = tickElement.select('text');
+
+                                    if (parseFloat(tickText.text()) === nextValue) {
+                                        matched = true;
+                                    }
+                                });
+
+                            if (!matched) {
+                                var translate = 0,
+                                    transform = '',
+                                    gridLineTransform = '',
+                                    nextGridLine = null;
+
+                                if (grid.empty()) {
+                                    nextGridLine = nextTick.select('line.grid-line');
+                                } else {
+                                    nextGridLine = filterNextItem(nextGrid.selectAll('line'), nextIndex);
                                 }
-                            });
 
-                        if (!matched) {
-                            var translate = 0,
-                                transform = '',
-                                gridLineTransform = '',
-                                nextGridLine = null;
+                                if (isHorizontal) {
+                                    translate = axisBBox.width * tickPercentage / 100;
 
-                            if (grid.empty()) {
-                                nextGridLine = nextTick.select('line.grid-line');
-                            } else {
-                                nextGridLine = filterNextItem(nextGrid.selectAll('line'), nextIndex);
-                            }
+                                    if (isRightYAxis) {
+                                        transform = 'translate(-' + translate + ', 0)';
+                                    } else {
+                                        transform = 'translate(' + translate + ', 0)';
+                                    }
 
-                            if (isHorizontal) {
-                                translate = axisBBox.width * tickPercentage / 100;
-                                transform = 'translate(' + translate + ', 0)';
-                                gridLineTransform = 'translate(' + (translate - nextGridLine.attr('x1')) + ', 0)';
-                            } else {
-                                translate = axisBBox.height - (axisBBox.height * tickPercentage / 100);
-                                transform = 'translate(0, ' + translate + ')';
-                                gridLineTransform = 'translate(0, ' + (translate - nextGridLine.attr('y1')) + ')';
-                            }
+                                    if (!nextGridLine.empty()) {
+                                        gridLineTransform = 'translate(' + (translate - nextGridLine.attr('x1')) + ', 0)';
+                                    }
+                                } else {
+                                    translate = axisBBox.height - (axisBBox.height * tickPercentage / 100);
+                                    transform = 'translate(0, ' + translate + ')';
 
-                            var addedTick = axisElement
-                                .append('g')
-                                .attr('class', 'tick')
-                                .attr('transform', transform)
-                                .attr('opacity', 0);
+                                    if (!nextGridLine.empty()) {
+                                        gridLineTransform = 'translate(0, ' + (translate - nextGridLine.attr('y1')) + ')';
+                                    }
+                                }
 
-                            addedTick
-                                .transition()
-                                    .duration(duration)
-                                    .ease(ease)
-                                    .attr('transform', nextTick.attr('transform'))
-                                    .style('opacity', 1);
+                                var addedTick = axisElement
+                                    .append('g')
+                                    .attr('class', 'tick')
+                                    .attr('transform', transform)
+                                    .attr('opacity', 0);
 
-                            addedTick
-                                .append('text')
-                                .attr('x', nextText.attr('x'))
-                                .attr('y', nextText.attr('y'))
-                                .attr('dy', nextText.attr('dy'))
-                                .attr('style', nextText.attr('style'))
-                                .text(nextText.text());
-
-                            addedTick
-                                .append('line')
-                                .attr('x1', nextLine.attr('x1'))
-                                .attr('y1', nextLine.attr('y1'))
-                                .attr('x2', nextLine.attr('x2'))
-                                .attr('y2', nextLine.attr('y2'));
-
-                            if (grid.empty()) {
                                 addedTick
-                                    .append('line')
-                                    .attr('class', nextGridLine.attr('class'))
-                                    .attr('x1', nextGridLine.attr('x1'))
-                                    .attr('y1', nextGridLine.attr('y1'))
-                                    .attr('x2', nextGridLine.attr('x2'))
-                                    .attr('y2', nextGridLine.attr('y2'));
-                            } else {
-                                grid
-                                    .append('line')
-                                    .attr('x1', nextGridLine.attr('x1'))
-                                    .attr('y1', nextGridLine.attr('y1'))
-                                    .attr('x2', nextGridLine.attr('x2'))
-                                    .attr('y2', nextGridLine.attr('y2'))
-                                    .attr('transform', gridLineTransform)
-                                    .attr('opacity', 0)
                                     .transition()
                                         .duration(duration)
                                         .ease(ease)
-                                        .attr('transform', 'translate(0, 0)')
+                                        .attr('transform', nextTick.attr('transform'))
                                         .style('opacity', 1);
+
+                                addedTick
+                                    .append('text')
+                                    .attr('x', nextText.attr('x'))
+                                    .attr('y', nextText.attr('y'))
+                                    .attr('dy', nextText.attr('dy'))
+                                    .attr('style', nextText.attr('style'))
+                                    .text(nextText.text());
+
+                                addedTick
+                                    .append('line')
+                                    .attr('x1', nextLine.attr('x1'))
+                                    .attr('y1', nextLine.attr('y1'))
+                                    .attr('x2', nextLine.attr('x2'))
+                                    .attr('y2', nextLine.attr('y2'));
+
+                                if (!nextGridLine.empty()) {
+                                    if (grid.empty()) {
+                                        addedTick
+                                            .append('line')
+                                            .attr('class', nextGridLine.attr('class'))
+                                            .attr('x1', nextGridLine.attr('x1'))
+                                            .attr('y1', nextGridLine.attr('y1'))
+                                            .attr('x2', nextGridLine.attr('x2'))
+                                            .attr('y2', nextGridLine.attr('y2'));
+                                    } else {
+                                        grid
+                                            .append('line')
+                                            .attr('x1', nextGridLine.attr('x1'))
+                                            .attr('y1', nextGridLine.attr('y1'))
+                                            .attr('x2', nextGridLine.attr('x2'))
+                                            .attr('y2', nextGridLine.attr('y2'))
+                                            .attr('transform', gridLineTransform)
+                                            .attr('opacity', 0)
+                                            .transition()
+                                                .duration(duration)
+                                                .ease(ease)
+                                                .attr('transform', 'translate(0, 0)')
+                                                .style('opacity', 1);
+                                    }
+                                }
                             }
-                        }
-                    });
+                        });
+                }
             });
     }
 

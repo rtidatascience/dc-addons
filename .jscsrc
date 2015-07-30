@@ -10,7 +10,7 @@
     ],
     "requireOperatorBeforeLineBreak": true,
     "maximumLineLength": {
-        "value": 120,
+        "value": 150,
         "allowComments": true,
         "allowRegex": true
     },
@@ -79,9 +79,5 @@
     "disallowSpacesInsideObjectBrackets": "all",
     "disallowSpacesInsideArrayBrackets": "all",
     "disallowSpacesInsideParentheses": true,
-    "validateJSDoc": {
-        "checkParamNames": true,
-        "requireParamTypes": true
-    },
     "disallowMultipleLineBreaks": true
 }

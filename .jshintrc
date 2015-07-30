@@ -7,7 +7,7 @@
     "immed": true,
     "latedef": true,
     "loopfunc": true,
-    "maxlen": 120,
+    "maxlen": 150,
     "multistr": true,
     "newcap": true,
     "noarg": true,
@@ -31,6 +31,7 @@
         "require": false,
         "L": false,
         "google": false,
-        "MarkerClusterer": false
+        "MarkerClusterer": false,
+        "angular": false
     }
 }
