@@ -8,6 +8,8 @@
     dc.serverChart = function (parent) {
         var _chart = {},
             socket = null,
+            hasInit = false,
+            connected = false,
             element = d3.select(parent),
             _options = {
                 name: null,
@@ -17,6 +19,7 @@
                 reconnectingMessage: 'There appears to be a problem connecting to the server. Retyring...',
                 connectionErrorMessage: 'Could not connect to the server.',
             },
+            _conditions = null,
             mouseDownCoords = null,
             east = null,
             west = null,
@@ -26,33 +29,6 @@
             resizeEastMouse = false,
             resizeWestMouse = false,
             chartWrapperClass = '.dc-server-chart';
-
-        //---------------------
-        // Redraw Functions
-        //---------------------
-
-        function redraw (response) {
-            var next = document.createElement('div');
-            next.innerHTML = response;
-            next = d3.select(next);
-
-            element.selectAll(chartWrapperClass).each(function (el, chartIndex) {
-                var chartWrapper = d3.select(this),
-                    nextWrapper = next.selectAll(chartWrapperClass).filter(function (d, j) {
-                        return j === chartIndex;
-                    }),
-                    chartType = getChartType(chartWrapper);
-
-                if (chartType) {
-                    if (typeof dc.serverChart['redraw' + chartType] === 'function') {
-                        dc.serverChart['redraw' + chartType](chartIndex, chartWrapper, nextWrapper);
-                    } else {
-                        chartWrapper.html(nextWrapper.html());
-                        attachEvents();
-                    }
-                }
-            });
-        }
 
         //---------------------
         // Browser Events
@@ -89,19 +65,18 @@
 
         dc.serverChart.attachEventsRowChart = function (chartIndex, chartWrapper) {
             chartWrapper
-                .selectAll('g.row')
                 .selectAll('rect')
-                .on('click', function (rowData, rowIndex, gIndex) {
-                    sendFilter(chartIndex, gIndex);
+                .on('click', function (rowData, rowIndex) {
+                    sendFilter(chartIndex, rowIndex);
                 });
         };
 
         dc.serverChart.attachEventsPairedRowChart = function (chartIndex, chartWrapper) {
             chartWrapper
-                .selectAll('g.row')
+                .selectAll('svg')
                 .selectAll('rect')
-                .on('click', function (rowData, rowIndex, gIndex) {
-                    sendFilter(chartIndex, gIndex);
+                .on('click', function (rowData, rowIndex, svgIndex) {
+                    sendFilter(chartIndex, rowIndex * 2 - svgIndex);
                 });
         };
 
@@ -301,6 +276,18 @@
                     _options[key] = _[key];
                 }
             }
+
+            return _chart;
+        };
+
+        _chart.conditions = function (_) {
+            if (arguments.length === 0) {
+                return _conditions;
+            }
+
+            _conditions = _;
+            updateConditions();
+
             return _chart;
         };
 
@@ -348,9 +335,39 @@
             console.warn(response);
         }
 
+        function redraw (response) {
+            var next = document.createElement('div');
+            next.innerHTML = response;
+            next = d3.select(next);
+
+            element.selectAll(chartWrapperClass).each(function (el, chartIndex) {
+                var chartWrapper = d3.select(this),
+                    nextWrapper = next.selectAll(chartWrapperClass).filter(function (d, j) {
+                        return j === chartIndex;
+                    }),
+                    chartType = getChartType(chartWrapper);
+
+                if (chartType) {
+                    if (typeof dc.serverChart['redraw' + chartType] === 'function') {
+                        dc.serverChart['redraw' + chartType](chartIndex, chartWrapper, nextWrapper);
+                    } else {
+                        chartWrapper.html(nextWrapper.html());
+                        attachEvents();
+                    }
+                }
+            });
+        }
+
+        function updateConditions () {
+            if (hasInit) {
+                socket.emit('updateConditions', _conditions);
+            }
+        }
+
         //---------------------
         // Helper Functions
         //---------------------
+
         function onRefresh () {
             element.html(_options.loadingMessage);
         }
@@ -362,19 +379,31 @@
                 reconnectionAttempts: 4,
             });
 
+            // socket events
+            socket.io.on('open', function() {
+                connected = true;
+            });
+
+            socket.io.on('reconnecting', function () {
+                if (!connected) {
+                    element.html(_options.reconnectingMessage);
+                }
+            });
+
+            socket.io.on('reconnect_failed', function () {
+                if (!connected) {
+                    element.html(_options.connectionErrorMessage);
+                }
+            });
+
+            // custom events
             socket.on('preRender', preRender);
             socket.on('afterRender', render);
             socket.on('afterRenderError', renderError);
             socket.on('afterFilter', redraw);
             socket.on('afterFilterError', renderError);
 
-            socket.io.on('reconnecting', function () {
-                element.html(_options.reconnectingMessage);
-            });
-
-            socket.io.on('reconnect_failed', function () {
-                element.html(_options.connectionErrorMessage);
-            });
+            hasInit = true;
         }
 
         function getChartType (chartWrapper) {
