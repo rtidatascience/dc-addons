@@ -89,6 +89,9 @@ module.exports = {
             '<%= config.src %>/<%= config.scripts %>/paired-row-chart.js',
             '<%= config.src %>/<%= config.scripts %>/server-chart.js',
             '<%= config.src %>/<%= config.scripts %>/server-chart-animations.js',
+            '<%= config.src %>/<%= config.scripts %>/angular-module.js',
+            '<%= config.src %>/<%= config.scripts %>/angular-chart.js',
+            '<%= config.src %>/<%= config.scripts %>/angular-server-chart.js',
         ]
     },
 };
