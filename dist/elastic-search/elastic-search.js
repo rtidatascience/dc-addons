@@ -1,3 +1,9 @@
+/*!
+ * dc-addons v0.10.0
+ *
+ * 2015-08-11 08:06:00
+ *
+ */
 (function () {
     'use strict';
 
