@@ -74,6 +74,18 @@ module.exports = {
             '<%= config.src %>/<%= config.scripts %>/angular-server-chart.js',
         ]
     },
+    crossfilter: {
+        dest: '<%= config.dist %>/crossfilter-server/crossfilter-server.js',
+        src: [
+            '<%= config.src %>/<%= config.scripts %>/crossfilter-server.js',
+        ]
+    },
+    elasticsearch: {
+        dest: '<%= config.dist %>/elastic-search/elastic-search.js',
+        src: [
+            '<%= config.src %>/<%= config.scripts %>/elastic-search.js',
+        ]
+    },
     build: {
         dest: '<%= config.dist %>/dc-addons.js',
         src: [
