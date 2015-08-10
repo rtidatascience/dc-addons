@@ -1,7 +1,7 @@
 {
   "name": "dc-addons",
   "description": "These are additional charts that extend dc.js",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "homepage": "https://github.com/intellipharm/dc-addons",
   "repository": {
     "type": "git",
@@ -36,7 +36,7 @@
   "ignore": [
     "*",
     "!dist/",
-    "!dist/*"
+    "!dist/**/*"
   ],
   "dependencies": {
     "dcjs": "https://github.com/dc-js/dc.js.git#develop",
