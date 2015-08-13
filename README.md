@@ -9,6 +9,7 @@ These [dc.js](http://dc-js.github.io/dc.js/) addons provide new charts for the d
   * [Bubble Cloud](#bubble-cloud)
   * [Paired Row](#paired-row)
   * [Server](#server)
+  * [AngularJS Directives](#angularjs-directives)
 
 ## Installation
 ```js
@@ -79,8 +80,9 @@ dc.leafletChoroplethChart(parent,chartGroup)
 ```
 
 
-#### Demo
-Coming soon...
+#### Examples
+  * [Leaflet Marker](http://intellipharm.github.io/dc-addons/examples/leaflet-marker.html)
+  * [Leaflet Choropleth](http://intellipharm.github.io/dc-addons/examples/leaflet-choropleth.html)
 
 
 #### Requirements
@@ -161,8 +163,9 @@ dc.googleChoroplethChart(parent,chartGroup)
 ```
 
 
-#### Demo
-Coming soon...
+#### Examples
+  * [Google Marker](http://intellipharm.github.io/dc-addons/examples/google-marker.html)
+  * [Google Choropleth](http://intellipharm.github.io/dc-addons/examples/google-choropleth.html)
 
 
 #### Requirements
@@ -197,7 +200,7 @@ dc.tooltipMixin(chart);
 ```
 
 
-#### Demo
+#### Examples
 Coming soon...
 
 
@@ -253,8 +256,8 @@ chart
 
 ```
 
-#### Demo
-Coming soon...
+#### Examples
+  * [Google Marker](http://intellipharm.github.io/dc-addons/examples/bubble-cloud.html)
 
 
 #### Requirements
@@ -326,7 +329,7 @@ chart
 ```
 
 #### Demo
-Coming soon...
+  * [Paired Row Chart](http://intellipharm.github.io/dc-addons/examples/paired-row-chart.html)
 
 
 #### Requirements
@@ -416,7 +419,7 @@ module.exports = {
 ```
 
 #### Demo
-Coming soon...
+You will need to clone and run the server locally for an example
 
 
 #### Requirements
@@ -432,4 +435,118 @@ npm install dc-addons --save
 If you want to include individually
 ```html
 <script src="bower_components/dc-addons/dist/server/dc-server-chart-with-animations.min.js"></script>
+```
+
+
+## AngularJS Directives
+Angular directives for creating charts
+
+#### Usage
+Include the angular module `AngularDc`
+
+```js
+    angular.module('App', ['AngularDc']);
+```
+
+Create the chart. Chart options will be an object of all the charts settings.
+
+```html
+<dc-chart chart-type="chartType" chart-group="chartGroup" chart-options="chartOptions"></dc-chart>
+```
+
+#### Demo
+Coming soon...
+
+
+#### Requirements
+  * [AngularJS](https://angularjs.org/)
+```
+bower install angularjs --save
+```
+
+If you want to include individually
+```html
+<script src="bower_components/dc-addons/dist/angular/angular-dc.min.js"></script>
+```
+
+## Crossfilter Server
+A shell for crossfilter to allow all calculations to happen on the server.
+
+#### Usage
+
+If the normal crossfilter library is not included, this library will take the crossfilter namespace.
+
+```js
+    chart.dimension(crossfilterServer.dimension);
+    chart.group(crossfilterServer.group(function(filters, chartId, callback) {
+        // send a request to the server and return the data in the callback
+        ajax(function(response) {
+            callback(data);
+        });
+    }));
+```
+
+#### Demo
+Coming soon...
+
+
+#### Requirements
+None
+
+If you want to include individually
+```html
+<script src="bower_components/dc-addons/dist/crossfilter-server/crossfilter-server.min.js"></script>
+```
+
+## Crossfilter Server With Elastic Search
+Helper functions to integration dc.js charts with elastic search.
+
+#### Usage
+
+If the normal crossfilter library is not included, this library will take the crossfilter namespace.
+
+```js
+    var query = {
+        aggs: {
+            date: {
+                date_histogram: {
+                    field: 'date_field',
+                    interval: '1d',
+                }
+            },
+            site: {
+                histogram: {
+                    field: 'site_id',
+                    interval: 1,
+                }
+            }
+        }
+    };
+    // when filtering a chart, the chart with the integer id will filter the values base on the given field
+    var mapping = {
+        1: 'date_field',
+        2: 'site_id',
+    };
+
+    var url = 'http://localhost:9200/_search';
+
+    chart.dimension(crossfilterServer.dimension);
+    chart.group(crossfilterServer.group(function(filters, chartId, callback) {
+        // send a request to the server and return the data in the callback
+        crossfilterServer.elasticSearch.send(filters, chartId, url, query, mapping, function(data) {
+            callback(data.aggregations.date.buckets);
+        });
+    }));
+```
+
+#### Demo
+Coming soon...
+
+
+#### Requirements
+None
+
+If you want to include individually
+```html
+<script src="bower_components/dc-addons/dist/crossfilter-server/crossfilter-server.min.js"></script>
 ```
