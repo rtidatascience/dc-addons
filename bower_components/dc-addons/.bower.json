@@ -1,0 +1,58 @@
+{
+  "name": "dc-addons",
+  "description": "These are additional charts that extend dc.js",
+  "version": "0.10.1",
+  "homepage": "https://github.com/intellipharm/dc-addons",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/intellipharm/dc-addons.git"
+  },
+  "authors": [
+    "Intellipharm <damian@intellipharm.com.au>",
+    "Timothy Ruhle <timothy.ruhle@intellipharm.com.au>"
+  ],
+  "main": [
+    "dist/dc-addons.min.js"
+  ],
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "dc",
+    "dcjs",
+    "dc-js",
+    "dc.js",
+    "leaflet",
+    "leaflet.js",
+    "google",
+    "map",
+    "tooltip",
+    "tool",
+    "tip",
+    "server",
+    "addons"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "*",
+    "!dist/",
+    "!dist/**/*"
+  ],
+  "dependencies": {
+    "dcjs": "https://github.com/dc-js/dc.js.git#develop",
+    "leaflet": "~0.7.3",
+    "leaflet.markercluster": "~0.4.0",
+    "d3-tip": "~0.6.6",
+    "d3": "~3.5.5"
+  },
+  "_release": "0.10.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.10.1",
+    "commit": "d0b388ec0aa01a7943ea277aa9ce035506abd879"
+  },
+  "_source": "git://github.com/Intellipharm/dc-addons.git",
+  "_target": "~0.10.1",
+  "_originalSource": "dc-addons",
+  "_direct": true
+}

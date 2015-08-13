@@ -1,0 +1,37 @@
+{
+  "name": "dcjs",
+  "main": [
+    "dc.js",
+    "dc.css"
+  ],
+  "keywords": [
+    "visualization",
+    "svg",
+    "animation",
+    "canvas",
+    "chart",
+    "dimensional",
+    "crossfilter",
+    "d3"
+  ],
+  "ignore": [
+    "*",
+    "!dc.*",
+    "!LICENSE",
+    "!README.md"
+  ],
+  "dependencies": {
+    "d3": "3.x",
+    "crossfilter": "1.x"
+  },
+  "homepage": "https://github.com/dc-js/dc.js",
+  "_release": "27165df5bc",
+  "_resolution": {
+    "type": "branch",
+    "branch": "develop",
+    "commit": "27165df5bc9156f661593fdecf87c637aac08024"
+  },
+  "_source": "https://github.com/dc-js/dc.js.git",
+  "_target": "develop",
+  "_originalSource": "https://github.com/dc-js/dc.js.git"
+}
