@@ -10,6 +10,8 @@ These [dc.js](http://dc-js.github.io/dc.js/) addons provide new charts for the d
   * [Paired Row](#paired-row)
   * [Server](#server)
   * [AngularJS Directives](#angularjs-directives)
+  * [Crossfilter Server](#crossfilter-server)
+  * [Crossfilter Server With Elastic Search](#crossfilter-server-with-elastic-search)
 
 ## Installation
 ```js
@@ -549,4 +551,5 @@ None
 If you want to include individually
 ```html
 <script src="bower_components/dc-addons/dist/crossfilter-server/crossfilter-server.min.js"></script>
+<script src="bower_components/dc-addons/dist/elastic-search/elastic-search.min.js"></script>
 ```
