@@ -54,8 +54,8 @@
                     var group = chart.group();
 
                     if (group && group._filterChanged) {
-                        group._filterChanged = false;
                         _fetch(group, chart, filters, chartId);
+                        group._filterChanged = false;
                     }
                     break;
                 }
