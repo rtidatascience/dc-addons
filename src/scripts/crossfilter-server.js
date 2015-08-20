@@ -31,20 +31,8 @@
     // group
     //------------------------
 
-    function _getFilters () {
-        var result = {};
-        var list = dc.chartRegistry.list();
-
-        for (var e in list) {
-            var chart = list[e];
-            result[chart.chartID()] = chart.filters();
-        }
-
-        return result;
-    }
-
     function _fetchData () {
-        var filters = _getFilters();
+        var filters = dc.utils.getAllFilters();
         var list = dc.chartRegistry.list();
 
         for (var chartId in filters) {

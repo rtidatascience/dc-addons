@@ -8,9 +8,8 @@
 
         var LAYOUT_GRAVITY = 0.2;
         var RADIUS_TRANSITION = 1500;
-        var FRICTION = 0.5;
-        var PADDING = 10;
-        var MIN_RADIUS = 5;
+        var FRICTION = 0.25;
+        var PADDING = 5;
 
         var _force = null;
         var _circles = [];
@@ -41,7 +40,7 @@
                 _chart.r().domain([_chart.rMin(), _chart.rMax()]);
             }
 
-            _chart.r().range([MIN_RADIUS, _chart.xAxisLength() * _chart.maxBubbleRelativeSize()]);
+            _chart.r().range([_chart.MIN_RADIUS, _chart.xAxisLength() * _chart.maxBubbleRelativeSize()]);
 
             if (_circles.length === 0) {
                 createBubbles();
@@ -84,8 +83,7 @@
                 .data(_chart.data())
                 .enter()
                 .append('g')
-                .attr('class', _chart.BUBBLE_NODE_CLASS)
-                .on('click', _chart.onClick);
+                .attr('class', _chart.BUBBLE_NODE_CLASS);
 
             _circles = _gs
                 .append('circle')
@@ -96,6 +94,7 @@
                     return _chart.getColor(d, i);
                 })
                 .attr('stroke-width', 2)
+                .on('click', _chart.onClick)
                 .on('mouseenter', function (d, i) {
                     d3.select(this).attr('stroke', '#303030');
                 })
@@ -108,8 +107,6 @@
 
             _circles.transition().duration(RADIUS_TRANSITION).attr('r', function (d) {
                 d.radius = _chart.bubbleR(d);
-                d.x = Math.random() * _chart.width();
-                d.y = Math.random() * _chart.height();
                 return d.radius;
             });
         }

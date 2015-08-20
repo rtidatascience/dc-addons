@@ -126,7 +126,6 @@
         };
 
         var selectFilter = function (event) {
-            console.log(event);
             if (!event.feature) {
                 return;
             }

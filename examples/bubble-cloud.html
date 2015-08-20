@@ -11,12 +11,12 @@
         <script src="../bower_components/crossfilter/crossfilter.min.js"></script>
         <script src="../bower_components/dcjs/dc.js"></script>
 
-        <script src="../dist/bubble-cloud/dc-bubble-cloud.js"></script>
-        <script src="../dist/tooltip/dc-tooltip-mixin.js"></script>
+        <!-- <script src="../dist/bubble-cloud/dc-bubble-cloud.js"></script>
+        <script src="../dist/tooltip/dc-tooltip-mixin.js"></script> -->
 
         <!-- use src for testing -->
-        <!-- <script src="../src/scripts/bubble-cloud.js"></script>
-        <script src="../src/scripts/tooltip-mixin.js"></script>  -->
+        <script src="../src/scripts/bubble-cloud.js"></script>
+        <script src="../src/scripts/tooltip-mixin.js"></script>
     </head>
     <body>
         <h1>dc.js bubble cloud</h1>
@@ -42,8 +42,9 @@
                     // display
                     width: 500,
                     height: 500,
+                    elasticRadius: true,
 
-                    r: d3.scale.linear().domain([0, 1000]),
+                    r: d3.scale.linear(),
                     radiusValueAccessor: function(d) {
                         return d.value;
                     },

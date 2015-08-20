@@ -489,7 +489,7 @@ If the normal crossfilter library is not included, this library will take the cr
 ```
 
 #### Demo
-Coming soon...
+You will need to clone and run the server locally for an example
 
 
 #### Requirements
@@ -542,7 +542,7 @@ If the normal crossfilter library is not included, this library will take the cr
 ```
 
 #### Demo
-Coming soon...
+You will need to clone and run the server locally for an example
 
 
 #### Requirements

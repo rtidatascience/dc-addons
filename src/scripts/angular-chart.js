@@ -5,38 +5,43 @@
         return {
             restrict: 'E',
             scope: {
-                chartType: '=',
-                chartGroup: '=',
-                chartOptions: '='
+                chart: '=',
+                type: '=',
+                group: '=',
+                options: '=',
+                filters: '=',
             },
             link: function ($scope, element) {
                 $scope.drawChart = function () {
-                    if (typeof $scope.chartType === 'string' && typeof $scope.chartOptions === 'object') {
-                        if ($scope.chart !== null) {
-                            dc.chartRegistry.clear();
-                        }
+                    if (typeof $scope.type === 'string' && typeof $scope.options === 'object') {
+                        $scope.cleanup();
 
-                        $scope.chart = dc[$scope.chartType](element[0], $scope.chartGroup || undefined);
+                        $scope.chart = dc[$scope.type](element[0], $scope.group || undefined);
 
-                        if ($scope.chartType === 'compositeChart') {
-                            for (var i = 0; i < $scope.chartOptions.compose.length; i++) {
-                                if ($scope.chartOptions.compose[i].chartType && typeof $scope.chartOptions.compose[i].useRightYAxis !== 'function') {
-                                    $scope.chartOptions.compose[i] =
-                                        dc[$scope.chartOptions.compose[i].chartType]($scope.chart)
-                                            .options($scope.chartOptions.compose[i]);
+                        if ($scope.type === 'compositeChart') {
+                            for (var i = 0; i < $scope.options.compose.length; i++) {
+                                if ($scope.options.compose[i].type && typeof $scope.options.compose[i].useRightYAxis !== 'function') {
+                                    $scope.options.compose[i] =
+                                        dc[$scope.options.compose[i].type]($scope.chart)
+                                            .options($scope.options.compose[i]);
                                 }
                             }
                         }
 
-                        $scope.chart.options($scope.chartOptions);
+                        $scope.chart.options($scope.options);
                         $scope.chart.render();
+
+                        if ($scope.filters) {
+                            for (var i = 0; i < $scope.filters.length; i++) {
+                                $scope.chart.filter($scope.filters[i]);
+                            }
+                        }
+
+                        // set the model for custom use
+                        $scope.chart = $scope.chart;
+
                         $scope.resize();
                     }
-                };
-
-                $scope.resetChart = function () {
-                    $scope.chart = null;
-                    element.empty();
                 };
 
                 $scope.resize = function () {
@@ -47,7 +52,7 @@
                                 if ($scope.chart.hasOwnProperty('rescale')) {
                                     $scope.chart.rescale();
                                 }
-                                $scope.chart.redraw();
+                                dc.redrawAll();
                             }, 100);
                         }
                     } catch (err) {
@@ -55,17 +60,41 @@
                     }
                 };
 
-                $scope.$watch('chartType', function () {
-                    $scope.resetChart();
-                    $scope.drawChart();
+                $scope.cleanup = function () {
+                    if ($scope.chart) {
+                        dc.deregisterChart($scope.chart);
+                    }
+                };
+
+                //--------------------
+                // watchers
+                //--------------------
+
+                $scope.$watch('type', function () {
+                    if ($scope.type) {
+                        $scope.drawChart();
+                    }
                 });
 
-                $scope.$watch('chartOptions', function () {
-                    $scope.resetChart();
-                    $scope.drawChart();
+                $scope.$watch('options', function () {
+                    if ($scope.options) {
+                        $scope.drawChart();
+                    }
                 });
 
-                $scope.resetChart();
+                $scope.$watch('filters', function () {
+                    if ($scope.filters) {
+                        $scope.drawChart();
+                    }
+                });
+
+                //--------------------
+                // destroy
+                //--------------------
+
+                $scope.$on('$destroy', function () {
+                    $scope.cleanup();
+                });
             }
         };
     };

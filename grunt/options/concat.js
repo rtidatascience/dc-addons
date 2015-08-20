@@ -86,9 +86,16 @@ module.exports = {
             '<%= config.src %>/<%= config.scripts %>/elastic-search.js',
         ]
     },
+    utils: {
+        dest: '<%= config.dist %>/utils/utils.js',
+        src: [
+            '<%= config.src %>/<%= config.scripts %>/utils.js',
+        ]
+    },
     build: {
         dest: '<%= config.dist %>/dc-addons.js',
         src: [
+            '<%= config.src %>/<%= config.scripts %>/utils.js',
             '<%= config.src %>/<%= config.scripts %>/base-map-chart.js',
             '<%= config.src %>/<%= config.scripts %>/base-leaflet-chart.js',
             '<%= config.src %>/<%= config.scripts %>/leaflet-choropleth-chart.js',
