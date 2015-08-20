@@ -10,7 +10,9 @@
         var _leftChart = dc.rowChart(_leftChartWrapper[0][0], chartGroup);
         var _rightChart = dc.rowChart(_rightChartWrapper[0][0], chartGroup);
 
-        //_leftChart.useRightYAxis(true);
+        if (_leftChart.useRightYAxis) {
+            _leftChart.useRightYAxis(true);
+        }
 
         // data filtering
 

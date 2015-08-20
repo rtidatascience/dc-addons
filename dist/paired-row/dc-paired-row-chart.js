@@ -1,7 +1,7 @@
 /*!
- * dc-addons v0.10.1
+ * dc-addons v0.10.2
  *
- * 2015-08-11 09:50:04
+ * 2015-08-20 16:06:36
  *
  */
 (function () {
@@ -16,7 +16,9 @@
         var _leftChart = dc.rowChart(_leftChartWrapper[0][0], chartGroup);
         var _rightChart = dc.rowChart(_rightChartWrapper[0][0], chartGroup);
 
-        _leftChart.useRightYAxis(true);
+        if (_leftChart.useRightYAxis) {
+            _leftChart.useRightYAxis(true);
+        }
 
         // data filtering
 

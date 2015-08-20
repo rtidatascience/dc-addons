@@ -13,13 +13,15 @@
             },
             link: function ($scope, element) {
                 $scope.drawChart = function () {
+                    var i;
+
                     if (typeof $scope.type === 'string' && typeof $scope.options === 'object') {
                         $scope.cleanup();
 
                         $scope.chart = dc[$scope.type](element[0], $scope.group || undefined);
 
                         if ($scope.type === 'compositeChart') {
-                            for (var i = 0; i < $scope.options.compose.length; i++) {
+                            for (i = 0; i < $scope.options.compose.length; i++) {
                                 if ($scope.options.compose[i].type && typeof $scope.options.compose[i].useRightYAxis !== 'function') {
                                     $scope.options.compose[i] =
                                         dc[$scope.options.compose[i].type]($scope.chart)
@@ -32,7 +34,7 @@
                         $scope.chart.render();
 
                         if ($scope.filters) {
-                            for (var i = 0; i < $scope.filters.length; i++) {
+                            for (i = 0; i < $scope.filters.length; i++) {
                                 $scope.chart.filter($scope.filters[i]);
                             }
                         }

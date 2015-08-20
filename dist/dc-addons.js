@@ -1,9 +1,21 @@
 /*!
- * dc-addons v0.10.1
+ * dc-addons v0.10.2
  *
- * 2015-08-11 09:50:04
+ * 2015-08-20 16:06:36
  *
  */
+dc.utils.getAllFilters = function () {
+    var result = {};
+    var list = dc.chartRegistry.list();
+
+    for (var e in list) {
+        var chart = list[e];
+        result[chart.chartID()] = chart.filters();
+    }
+
+    return result;
+};
+
 (function () {
     'use strict';
 
@@ -775,7 +787,6 @@
         };
 
         var selectFilter = function (event) {
-            console.log(event);
             if (!event.feature) {
                 return;
             }
@@ -1171,9 +1182,8 @@
 
         var LAYOUT_GRAVITY = 0.2;
         var RADIUS_TRANSITION = 1500;
-        var FRICTION = 0.5;
-        var PADDING = 10;
-        var MIN_RADIUS = 5;
+        var FRICTION = 0.25;
+        var PADDING = 5;
 
         var _force = null;
         var _circles = [];
@@ -1204,7 +1214,7 @@
                 _chart.r().domain([_chart.rMin(), _chart.rMax()]);
             }
 
-            _chart.r().range([MIN_RADIUS, _chart.xAxisLength() * _chart.maxBubbleRelativeSize()]);
+            _chart.r().range([_chart.MIN_RADIUS, _chart.xAxisLength() * _chart.maxBubbleRelativeSize()]);
 
             if (_circles.length === 0) {
                 createBubbles();
@@ -1247,8 +1257,7 @@
                 .data(_chart.data())
                 .enter()
                 .append('g')
-                .attr('class', _chart.BUBBLE_NODE_CLASS)
-                .on('click', _chart.onClick);
+                .attr('class', _chart.BUBBLE_NODE_CLASS);
 
             _circles = _gs
                 .append('circle')
@@ -1259,6 +1268,7 @@
                     return _chart.getColor(d, i);
                 })
                 .attr('stroke-width', 2)
+                .on('click', _chart.onClick)
                 .on('mouseenter', function (d, i) {
                     d3.select(this).attr('stroke', '#303030');
                 })
@@ -1271,8 +1281,6 @@
 
             _circles.transition().duration(RADIUS_TRANSITION).attr('r', function (d) {
                 d.radius = _chart.bubbleR(d);
-                d.x = Math.random() * _chart.width();
-                d.y = Math.random() * _chart.height();
                 return d.radius;
             });
         }
@@ -1355,7 +1363,9 @@
         var _leftChart = dc.rowChart(_leftChartWrapper[0][0], chartGroup);
         var _rightChart = dc.rowChart(_rightChartWrapper[0][0], chartGroup);
 
-        _leftChart.useRightYAxis(true);
+        if (_leftChart.useRightYAxis) {
+            _leftChart.useRightYAxis(true);
+        }
 
         // data filtering
 
@@ -2559,38 +2569,45 @@
         return {
             restrict: 'E',
             scope: {
-                chartType: '=',
-                chartGroup: '=',
-                chartOptions: '='
+                chart: '=',
+                type: '=',
+                group: '=',
+                options: '=',
+                filters: '=',
             },
             link: function ($scope, element) {
                 $scope.drawChart = function () {
-                    if (typeof $scope.chartType === 'string' && typeof $scope.chartOptions === 'object') {
-                        if ($scope.chart !== null) {
-                            dc.chartRegistry.clear();
-                        }
+                    var i;
 
-                        $scope.chart = dc[$scope.chartType](element[0], $scope.chartGroup || undefined);
+                    if (typeof $scope.type === 'string' && typeof $scope.options === 'object') {
+                        $scope.cleanup();
 
-                        if ($scope.chartType === 'compositeChart') {
-                            for (var i = 0; i < $scope.chartOptions.compose.length; i++) {
-                                if ($scope.chartOptions.compose[i].chartType && typeof $scope.chartOptions.compose[i].useRightYAxis !== 'function') {
-                                    $scope.chartOptions.compose[i] =
-                                        dc[$scope.chartOptions.compose[i].chartType]($scope.chart)
-                                            .options($scope.chartOptions.compose[i]);
+                        $scope.chart = dc[$scope.type](element[0], $scope.group || undefined);
+
+                        if ($scope.type === 'compositeChart') {
+                            for (i = 0; i < $scope.options.compose.length; i++) {
+                                if ($scope.options.compose[i].type && typeof $scope.options.compose[i].useRightYAxis !== 'function') {
+                                    $scope.options.compose[i] =
+                                        dc[$scope.options.compose[i].type]($scope.chart)
+                                            .options($scope.options.compose[i]);
                                 }
                             }
                         }
 
-                        $scope.chart.options($scope.chartOptions);
+                        $scope.chart.options($scope.options);
                         $scope.chart.render();
+
+                        if ($scope.filters) {
+                            for (i = 0; i < $scope.filters.length; i++) {
+                                $scope.chart.filter($scope.filters[i]);
+                            }
+                        }
+
+                        // set the model for custom use
+                        $scope.chart = $scope.chart;
+
                         $scope.resize();
                     }
-                };
-
-                $scope.resetChart = function () {
-                    $scope.chart = null;
-                    element.empty();
                 };
 
                 $scope.resize = function () {
@@ -2601,7 +2618,7 @@
                                 if ($scope.chart.hasOwnProperty('rescale')) {
                                     $scope.chart.rescale();
                                 }
-                                $scope.chart.redraw();
+                                dc.redrawAll();
                             }, 100);
                         }
                     } catch (err) {
@@ -2609,17 +2626,41 @@
                     }
                 };
 
-                $scope.$watch('chartType', function () {
-                    $scope.resetChart();
-                    $scope.drawChart();
+                $scope.cleanup = function () {
+                    if ($scope.chart) {
+                        dc.deregisterChart($scope.chart);
+                    }
+                };
+
+                //--------------------
+                // watchers
+                //--------------------
+
+                $scope.$watch('type', function () {
+                    if ($scope.type) {
+                        $scope.drawChart();
+                    }
                 });
 
-                $scope.$watch('chartOptions', function () {
-                    $scope.resetChart();
-                    $scope.drawChart();
+                $scope.$watch('options', function () {
+                    if ($scope.options) {
+                        $scope.drawChart();
+                    }
                 });
 
-                $scope.resetChart();
+                $scope.$watch('filters', function () {
+                    if ($scope.filters) {
+                        $scope.drawChart();
+                    }
+                });
+
+                //--------------------
+                // destroy
+                //--------------------
+
+                $scope.$on('$destroy', function () {
+                    $scope.cleanup();
+                });
             }
         };
     };

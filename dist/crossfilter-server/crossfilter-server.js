@@ -1,7 +1,7 @@
 /*!
- * dc-addons v0.10.1
+ * dc-addons v0.10.2
  *
- * 2015-08-11 09:50:04
+ * 2015-08-20 16:06:36
  *
  */
 (function () {
@@ -37,20 +37,8 @@
     // group
     //------------------------
 
-    function _getFilters () {
-        var result = {};
-        var list = dc.chartRegistry.list();
-
-        for (var e in list) {
-            var chart = list[e];
-            result[chart.chartID()] = chart.filters();
-        }
-
-        return result;
-    }
-
     function _fetchData () {
-        var filters = _getFilters();
+        var filters = dc.utils.getAllFilters();
         var list = dc.chartRegistry.list();
 
         for (var chartId in filters) {
@@ -60,8 +48,8 @@
                     var group = chart.group();
 
                     if (group && group._filterChanged) {
-                        group._filterChanged = false;
                         _fetch(group, chart, filters, chartId);
+                        group._filterChanged = false;
                     }
                     break;
                 }
