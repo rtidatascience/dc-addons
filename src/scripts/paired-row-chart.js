@@ -57,7 +57,7 @@
         Set or get the left key filter attribute of a chart.
 
         For example
-        function(d) {
+        function (d) {
             return d.key[0] === 'Male';
         }
 
@@ -79,7 +79,7 @@
         Set or get the right key filter attribute of a chart.
 
         For example
-        function(d) {
+        function (d) {
             return d.key[0] === 'Female';
         }
 
@@ -242,12 +242,12 @@
         }
 
         // get the charts - mainly used for testing
-        _chart.leftChart = function() {
-          return _leftChart;
+        _chart.leftChart = function () {
+            return _leftChart;
         };
 
-        _chart.rightChart = function() {
-          return _rightChart;
+        _chart.rightChart = function () {
+            return _rightChart;
         };
 
         // functions that we just want to pass on to both sub charts
@@ -266,7 +266,7 @@
             'cap', 'ordering' , 'dimension', 'group', 'othersGrouper', 'data'
         ];
 
-        function addGetterSetterFunction(functionName) {
+        function addGetterSetterfunction (functionName) {
             _chart[functionName] = function (_) {
                 if (!arguments.length) {
                     return _leftChart[functionName]();
@@ -278,7 +278,7 @@
         }
 
         for (var i = 0; i < _getterSetterPassOn.length; i++) {
-            addGetterSetterFunction(_getterSetterPassOn[i]);
+            addGetterSetterfunction (_getterSetterPassOn[i]);
         }
 
         var _passOnFunctions = [
@@ -299,6 +299,4 @@
 
         return _chart.anchor(parent, chartGroup);
     };
-
-
 })();
