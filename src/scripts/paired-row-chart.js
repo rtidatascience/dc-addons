@@ -1,6 +1,33 @@
 (function () {
     'use strict';
 
+    /**
+    ## Paired Row Chart
+    Includes: [Cap Mixin](#cap-mixin), [Margin Mixin](#margin-mixin), [Color Mixin](#color-mixin), [Base Mixin](#base-mixin)
+
+    Concrete paired row chart implementation.
+    #### dc.pairedRowChart(parent[, chartGroup])
+    Create a paired row chart instance and attach it to the given parent element.
+
+    Parameters:
+
+    * parent : string | node | selection - any valid
+     [d3 single selector](https://github.com/mbostock/d3/wiki/Selections#selecting-elements) specifying
+     a dom block element such as a div; or a dom element or d3 selection.
+
+    * chartGroup : string (optional) - name of the chart group this chart instance should be placed in.
+     Interaction with a chart will only trigger events and redraws within the chart's group.
+
+    Returns:
+    A newly created paired row chart instance
+
+    ```js
+    // create a paired row chart under #chart-container1 element using the default global chart group
+    var chart1 = dc.pairedRowChart('#chart-container1');
+    // create a paired row chart under #chart-container2 element using chart group A
+    var chart2 = dc.pairedRowChart('#chart-container2', 'chartGroupA');
+    ```
+    **/
     dc.pairedRowChart = function (parent, chartGroup) {
         var _chart = dc.capMixin(dc.marginMixin(dc.colorMixin(dc.baseMixin({}))));
 
@@ -30,7 +57,7 @@
         Set or get the left key filter attribute of a chart.
 
         For example
-        function (d) {
+        function(d) {
             return d.key[0] === 'Male';
         }
 
@@ -52,7 +79,7 @@
         Set or get the right key filter attribute of a chart.
 
         For example
-        function (d) {
+        function(d) {
             return d.key[0] === 'Female';
         }
 
@@ -109,9 +136,9 @@
             });
         };
 
-        // margins
-        // the margins between the charts need to be set to 0 so that they sit together
+        // width and margins
 
+        // the margins between the charts need to be set to 0 so that they sit together
         var _margins = _chart.margins(); // get the default margins
 
         _chart.margins = function (_) {
@@ -141,6 +168,44 @@
 
         _chart.margins(_margins); // set the new margins
 
+        // the width needs to be halved
+        var _width = 0; // get the default width
+
+        _chart.width = function (_) {
+            if (!arguments.length) {
+                return _width;
+            }
+            _width = _;
+
+            // set left chart width
+            _leftChart.width(dc.utils.isNumber(_) ? _ / 2 : _);
+
+            // set right chart width
+            _rightChart.width(dc.utils.isNumber(_) ? _ / 2 : _);
+
+            return _chart;
+        };
+
+        // the minWidth needs to be halved
+        var _minWidth = _chart.minWidth(); // get the default minWidth
+
+        _chart.minWidth = function (_) {
+            if (!arguments.length) {
+                return _minWidth;
+            }
+            _minWidth = _;
+
+            // set left chart minWidth
+            _leftChart.minWidth(dc.utils.isNumber(_) ? _ / 2 : _);
+
+            // set right chart minWidth
+            _rightChart.minWidth(dc.utils.isNumber(_) ? _ / 2 : _);
+
+            return _chart;
+        };
+
+        _chart.minWidth(_minWidth); // set the new minWidth
+
         // svg
         // return an array of both the sub chart svgs
 
@@ -148,8 +213,7 @@
             return d3.selectAll([_leftChart.svg()[0][0], _rightChart.svg()[0][0]]);
         };
 
-        // data
-        // we need to make sure that the extent is the same for both charts
+        // data - we need to make sure that the extent is the same for both charts
 
         // this way we need a new function that is overridable
         if (_leftChart.calculateAxisScaleData) {
@@ -177,11 +241,20 @@
             };
         }
 
+        // get the charts - mainly used for testing
+        _chart.leftChart = function() {
+          return _leftChart;
+        };
+
+        _chart.rightChart = function() {
+          return _rightChart;
+        };
+
         // functions that we just want to pass on to both sub charts
 
         var _getterSetterPassOn = [
             // display
-            'height', 'width', 'minHeight', 'minWidth', 'renderTitleLabel', 'fixedBarHeight', 'gap', 'othersLabel',
+            'height', 'minHeight', 'renderTitleLabel', 'fixedBarHeight', 'gap', 'othersLabel',
             'transitionDuration', 'label', 'renderLabel', 'title', 'renderTitle', 'chartGroup',
             //colors
             'colors', 'ordinalColors', 'linearColors', 'colorAccessor', 'colorDomain', 'getColor', 'colorCalculator',
@@ -193,7 +266,7 @@
             'cap', 'ordering' , 'dimension', 'group', 'othersGrouper', 'data'
         ];
 
-        function addGetterSetterfunction (functionName) {
+        function addGetterSetterFunction(functionName) {
             _chart[functionName] = function (_) {
                 if (!arguments.length) {
                     return _leftChart[functionName]();
@@ -205,7 +278,7 @@
         }
 
         for (var i = 0; i < _getterSetterPassOn.length; i++) {
-            addGetterSetterfunction (_getterSetterPassOn[i]);
+            addGetterSetterFunction(_getterSetterPassOn[i]);
         }
 
         var _passOnFunctions = [
@@ -226,5 +299,6 @@
 
         return _chart.anchor(parent, chartGroup);
     };
+
 
 })();
