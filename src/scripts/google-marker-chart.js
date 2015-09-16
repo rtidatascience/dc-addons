@@ -19,6 +19,7 @@
         var _markerListFilterd = [];
         var _currentGroups = false;
         var _icon = false;
+        var _infoWindow = null;
 
         _chart.renderTitle(true);
 
@@ -60,9 +61,6 @@
 
             if (_cluster) {
                 _layerGroup = new MarkerClusterer(_chart.map());
-            } else {
-                _layerGroup = new google.maps.OverlayView();
-                _layerGroup.setMap(_chart.map());
             }
         };
 
@@ -77,7 +75,9 @@
                 _markerList = [];
             }
 
-            _layerGroup.clearMarkers();
+            if (_cluster) {
+                _layerGroup.clearMarkers();
+            }
 
             var addList = [];
             var featureGroup = [];
@@ -102,8 +102,8 @@
                     bounds.extend(marker.getPosition());
                     featureGroup.push(marker);
 
-                    if (!_chart.cluster()) {
-                        _layerGroup.addMarker(marker);
+                    if (!_cluster) {
+                        marker.setMap(_chart.map());
                     } else {
                         addList.push(marker);
                     }
@@ -116,7 +116,7 @@
                 }
             });
 
-            if (_chart.cluster() && addList.length > 0) {
+            if (_cluster && addList.length > 0) {
                 _layerGroup.addMarkers(addList);
 
             }
@@ -239,7 +239,15 @@
 
             if (_chart.renderPopup()) {
                 google.maps.event.addListener(marker, 'click', function () {
-                    _chart.popup()(v, marker).open(_chart.map(), marker);
+                    if (_infoWindow) {
+                        _infoWindow.close();
+                    }
+
+                    _infoWindow = new google.maps.InfoWindow({
+                        content: _chart.popup()(v, marker)
+                    });
+
+                    _infoWindow.open(_chart.map(), marker);
                 });
             }
 
