@@ -25,13 +25,14 @@
     "crossfilter": "1.x"
   },
   "homepage": "https://github.com/dc-js/dc.js",
-  "_release": "27165df5bc",
+  "version": "2.0.0-beta.18",
+  "_release": "2.0.0-beta.18",
   "_resolution": {
-    "type": "branch",
-    "branch": "develop",
-    "commit": "27165df5bc9156f661593fdecf87c637aac08024"
+    "type": "version",
+    "tag": "2.0.0-beta.18",
+    "commit": "82f0215361456701a48220d4764518eeb755f7aa"
   },
-  "_source": "https://github.com/dc-js/dc.js.git",
-  "_target": "develop",
-  "_originalSource": "https://github.com/dc-js/dc.js.git"
+  "_source": "git://github.com/dc-js/dc.js.git",
+  "_target": "~2.0.0",
+  "_originalSource": "dc-js/dc.js"
 }

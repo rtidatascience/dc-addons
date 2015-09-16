@@ -1,9 +1,21 @@
 /*!
- * dc-addons v0.10.1
+ * dc-addons v0.10.4
  *
- * 2015-08-11 09:50:04
+ * 2015-09-16 13:22:54
  *
  */
+dc.utils.getAllFilters = function () {
+    var result = {};
+    var list = dc.chartRegistry.list();
+
+    for (var e in list) {
+        var chart = list[e];
+        result[chart.chartID()] = chart.filters();
+    }
+
+    return result;
+};
+
 (function () {
     'use strict';
 
@@ -775,7 +787,6 @@
         };
 
         var selectFilter = function (event) {
-            console.log(event);
             if (!event.feature) {
                 return;
             }
@@ -813,6 +824,7 @@
         var _markerListFilterd = [];
         var _currentGroups = false;
         var _icon = false;
+        var _infoWindow = null;
 
         _chart.renderTitle(true);
 
@@ -854,9 +866,6 @@
 
             if (_cluster) {
                 _layerGroup = new MarkerClusterer(_chart.map());
-            } else {
-                _layerGroup = new google.maps.OverlayView();
-                _layerGroup.setMap(_chart.map());
             }
         };
 
@@ -871,7 +880,9 @@
                 _markerList = [];
             }
 
-            _layerGroup.clearMarkers();
+            if (_cluster) {
+                _layerGroup.clearMarkers();
+            }
 
             var addList = [];
             var featureGroup = [];
@@ -896,8 +907,8 @@
                     bounds.extend(marker.getPosition());
                     featureGroup.push(marker);
 
-                    if (!_chart.cluster()) {
-                        _layerGroup.addMarker(marker);
+                    if (!_cluster) {
+                        marker.setMap(_chart.map());
                     } else {
                         addList.push(marker);
                     }
@@ -910,7 +921,7 @@
                 }
             });
 
-            if (_chart.cluster() && addList.length > 0) {
+            if (_cluster && addList.length > 0) {
                 _layerGroup.addMarkers(addList);
 
             }
@@ -1033,7 +1044,15 @@
 
             if (_chart.renderPopup()) {
                 google.maps.event.addListener(marker, 'click', function () {
-                    _chart.popup()(v, marker).open(_chart.map(), marker);
+                    if (_infoWindow) {
+                        _infoWindow.close();
+                    }
+
+                    _infoWindow = new google.maps.InfoWindow({
+                        content: _chart.popup()(v, marker)
+                    });
+
+                    _infoWindow.open(_chart.map(), marker);
                 });
             }
 
@@ -1171,9 +1190,8 @@
 
         var LAYOUT_GRAVITY = 0.2;
         var RADIUS_TRANSITION = 1500;
-        var FRICTION = 0.5;
-        var PADDING = 10;
-        var MIN_RADIUS = 5;
+        var FRICTION = 0.25;
+        var PADDING = 5;
 
         var _force = null;
         var _circles = [];
@@ -1204,7 +1222,7 @@
                 _chart.r().domain([_chart.rMin(), _chart.rMax()]);
             }
 
-            _chart.r().range([MIN_RADIUS, _chart.xAxisLength() * _chart.maxBubbleRelativeSize()]);
+            _chart.r().range([_chart.MIN_RADIUS, _chart.xAxisLength() * _chart.maxBubbleRelativeSize()]);
 
             if (_circles.length === 0) {
                 createBubbles();
@@ -1247,8 +1265,7 @@
                 .data(_chart.data())
                 .enter()
                 .append('g')
-                .attr('class', _chart.BUBBLE_NODE_CLASS)
-                .on('click', _chart.onClick);
+                .attr('class', _chart.BUBBLE_NODE_CLASS);
 
             _circles = _gs
                 .append('circle')
@@ -1259,6 +1276,7 @@
                     return _chart.getColor(d, i);
                 })
                 .attr('stroke-width', 2)
+                .on('click', _chart.onClick)
                 .on('mouseenter', function (d, i) {
                     d3.select(this).attr('stroke', '#303030');
                 })
@@ -1271,8 +1289,6 @@
 
             _circles.transition().duration(RADIUS_TRANSITION).attr('r', function (d) {
                 d.radius = _chart.bubbleR(d);
-                d.x = Math.random() * _chart.width();
-                d.y = Math.random() * _chart.height();
                 return d.radius;
             });
         }
@@ -1346,6 +1362,33 @@
 (function () {
     'use strict';
 
+    /**
+    ## Paired Row Chart
+    Includes: [Cap Mixin](#cap-mixin), [Margin Mixin](#margin-mixin), [Color Mixin](#color-mixin), [Base Mixin](#base-mixin)
+
+    Concrete paired row chart implementation.
+    #### dc.pairedRowChart(parent[, chartGroup])
+    Create a paired row chart instance and attach it to the given parent element.
+
+    Parameters:
+
+    * parent : string | node | selection - any valid
+     [d3 single selector](https://github.com/mbostock/d3/wiki/Selections#selecting-elements) specifying
+     a dom block element such as a div; or a dom element or d3 selection.
+
+    * chartGroup : string (optional) - name of the chart group this chart instance should be placed in.
+     Interaction with a chart will only trigger events and redraws within the chart's group.
+
+    Returns:
+    A newly created paired row chart instance
+
+    ```js
+    // create a paired row chart under #chart-container1 element using the default global chart group
+    var chart1 = dc.pairedRowChart('#chart-container1');
+    // create a paired row chart under #chart-container2 element using chart group A
+    var chart2 = dc.pairedRowChart('#chart-container2', 'chartGroupA');
+    ```
+    **/
     dc.pairedRowChart = function (parent, chartGroup) {
         var _chart = dc.capMixin(dc.marginMixin(dc.colorMixin(dc.baseMixin({}))));
 
@@ -1355,7 +1398,9 @@
         var _leftChart = dc.rowChart(_leftChartWrapper[0][0], chartGroup);
         var _rightChart = dc.rowChart(_rightChartWrapper[0][0], chartGroup);
 
-        _leftChart.useRightYAxis(true);
+        if (_leftChart.useRightYAxis) {
+            _leftChart.useRightYAxis(true);
+        }
 
         // data filtering
 
@@ -1452,9 +1497,9 @@
             });
         };
 
-        // margins
-        // the margins between the charts need to be set to 0 so that they sit together
+        // width and margins
 
+        // the margins between the charts need to be set to 0 so that they sit together
         var _margins = _chart.margins(); // get the default margins
 
         _chart.margins = function (_) {
@@ -1484,6 +1529,44 @@
 
         _chart.margins(_margins); // set the new margins
 
+        // the width needs to be halved
+        var _width = 0; // get the default width
+
+        _chart.width = function (_) {
+            if (!arguments.length) {
+                return _width;
+            }
+            _width = _;
+
+            // set left chart width
+            _leftChart.width(dc.utils.isNumber(_) ? _ / 2 : _);
+
+            // set right chart width
+            _rightChart.width(dc.utils.isNumber(_) ? _ / 2 : _);
+
+            return _chart;
+        };
+
+        // the minWidth needs to be halved
+        var _minWidth = _chart.minWidth(); // get the default minWidth
+
+        _chart.minWidth = function (_) {
+            if (!arguments.length) {
+                return _minWidth;
+            }
+            _minWidth = _;
+
+            // set left chart minWidth
+            _leftChart.minWidth(dc.utils.isNumber(_) ? _ / 2 : _);
+
+            // set right chart minWidth
+            _rightChart.minWidth(dc.utils.isNumber(_) ? _ / 2 : _);
+
+            return _chart;
+        };
+
+        _chart.minWidth(_minWidth); // set the new minWidth
+
         // svg
         // return an array of both the sub chart svgs
 
@@ -1491,8 +1574,7 @@
             return d3.selectAll([_leftChart.svg()[0][0], _rightChart.svg()[0][0]]);
         };
 
-        // data
-        // we need to make sure that the extent is the same for both charts
+        // data - we need to make sure that the extent is the same for both charts
 
         // this way we need a new function that is overridable
         if (_leftChart.calculateAxisScaleData) {
@@ -1520,11 +1602,20 @@
             };
         }
 
+        // get the charts - mainly used for testing
+        _chart.leftChart = function () {
+            return _leftChart;
+        };
+
+        _chart.rightChart = function () {
+            return _rightChart;
+        };
+
         // functions that we just want to pass on to both sub charts
 
         var _getterSetterPassOn = [
             // display
-            'height', 'width', 'minHeight', 'minWidth', 'renderTitleLabel', 'fixedBarHeight', 'gap', 'othersLabel',
+            'height', 'minHeight', 'renderTitleLabel', 'fixedBarHeight', 'gap', 'othersLabel',
             'transitionDuration', 'label', 'renderLabel', 'title', 'renderTitle', 'chartGroup',
             //colors
             'colors', 'ordinalColors', 'linearColors', 'colorAccessor', 'colorDomain', 'getColor', 'colorCalculator',
@@ -1569,7 +1660,6 @@
 
         return _chart.anchor(parent, chartGroup);
     };
-
 })();
 
 (function () {
@@ -2559,38 +2649,45 @@
         return {
             restrict: 'E',
             scope: {
-                chartType: '=',
-                chartGroup: '=',
-                chartOptions: '='
+                chart: '=',
+                type: '=',
+                group: '=',
+                options: '=',
+                filters: '=',
             },
             link: function ($scope, element) {
                 $scope.drawChart = function () {
-                    if (typeof $scope.chartType === 'string' && typeof $scope.chartOptions === 'object') {
-                        if ($scope.chart !== null) {
-                            dc.chartRegistry.clear();
-                        }
+                    var i;
 
-                        $scope.chart = dc[$scope.chartType](element[0], $scope.chartGroup || undefined);
+                    if (typeof $scope.type === 'string' && typeof $scope.options === 'object') {
+                        $scope.cleanup();
 
-                        if ($scope.chartType === 'compositeChart') {
-                            for (var i = 0; i < $scope.chartOptions.compose.length; i++) {
-                                if ($scope.chartOptions.compose[i].chartType && typeof $scope.chartOptions.compose[i].useRightYAxis !== 'function') {
-                                    $scope.chartOptions.compose[i] =
-                                        dc[$scope.chartOptions.compose[i].chartType]($scope.chart)
-                                            .options($scope.chartOptions.compose[i]);
+                        $scope.chart = dc[$scope.type](element[0], $scope.group || undefined);
+
+                        if ($scope.type === 'compositeChart') {
+                            for (i = 0; i < $scope.options.compose.length; i++) {
+                                if ($scope.options.compose[i].type && typeof $scope.options.compose[i].useRightYAxis !== 'function') {
+                                    $scope.options.compose[i] =
+                                        dc[$scope.options.compose[i].type]($scope.chart)
+                                            .options($scope.options.compose[i]);
                                 }
                             }
                         }
 
-                        $scope.chart.options($scope.chartOptions);
+                        $scope.chart.options($scope.options);
                         $scope.chart.render();
+
+                        if ($scope.filters) {
+                            for (i = 0; i < $scope.filters.length; i++) {
+                                $scope.chart.filter($scope.filters[i]);
+                            }
+                        }
+
+                        // set the model for custom use
+                        $scope.chart = $scope.chart;
+
                         $scope.resize();
                     }
-                };
-
-                $scope.resetChart = function () {
-                    $scope.chart = null;
-                    element.empty();
                 };
 
                 $scope.resize = function () {
@@ -2601,7 +2698,7 @@
                                 if ($scope.chart.hasOwnProperty('rescale')) {
                                     $scope.chart.rescale();
                                 }
-                                $scope.chart.redraw();
+                                dc.redrawAll();
                             }, 100);
                         }
                     } catch (err) {
@@ -2609,17 +2706,41 @@
                     }
                 };
 
-                $scope.$watch('chartType', function () {
-                    $scope.resetChart();
-                    $scope.drawChart();
+                $scope.cleanup = function () {
+                    if ($scope.chart) {
+                        dc.deregisterChart($scope.chart);
+                    }
+                };
+
+                //--------------------
+                // watchers
+                //--------------------
+
+                $scope.$watch('type', function () {
+                    if ($scope.type) {
+                        $scope.drawChart();
+                    }
                 });
 
-                $scope.$watch('chartOptions', function () {
-                    $scope.resetChart();
-                    $scope.drawChart();
+                $scope.$watch('options', function () {
+                    if ($scope.options) {
+                        $scope.drawChart();
+                    }
                 });
 
-                $scope.resetChart();
+                $scope.$watch('filters', function () {
+                    if ($scope.filters) {
+                        $scope.drawChart();
+                    }
+                });
+
+                //--------------------
+                // destroy
+                //--------------------
+
+                $scope.$on('$destroy', function () {
+                    $scope.cleanup();
+                });
             }
         };
     };

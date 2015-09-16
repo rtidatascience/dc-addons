@@ -195,11 +195,11 @@
                     return d.value;
                   })
                   .featureKeyAccessor(function(feature) {
-                    return feature.k.code;
+                    return feature.H.code;
                   })
                   .renderPopup(true)
                   .popup(function(d,feature) {
-                    return feature.k.nameEn+" : "+d.value;
+                    return feature.H.nameEn+" : "+d.value;
                   });
 
                 var types = xf.dimension(function(d) { return d.type; });

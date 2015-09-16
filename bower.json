@@ -41,5 +41,8 @@
   "dependencies": {},
   "devDependencies": {
     "dc-addons": "~0.10.1"
+  },
+  "resolutions": {
+    "d3": "~3.5.6"
   }
 }

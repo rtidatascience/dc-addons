@@ -1,7 +1,7 @@
 {
   "name": "dc-addons",
   "description": "These are additional charts that extend dc.js",
-  "version": "0.10.1",
+  "version": "0.10.4",
   "homepage": "https://github.com/intellipharm/dc-addons",
   "repository": {
     "type": "git",
@@ -39,10 +39,13 @@
     "!dist/**/*"
   ],
   "dependencies": {
-    "dcjs": "https://github.com/dc-js/dc.js.git#develop",
-    "leaflet": "~0.7.3",
+    "dcjs": "dc-js/dc.js#~2.0.0",
+    "leaflet": "~0.7.5",
     "leaflet.markercluster": "~0.4.0",
     "d3-tip": "~0.6.6",
-    "d3": "~3.5.5"
+    "d3": "~3.5.6"
+  },
+  "resolutions": {
+    "d3": "~3.5.6"
   }
 }
