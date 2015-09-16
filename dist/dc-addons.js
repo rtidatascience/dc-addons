@@ -1,7 +1,7 @@
 /*!
- * dc-addons v0.10.3
+ * dc-addons v0.10.4
  *
- * 2015-08-26 14:19:42
+ * 2015-09-16 13:22:54
  *
  */
 dc.utils.getAllFilters = function () {
@@ -824,6 +824,7 @@ dc.utils.getAllFilters = function () {
         var _markerListFilterd = [];
         var _currentGroups = false;
         var _icon = false;
+        var _infoWindow = null;
 
         _chart.renderTitle(true);
 
@@ -865,9 +866,6 @@ dc.utils.getAllFilters = function () {
 
             if (_cluster) {
                 _layerGroup = new MarkerClusterer(_chart.map());
-            } else {
-                _layerGroup = new google.maps.OverlayView();
-                _layerGroup.setMap(_chart.map());
             }
         };
 
@@ -882,7 +880,9 @@ dc.utils.getAllFilters = function () {
                 _markerList = [];
             }
 
-            _layerGroup.clearMarkers();
+            if (_cluster) {
+                _layerGroup.clearMarkers();
+            }
 
             var addList = [];
             var featureGroup = [];
@@ -907,8 +907,8 @@ dc.utils.getAllFilters = function () {
                     bounds.extend(marker.getPosition());
                     featureGroup.push(marker);
 
-                    if (!_chart.cluster()) {
-                        _layerGroup.addMarker(marker);
+                    if (!_cluster) {
+                        marker.setMap(_chart.map());
                     } else {
                         addList.push(marker);
                     }
@@ -921,7 +921,7 @@ dc.utils.getAllFilters = function () {
                 }
             });
 
-            if (_chart.cluster() && addList.length > 0) {
+            if (_cluster && addList.length > 0) {
                 _layerGroup.addMarkers(addList);
 
             }
@@ -1044,7 +1044,15 @@ dc.utils.getAllFilters = function () {
 
             if (_chart.renderPopup()) {
                 google.maps.event.addListener(marker, 'click', function () {
-                    _chart.popup()(v, marker).open(_chart.map(), marker);
+                    if (_infoWindow) {
+                        _infoWindow.close();
+                    }
+
+                    _infoWindow = new google.maps.InfoWindow({
+                        content: _chart.popup()(v, marker)
+                    });
+
+                    _infoWindow.open(_chart.map(), marker);
                 });
             }
 
