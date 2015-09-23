@@ -1,6 +1,10 @@
 (function () {
     'use strict';
 
+    if (dc.serverChart) {
+        return false;
+    }
+
     if (!('dc' in window)) {
         window.dc = {};
     }

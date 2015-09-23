@@ -1,6 +1,10 @@
 (function () {
     'use strict';
 
+    if (dc.baseGoogleChart) {
+        return false;
+    }
+
     dc.baseGoogleChart = function (_chart) {
         _chart = dc.baseMapChart(_chart);
 

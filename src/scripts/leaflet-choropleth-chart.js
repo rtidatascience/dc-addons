@@ -1,6 +1,10 @@
 (function () {
     'use strict';
 
+    if (dc.leafletChoroplethChart) {
+        return false;
+    }
+
     dc.leafletChoroplethChart = function (parent, chartGroup) {
         var _chart = dc.colorChart(dc.baseLeafletChart({}));
 

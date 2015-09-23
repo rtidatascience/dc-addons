@@ -1,6 +1,10 @@
 (function () {
     'use strict';
 
+    if (dc.tooltipMixin) {
+        return false;
+    }
+
     dc.tooltipMixin = function (_chart) {
 
         if (_chart) {

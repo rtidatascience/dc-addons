@@ -1,6 +1,10 @@
 (function () {
     'use strict';
 
+    if (dc.googleMarkerChart) {
+        return false;
+    }
+
     dc.googleMarkerChart = function (parent, chartGroup) {
         var _chart = dc.baseGoogleChart({});
 
@@ -57,6 +61,26 @@
                         zoomFilter('click');
                     }, this);
                 }
+
+                // if (google.maps.drawing) {
+                //     var drawingManager = new google.maps.drawing.DrawingManager({
+                //         drawingControl: true,
+                //         drawingControlOptions: {
+                //             position: google.maps.ControlPosition.TOP_CENTER,
+                //             drawingModes: [
+                //                 google.maps.drawing.OverlayType.CIRCLE,
+                //                 google.maps.drawing.OverlayType.POLYGON,
+                //                 google.maps.drawing.OverlayType.RECTANGLE
+                //             ]
+                //         },
+                //     });
+                //
+                //     drawingManager.setMap(_chart.map());
+                //
+                //     google.maps.event.addListener(drawingManager, 'overlaycomplete', function (OverlayCompleteEvent) {
+                //         console.log(OverlayCompleteEvent.overlay);
+                //     });
+                // }
             }
 
             if (_cluster) {

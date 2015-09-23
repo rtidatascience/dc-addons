@@ -1,6 +1,10 @@
 (function () {
     'use strict';
 
+    if (dc.googleChoroplethChart) {
+        return false;
+    }
+
     dc.googleChoroplethChart = function (parent, chartGroup) {
         var _chart = dc.colorChart(dc.baseGoogleChart({}));
 

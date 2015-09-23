@@ -1,6 +1,10 @@
 (function () {
     'use strict';
 
+    if (dc.serverChart.redrawPieChart) {
+        return false;
+    }
+
     var duration = 5000;
     var ease = 'quad-in-out';
     var pieRegEx = new RegExp([

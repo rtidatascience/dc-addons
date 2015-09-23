@@ -1,6 +1,10 @@
 (function () {
     'use strict';
 
+    if (dc.leafletMarkerChart) {
+        return false;
+    }
+
     dc.leafletMarkerChart = function (parent, chartGroup) {
         var _chart = dc.baseLeafletChart({});
 

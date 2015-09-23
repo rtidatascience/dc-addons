@@ -3,6 +3,10 @@
 (function () {
     'use strict';
 
+    if (dc.bubbleCloud) {
+        return false;
+    }
+
     dc.bubbleCloud = function (parent, chartGroup) {
         var _chart = dc.bubbleMixin(dc.capMixin(dc.bubbleChart()));
 

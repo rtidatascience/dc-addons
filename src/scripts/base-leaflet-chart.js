@@ -1,6 +1,10 @@
 (function () {
     'use strict';
 
+    if (dc.baseLeafletChart) {
+        return false;
+    }
+
     dc.baseLeafletChart = function (_chart) {
         _chart = dc.baseMapChart(_chart);
 
