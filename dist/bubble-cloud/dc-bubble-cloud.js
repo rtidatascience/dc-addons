@@ -1,13 +1,17 @@
 /*!
- * dc-addons v0.10.4
+ * dc-addons v0.10.5
  *
- * 2015-09-16 13:22:54
+ * 2015-09-23 15:39:49
  *
  */
 // Code copied and changed from https://github.com/vlandham/gates_bubbles
 
 (function () {
     'use strict';
+
+    if (dc.bubbleCloud) {
+        return false;
+    }
 
     dc.bubbleCloud = function (parent, chartGroup) {
         var _chart = dc.bubbleMixin(dc.capMixin(dc.bubbleChart()));

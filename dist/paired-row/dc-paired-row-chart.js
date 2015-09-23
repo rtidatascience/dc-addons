@@ -1,11 +1,15 @@
 /*!
- * dc-addons v0.10.4
+ * dc-addons v0.10.5
  *
- * 2015-09-16 13:22:54
+ * 2015-09-23 15:39:49
  *
  */
 (function () {
     'use strict';
+
+    if (dc.pairedRowChart) {
+        return false;
+    }
 
     /**
     ## Paired Row Chart
@@ -146,6 +150,7 @@
 
         // the margins between the charts need to be set to 0 so that they sit together
         var _margins = _chart.margins(); // get the default margins
+        _margins.right = _margins.left;
 
         _chart.margins = function (_) {
             if (!arguments.length) {
@@ -261,13 +266,13 @@
         var _getterSetterPassOn = [
             // display
             'height', 'minHeight', 'renderTitleLabel', 'fixedBarHeight', 'gap', 'othersLabel',
-            'transitionDuration', 'label', 'renderLabel', 'title', 'renderTitle', 'chartGroup',
+            'transitionDuration', 'label', 'renderLabel', 'title', 'renderTitle', 'chartGroup', 'legend',
             //colors
             'colors', 'ordinalColors', 'linearColors', 'colorAccessor', 'colorDomain', 'getColor', 'colorCalculator',
             // x axis
-            'x', 'elasticX', 'valueAccessor', 'labelOffsetX', 'titleLabelOffsetx',
+            'x', 'elasticX', 'valueAccessor', 'labelOffsetX', 'titleLabelOffsetx', 'xAxis',
             // y axis
-            'keyAccessor', 'labelOffsetY',
+            'keyAccessor', 'labelOffsetY', 'yAxis',
             // data
             'cap', 'ordering' , 'dimension', 'group', 'othersGrouper', 'data'
         ];
@@ -275,7 +280,7 @@
         function addGetterSetterfunction (functionName) {
             _chart[functionName] = function (_) {
                 if (!arguments.length) {
-                    return _leftChart[functionName]();
+                    return [_leftChart[functionName](), _rightChart[functionName]()];
                 }
                 _leftChart[functionName](_);
                 _rightChart[functionName](_);

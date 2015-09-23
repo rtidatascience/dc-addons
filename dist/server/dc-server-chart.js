@@ -1,11 +1,15 @@
 /*!
- * dc-addons v0.10.4
+ * dc-addons v0.10.5
  *
- * 2015-09-16 13:22:54
+ * 2015-09-23 15:39:49
  *
  */
 (function () {
     'use strict';
+
+    if (dc.serverChart) {
+        return false;
+    }
 
     if (!('dc' in window)) {
         window.dc = {};

@@ -1,11 +1,15 @@
 /*!
- * dc-addons v0.10.4
+ * dc-addons v0.10.5
  *
- * 2015-09-16 13:22:54
+ * 2015-09-23 15:39:49
  *
  */
 (function () {
     'use strict';
+
+    if (dc.baseMapChart) {
+        return false;
+    }
 
     dc.baseMapChart = function (_chart) {
         _chart = dc.baseChart(_chart);
@@ -122,6 +126,10 @@
 (function () {
     'use strict';
 
+    if (dc.baseLeafletChart) {
+        return false;
+    }
+
     dc.baseLeafletChart = function (_chart) {
         _chart = dc.baseMapChart(_chart);
 
@@ -156,6 +164,10 @@
 
 (function () {
     'use strict';
+
+    if (dc.leafletChoroplethChart) {
+        return false;
+    }
 
     dc.leafletChoroplethChart = function (parent, chartGroup) {
         var _chart = dc.colorChart(dc.baseLeafletChart({}));
@@ -279,6 +291,10 @@
 
 (function () {
     'use strict';
+
+    if (dc.leafletMarkerChart) {
+        return false;
+    }
 
     dc.leafletMarkerChart = function (parent, chartGroup) {
         var _chart = dc.baseLeafletChart({});
