@@ -6,6 +6,7 @@ These [dc.js](http://dc-js.github.io/dc.js/) addons provide new charts for the d
   * [Leaflet.js](#leafletjs)
   * [Google Maps](#google-maps)
   * [Tooltip Mixin](#tooltip-mixin)
+  * [Pagination Mixin](#pagination-mixin)
   * [Bubble Cloud](#bubble-cloud)
   * [Paired Row](#paired-row)
   * [Server](#server)
@@ -221,6 +222,33 @@ If you want to include individually
 <script src="bower_components/dc-addons/dist/tooltip/dc-tooltip-mixin.min.js"></script>
 ```
 
+## Pagination Mixin
+This allows you to paginate a chart
+
+#### Usage
+After you have rendered the chart than run the pagination mixin on the chart
+
+```js
+var chart = dc.barChart('#chart');
+// set options...
+chart.render();
+
+dc.paginationMixin(chart);
+```
+
+
+#### Examples
+  * [Pagination](http://intellipharm.github.io/dc-addons/examples/pagination.html)
+
+
+#### Requirements
+None
+
+If you want to include individually
+```html
+<script src="bower_components/dc-addons/dist/pagination/dc-pagination-mixin.min.js"></script>
+```
+
 ## Bubble Cloud
 
 #### Usage
@@ -259,7 +287,7 @@ chart
 ```
 
 #### Examples
-  * [Google Marker](http://intellipharm.github.io/dc-addons/examples/bubble-cloud.html)
+  * [Bubble Cloud](http://intellipharm.github.io/dc-addons/examples/bubble-cloud.html)
 
 
 #### Requirements
