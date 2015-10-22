@@ -30,6 +30,7 @@
 <li><a href="#leafletjs">Leaflet.js</a></li>
 <li><a href="#google-maps">Google Maps</a></li>
 <li><a href="#tooltip-mixin">Tooltip Mixin</a></li>
+<li><a href="#pagination-mixin">Pagination Mixin</a></li>
 <li><a href="#bubble-cloud">Bubble Cloud</a></li>
 <li><a href="#paired-row">Paired Row</a></li>
 <li><a href="#server">Server</a></li>
@@ -274,6 +275,41 @@ dc.<span class="pl-c1">tooltipMixin</span>(chart);</pre></div>
 
 <div class="highlight highlight-html"><pre>&lt;<span class="pl-ent">link</span> <span class="pl-e">type</span>=<span class="pl-s"><span class="pl-pds">"</span>stylesheet<span class="pl-pds">"</span></span> <span class="pl-e">href</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/dc-addons/dist/tooltip/dc-tooltip-mixin.min.css<span class="pl-pds">"</span></span> /&gt;
 &lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/dc-addons/dist/tooltip/dc-tooltip-mixin.min.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
+
+<h2>
+<a id="pagination-mixin" class="anchor" href="#pagination-mixin" aria-hidden="true"><span class="octicon octicon-link"></span></a>Pagination Mixin</h2>
+
+<p>This allows you to paginate a chart</p>
+
+<h4>
+<a id="usage-6" class="anchor" href="#usage-6" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h4>
+
+<p>After you have rendered the chart than run the pagination mixin on the chart</p>
+
+<div class="highlight highlight-js"><pre><span class="pl-k">var</span> chart <span class="pl-k">=</span> dc.<span class="pl-c1">barChart</span>(<span class="pl-s"><span class="pl-pds">'</span>#chart<span class="pl-pds">'</span></span>);
+<span class="pl-c">// set options...</span>
+chart.<span class="pl-c1">render</span>();
+
+dc.<span class="pl-c1">paginationMixin</span>(chart);</pre></div>
+
+<h4>
+<a id="examples-6" class="anchor" href="#examples-6" aria-hidden="true"><span class="octicon octicon-link"></span></a>Examples</h4>
+
+<p>
+    <ul>
+        <li><a href="http://intellipharm.github.io/dc-addons/examples/pagination.html">Pagination</a></li>
+    </ul>
+</p>
+
+<h4>
+<a id="requirements-6" class="anchor" href="#requirements-6" aria-hidden="true"><span class="octicon octicon-link"></span></a>Requirements</h4>
+
+<p>None</p>
+
+<p>If you want to include individually</p>
+
+<div class="highlight highlight-html"><pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/dc-addons/dist/pagination/dc-pagination-mixin.min.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
+
 
 <h2>
 <a id="bubble-cloud" class="anchor" href="#bubble-cloud" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bubble Cloud</h2>

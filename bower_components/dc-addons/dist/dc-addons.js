@@ -1,23 +1,29 @@
 /*!
- * dc-addons v0.10.4
+ * dc-addons v0.11.0
  *
- * 2015-09-16 13:22:54
+ * 2015-10-23 09:25:32
  *
  */
-dc.utils.getAllFilters = function () {
-    var result = {};
-    var list = dc.chartRegistry.list();
+if (!dc.utils.getAllFilters) {
+    dc.utils.getAllFilters = function () {
+        var result = {};
+        var list = dc.chartRegistry.list();
 
-    for (var e in list) {
-        var chart = list[e];
-        result[chart.chartID()] = chart.filters();
-    }
+        for (var e in list) {
+            var chart = list[e];
+            result[chart.chartID()] = chart.filters();
+        }
 
-    return result;
-};
+        return result;
+    };
+}
 
 (function () {
     'use strict';
+
+    if (dc.baseMapChart) {
+        return false;
+    }
 
     dc.baseMapChart = function (_chart) {
         _chart = dc.baseChart(_chart);
@@ -134,6 +140,10 @@ dc.utils.getAllFilters = function () {
 (function () {
     'use strict';
 
+    if (dc.baseLeafletChart) {
+        return false;
+    }
+
     dc.baseLeafletChart = function (_chart) {
         _chart = dc.baseMapChart(_chart);
 
@@ -168,6 +178,10 @@ dc.utils.getAllFilters = function () {
 
 (function () {
     'use strict';
+
+    if (dc.leafletChoroplethChart) {
+        return false;
+    }
 
     dc.leafletChoroplethChart = function (parent, chartGroup) {
         var _chart = dc.colorChart(dc.baseLeafletChart({}));
@@ -291,6 +305,10 @@ dc.utils.getAllFilters = function () {
 
 (function () {
     'use strict';
+
+    if (dc.leafletMarkerChart) {
+        return false;
+    }
 
     dc.leafletMarkerChart = function (parent, chartGroup) {
         var _chart = dc.baseLeafletChart({});
@@ -627,6 +645,10 @@ dc.utils.getAllFilters = function () {
 (function () {
     'use strict';
 
+    if (dc.baseGoogleChart) {
+        return false;
+    }
+
     dc.baseGoogleChart = function (_chart) {
         _chart = dc.baseMapChart(_chart);
 
@@ -661,6 +683,10 @@ dc.utils.getAllFilters = function () {
 
 (function () {
     'use strict';
+
+    if (dc.googleChoroplethChart) {
+        return false;
+    }
 
     dc.googleChoroplethChart = function (parent, chartGroup) {
         var _chart = dc.colorChart(dc.baseGoogleChart({}));
@@ -806,6 +832,10 @@ dc.utils.getAllFilters = function () {
 (function () {
     'use strict';
 
+    if (dc.googleMarkerChart) {
+        return false;
+    }
+
     dc.googleMarkerChart = function (parent, chartGroup) {
         var _chart = dc.baseGoogleChart({});
 
@@ -862,6 +892,26 @@ dc.utils.getAllFilters = function () {
                         zoomFilter('click');
                     }, this);
                 }
+
+                // if (google.maps.drawing) {
+                //     var drawingManager = new google.maps.drawing.DrawingManager({
+                //         drawingControl: true,
+                //         drawingControlOptions: {
+                //             position: google.maps.ControlPosition.TOP_CENTER,
+                //             drawingModes: [
+                //                 google.maps.drawing.OverlayType.CIRCLE,
+                //                 google.maps.drawing.OverlayType.POLYGON,
+                //                 google.maps.drawing.OverlayType.RECTANGLE
+                //             ]
+                //         },
+                //     });
+                //
+                //     drawingManager.setMap(_chart.map());
+                //
+                //     google.maps.event.addListener(drawingManager, 'overlaycomplete', function (OverlayCompleteEvent) {
+                //         console.log(OverlayCompleteEvent.overlay);
+                //     });
+                // }
             }
 
             if (_cluster) {
@@ -1150,6 +1200,10 @@ dc.utils.getAllFilters = function () {
 (function () {
     'use strict';
 
+    if (dc.tooltipMixin) {
+        return false;
+    }
+
     dc.tooltipMixin = function (_chart) {
 
         if (_chart) {
@@ -1184,6 +1238,10 @@ dc.utils.getAllFilters = function () {
 
 (function () {
     'use strict';
+
+    if (dc.bubbleCloud) {
+        return false;
+    }
 
     dc.bubbleCloud = function (parent, chartGroup) {
         var _chart = dc.bubbleMixin(dc.capMixin(dc.bubbleChart()));
@@ -1362,6 +1420,10 @@ dc.utils.getAllFilters = function () {
 (function () {
     'use strict';
 
+    if (dc.pairedRowChart) {
+        return false;
+    }
+
     /**
     ## Paired Row Chart
     Includes: [Cap Mixin](#cap-mixin), [Margin Mixin](#margin-mixin), [Color Mixin](#color-mixin), [Base Mixin](#base-mixin)
@@ -1501,6 +1563,7 @@ dc.utils.getAllFilters = function () {
 
         // the margins between the charts need to be set to 0 so that they sit together
         var _margins = _chart.margins(); // get the default margins
+        _margins.right = _margins.left;
 
         _chart.margins = function (_) {
             if (!arguments.length) {
@@ -1616,13 +1679,13 @@ dc.utils.getAllFilters = function () {
         var _getterSetterPassOn = [
             // display
             'height', 'minHeight', 'renderTitleLabel', 'fixedBarHeight', 'gap', 'othersLabel',
-            'transitionDuration', 'label', 'renderLabel', 'title', 'renderTitle', 'chartGroup',
+            'transitionDuration', 'label', 'renderLabel', 'title', 'renderTitle', 'chartGroup', 'legend',
             //colors
             'colors', 'ordinalColors', 'linearColors', 'colorAccessor', 'colorDomain', 'getColor', 'colorCalculator',
             // x axis
-            'x', 'elasticX', 'valueAccessor', 'labelOffsetX', 'titleLabelOffsetx',
+            'x', 'elasticX', 'valueAccessor', 'labelOffsetX', 'titleLabelOffsetx', 'xAxis',
             // y axis
-            'keyAccessor', 'labelOffsetY',
+            'keyAccessor', 'labelOffsetY', 'yAxis',
             // data
             'cap', 'ordering' , 'dimension', 'group', 'othersGrouper', 'data'
         ];
@@ -1630,7 +1693,7 @@ dc.utils.getAllFilters = function () {
         function addGetterSetterfunction (functionName) {
             _chart[functionName] = function (_) {
                 if (!arguments.length) {
-                    return _leftChart[functionName]();
+                    return [_leftChart[functionName](), _rightChart[functionName]()];
                 }
                 _leftChart[functionName](_);
                 _rightChart[functionName](_);
@@ -1664,6 +1727,10 @@ dc.utils.getAllFilters = function () {
 
 (function () {
     'use strict';
+
+    if (dc.serverChart) {
+        return false;
+    }
 
     if (!('dc' in window)) {
         window.dc = {};
@@ -2093,6 +2160,10 @@ dc.utils.getAllFilters = function () {
 
 (function () {
     'use strict';
+
+    if (dc.serverChart.redrawPieChart) {
+        return false;
+    }
 
     var duration = 5000;
     var ease = 'quad-in-out';
@@ -2785,4 +2856,62 @@ dc.utils.getAllFilters = function () {
 
     angular.module('AngularDc').directive('dcServerChart', dcServerChart);
 
+})();
+
+(function () {
+    'use strict';
+
+    if (dc.paginationMixin) {
+        return false;
+    }
+
+    dc.paginationMixin = function (_chart) {
+
+        if (_chart) {
+            _chart.pagination = {};
+            // data information
+            _chart.pagination.allData = _chart.group().all();
+            // page information
+            _chart.pagination.currentPage = 1;
+            _chart.pagination.pageSize = 5;
+            _chart.pagination.pageCount = Math.ceil(_chart.pagination.allData.length / _chart.pagination.pageSize);
+            // page controls
+            _chart.pagination.setPage = function (page) {
+                if (page < 1) {
+                    page = 1;
+                }
+
+                if (page > _chart.pagination.pageCount) {
+                    page = _chart.pagination.pageCount;
+                }
+
+                if (page !== _chart.pagination.currentPage) {
+                    _chart.pagination.currentPage = page;
+                    _chart.redraw();
+                }
+            };
+            _chart.pagination.previous = function () {
+                _chart.pagination.setPage(_chart.pagination.currentPage - 1);
+            };
+            _chart.pagination.next = function () {
+                _chart.pagination.setPage(_chart.pagination.currentPage + 1);
+            };
+            _chart.pagination.first = function () {
+                _chart.pagination.setPage(1);
+            };
+            _chart.pagination.last = function () {
+                _chart.pagination.setPage(_chart.pagination.pageCount);
+            };
+
+            _chart.group().all = function () {
+                var pageStart = (_chart.pagination.currentPage - 1) * _chart.pagination.pageSize;
+                var pageEnd = _chart.pagination.currentPage * _chart.pagination.pageSize;
+                return _chart.pagination.allData.slice(pageStart, pageEnd);
+            };
+        }
+
+        _chart.redraw();
+
+        return _chart;
+    };
 })();

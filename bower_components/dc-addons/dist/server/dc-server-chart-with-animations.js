@@ -1,11 +1,15 @@
 /*!
- * dc-addons v0.10.4
+ * dc-addons v0.11.0
  *
- * 2015-09-16 13:22:54
+ * 2015-10-23 09:25:32
  *
  */
 (function () {
     'use strict';
+
+    if (dc.serverChart) {
+        return false;
+    }
 
     if (!('dc' in window)) {
         window.dc = {};
@@ -435,6 +439,10 @@
 
 (function () {
     'use strict';
+
+    if (dc.serverChart.redrawPieChart) {
+        return false;
+    }
 
     var duration = 5000;
     var ease = 'quad-in-out';
