@@ -92,6 +92,12 @@ module.exports = {
             '<%= config.src %>/<%= config.scripts %>/utils.js',
         ]
     },
+    pagination: {
+        dest: '<%= config.dist %>/pagination/dc-pagination-mixin.js',
+        src: [
+            '<%= config.src %>/<%= config.scripts %>/pagination-mixin.js',
+        ]
+    },
     build: {
         dest: '<%= config.dist %>/dc-addons.js',
         src: [
@@ -111,6 +117,7 @@ module.exports = {
             '<%= config.src %>/<%= config.scripts %>/angular-module.js',
             '<%= config.src %>/<%= config.scripts %>/angular-chart.js',
             '<%= config.src %>/<%= config.scripts %>/angular-server-chart.js',
+            '<%= config.src %>/<%= config.scripts %>/pagination-mixin.js',
         ]
     },
 };
