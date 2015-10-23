@@ -8,7 +8,11 @@
     dc.paginationMixin = function (_chart) {
 
         if (_chart) {
-            _chart.elasticX(true);
+            // chart does not have a y axis if it is a row chart, so don't make it elastic
+            if (_chart.y) {
+                // chart is a bar chart so we need it to be elastic for it to work
+                _chart.elasticX(true);
+            }
 
             _chart.pagination = {};
             // data information
