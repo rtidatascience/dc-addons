@@ -9,9 +9,10 @@
         <script src="../bower_components/crossfilter/crossfilter.min.js"></script>
         <script src="../bower_components/dcjs/dc.js"></script>
 
-        <script src="../dist/pagination/dc-pagination-mixin.js"></script>
+        <!-- <script src="../dist/pagination/dc-pagination-mixin.js"></script> -->
+
         <!-- use src for testing -->
-        <!-- <script src="../src/scripts/pagination-mixin.js"></script> -->
+        <script src="../src/scripts/pagination-mixin.js"></script>
     </head>
     <body>
         <h1>dc.js bar chart with pagination</h1>
@@ -73,7 +74,6 @@
                     // x axis
                     x: d3.scale.ordinal(),
                     xUnits: dc.units.ordinal,
-                    elasticX: true,
 
                     // data
                     dimension: ageDimension,

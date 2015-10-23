@@ -8,6 +8,8 @@
     dc.paginationMixin = function (_chart) {
 
         if (_chart) {
+            _chart.elasticX(true);
+
             _chart.pagination = {};
             // data information
             _chart.pagination.allData = _chart.group().all();
@@ -48,9 +50,9 @@
                 var pageEnd = _chart.pagination.currentPage * _chart.pagination.pageSize;
                 return _chart.pagination.allData.slice(pageStart, pageEnd);
             };
-        }
 
-        _chart.redraw();
+            _chart.redraw();
+        }
 
         return _chart;
     };
