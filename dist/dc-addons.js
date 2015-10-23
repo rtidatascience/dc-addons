@@ -1,7 +1,7 @@
 /*!
- * dc-addons v0.11.1
+ * dc-addons v0.11.2
  *
- * 2015-10-23 10:14:02
+ * 2015-10-23 14:08:55
  *
  */
 if (!dc.utils.getAllFilters) {
@@ -2872,7 +2872,7 @@ if (!dc.utils.getAllFilters) {
 
             _chart.pagination = {};
             // data information
-            _chart.pagination.allData = _chart.group().all();
+            _chart.pagination.allData = _chart._computeOrderedGroups(_chart.group().all());
             // page information
             _chart.pagination.currentPage = 1;
             _chart.pagination.pageSize = 5;

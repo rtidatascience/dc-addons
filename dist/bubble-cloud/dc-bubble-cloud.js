@@ -1,7 +1,7 @@
 /*!
- * dc-addons v0.11.1
+ * dc-addons v0.11.2
  *
- * 2015-10-23 10:14:02
+ * 2015-10-23 14:08:55
  *
  */
 // Code copied and changed from https://github.com/vlandham/gates_bubbles
