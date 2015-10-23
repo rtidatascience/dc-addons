@@ -12,7 +12,7 @@
 
             _chart.pagination = {};
             // data information
-            _chart.pagination.allData = _chart.group().all();
+            _chart.pagination.allData = _chart._computeOrderedGroups(_chart.group().all());
             // page information
             _chart.pagination.currentPage = 1;
             _chart.pagination.pageSize = 5;

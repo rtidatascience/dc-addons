@@ -78,6 +78,9 @@
                     // data
                     dimension: ageDimension,
                     group: ageGroup,
+                    ordering: function(d) {
+                        return -d.value;
+                    },
                 })
                 .render();
 
