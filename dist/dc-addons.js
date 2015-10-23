@@ -1,7 +1,7 @@
 /*!
- * dc-addons v0.11.0
+ * dc-addons v0.11.1
  *
- * 2015-10-23 09:25:32
+ * 2015-10-23 10:14:02
  *
  */
 if (!dc.utils.getAllFilters) {
@@ -2868,6 +2868,8 @@ if (!dc.utils.getAllFilters) {
     dc.paginationMixin = function (_chart) {
 
         if (_chart) {
+            _chart.elasticX(true);
+
             _chart.pagination = {};
             // data information
             _chart.pagination.allData = _chart.group().all();
@@ -2908,9 +2910,9 @@ if (!dc.utils.getAllFilters) {
                 var pageEnd = _chart.pagination.currentPage * _chart.pagination.pageSize;
                 return _chart.pagination.allData.slice(pageStart, pageEnd);
             };
-        }
 
-        _chart.redraw();
+            _chart.redraw();
+        }
 
         return _chart;
     };

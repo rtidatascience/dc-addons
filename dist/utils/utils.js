@@ -1,7 +1,7 @@
 /*!
- * dc-addons v0.11.0
+ * dc-addons v0.11.1
  *
- * 2015-10-23 09:25:32
+ * 2015-10-23 10:14:02
  *
  */
 if (!dc.utils.getAllFilters) {
