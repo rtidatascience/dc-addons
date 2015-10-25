@@ -1,7 +1,7 @@
 /*!
  * dc-addons v0.11.2
  *
- * 2015-10-23 14:44:02
+ * 2015-10-26 09:41:00
  *
  */
 if (!dc.utils.getAllFilters) {
@@ -2716,7 +2716,7 @@ if (!dc.utils.getAllFilters) {
 (function () {
     'use strict';
 
-    var dcChart = function ($timeout) {
+    var dcChart = function ($timeout, $compile) {
         return {
             restrict: 'E',
             scope: {
@@ -2725,6 +2725,7 @@ if (!dc.utils.getAllFilters) {
                 group: '=',
                 options: '=',
                 filters: '=',
+                reset: '=',
             },
             link: function ($scope, element) {
                 $scope.drawChart = function () {
@@ -2732,6 +2733,15 @@ if (!dc.utils.getAllFilters) {
 
                     if (typeof $scope.type === 'string' && typeof $scope.options === 'object') {
                         $scope.cleanup();
+
+                        if ($scope.reset) {
+                            $scope.resetChart = function () {
+                                $scope.chart.filterAll();
+                                dc.redrawAll();
+                            };
+                            element.append('<span class="reset" style="visibility:hidden;">Current filter: <span class="filter"></span></span>');
+                            element.append($compile('<a class="reset" style="visibility:hidden;" ng-click="resetChart()">reset</a>')($scope));
+                        }
 
                         $scope.chart = dc[$scope.type](element[0], $scope.group || undefined);
 
@@ -2816,7 +2826,7 @@ if (!dc.utils.getAllFilters) {
         };
     };
 
-    dcChart.$inject = ['$timeout'];
+    dcChart.$inject = ['$timeout', '$compile'];
 
     angular.module('AngularDc').directive('dcChart', dcChart);
 
