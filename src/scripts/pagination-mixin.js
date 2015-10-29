@@ -34,6 +34,10 @@
                 if (page !== _chart.pagination.currentPage) {
                     _chart.pagination.currentPage = page;
                     _chart.redraw();
+
+                    if (_chart.tip) {
+                        _chart.tip();
+                    }
                 }
             };
             _chart.pagination.previous = function () {

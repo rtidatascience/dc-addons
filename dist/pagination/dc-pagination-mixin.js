@@ -1,7 +1,7 @@
 /*!
  * dc-addons v0.11.2
  *
- * 2015-10-29 16:02:31
+ * 2015-10-30 09:21:56
  *
  */
 (function () {
@@ -40,6 +40,10 @@
                 if (page !== _chart.pagination.currentPage) {
                     _chart.pagination.currentPage = page;
                     _chart.redraw();
+
+                    if (_chart.tip) {
+                        _chart.tip();
+                    }
                 }
             };
             _chart.pagination.previous = function () {
