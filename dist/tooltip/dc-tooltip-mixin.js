@@ -1,7 +1,7 @@
 /*!
  * dc-addons v0.11.2
  *
- * 2015-10-26 09:41:00
+ * 2015-10-29 16:02:31
  *
  */
 (function () {
@@ -19,16 +19,32 @@
                     svg = _chart.svg(),
                     tip = d3.tip()
                         .attr('class', 'tip')
-                        .html(function (d) {
-                            if (d.data) {
-                                return _chart.title()(d.data);
+                        .html(function (d, i, subI) {
+                            var title = _chart.title();
+
+                            if (_chart.children) {
+                                title = _chart.children()[subI].title();
                             }
 
-                            return _chart.title()(d);
+                            if (typeof title !== 'function') {
+                                title = title[subI];
+                            }
+
+                            if (d.data) {
+                                return title(d.data);
+                            }
+
+                            return title(d);
                         });
 
-                svg.selectAll(selector).call(tip);
-                svg.selectAll(selector).on('mouseover', tip.show).on('mouseleave', tip.hide);
+                var wrapper = svg.selectAll('g.sub');
+
+                if (wrapper.empty()) {
+                    wrapper = svg;
+                }
+
+                wrapper.selectAll(selector).call(tip);
+                wrapper.selectAll(selector).on('mouseover', tip.show).on('mouseleave', tip.hide);
 
                 // remove standard tooltip
                 svg.selectAll('title').remove();

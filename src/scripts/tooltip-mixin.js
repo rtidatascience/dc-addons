@@ -13,16 +13,32 @@
                     svg = _chart.svg(),
                     tip = d3.tip()
                         .attr('class', 'tip')
-                        .html(function (d) {
-                            if (d.data) {
-                                return _chart.title()(d.data);
+                        .html(function (d, i, subI) {
+                            var title = _chart.title();
+
+                            if (_chart.children) {
+                                title = _chart.children()[subI].title();
                             }
 
-                            return _chart.title()(d);
+                            if (typeof title !== 'function') {
+                                title = title[subI];
+                            }
+
+                            if (d.data) {
+                                return title(d.data);
+                            }
+
+                            return title(d);
                         });
 
-                svg.selectAll(selector).call(tip);
-                svg.selectAll(selector).on('mouseover', tip.show).on('mouseleave', tip.hide);
+                var wrapper = svg.selectAll('g.sub');
+
+                if (wrapper.empty()) {
+                    wrapper = svg;
+                }
+
+                wrapper.selectAll(selector).call(tip);
+                wrapper.selectAll(selector).on('mouseover', tip.show).on('mouseleave', tip.hide);
 
                 // remove standard tooltip
                 svg.selectAll('title').remove();

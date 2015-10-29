@@ -141,11 +141,15 @@
                 })
                 .render();
 
+                dc.tooltipMixin(filter);
+
                 state.options({
                     dimension: stateDimension,
                     group: stateGroup
                 })
                 .render();
+
+                dc.tooltipMixin(state);
             });
         </script>
     </body>
