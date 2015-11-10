@@ -58,11 +58,17 @@
                     _chart.tip.elements.call(_chart.tip.tooltip);
                     _chart.tip.elements.on('mouseover', _chart.tip.tooltip.show).on('mouseleave', _chart.tip.tooltip.hide);
 
-                    // remove standard tooltip text values so they don't show
-                    _chart.svg().selectAll('title').each(function () {
-                        var title = d3.select(this);
-                        title.attr('data-text', title.text());
-                        title.text('');
+                    // remove standard tooltips
+                    _chart.tip.elements.each(function() {
+                        var el = d3.select(this);
+                        var title = el.select('title');
+
+                        if (title.empty()) {
+                            return false;
+                        }
+
+                        el.attr('data-title', title.text());
+                        title.remove();
                     });
                 }
 
@@ -74,10 +80,10 @@
                 _chart.tip.tooltip.destroy(); // destroy the tip
                 _chart.tip.tooltip = null; // and set it to null
 
-                // add the standard tooltip text values back in
-                _chart.svg().selectAll('title').each(function () {
-                    var title = d3.select(this);
-                    title.text(title.attr('data-text'));
+                // add the standard tooltips back in
+                _chart.tip.elements.each(function() {
+                    var el = d3.select(this);
+                    el.append('title').text(el.attr('data-title'));
                 });
 
                 return _chart;

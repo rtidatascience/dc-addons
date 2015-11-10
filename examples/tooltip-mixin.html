@@ -20,6 +20,8 @@
     <body>
         <h1>tooltip mixin example</h1>
         <div id='test_composed'></div>
+        <button onclick="composite.tip.init()">Initialise</button>
+        <button onclick="composite.tip.destroy()">Destroy</button>
 
         <script type='text/javascript'>
             var composite = dc.compositeChart('#test_composed');
