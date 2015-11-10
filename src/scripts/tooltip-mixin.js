@@ -89,6 +89,11 @@
                 return _chart;
             };
 
+            _chart.tip.reinit = function () {
+                _chart.tip.destroy();
+                _chart.tip.init();
+            };
+
             _chart.tip.init();
         }
 

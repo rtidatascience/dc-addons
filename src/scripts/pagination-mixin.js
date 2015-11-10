@@ -36,7 +36,7 @@
                     _chart.redraw();
 
                     if (_chart.tip) {
-                        _chart.tip();
+                        _chart.tip.reinit();
                     }
                 }
             };

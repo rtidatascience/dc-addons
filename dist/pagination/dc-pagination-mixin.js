@@ -1,7 +1,7 @@
 /*!
  * dc-addons v0.11.2
  *
- * 2015-11-11 08:56:50
+ * 2015-11-11 09:14:48
  *
  */
 (function () {
@@ -42,7 +42,7 @@
                     _chart.redraw();
 
                     if (_chart.tip) {
-                        _chart.tip();
+                        _chart.tip.reinit();
                     }
                 }
             };

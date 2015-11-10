@@ -1,7 +1,7 @@
 /*!
  * dc-addons v0.11.2
  *
- * 2015-11-11 08:56:50
+ * 2015-11-11 09:14:48
  *
  */
 if (!dc.utils.getAllFilters) {
@@ -1286,6 +1286,11 @@ if (!dc.utils.getAllFilters) {
                 });
 
                 return _chart;
+            };
+
+            _chart.tip.reinit = function () {
+                _chart.tip.destroy();
+                _chart.tip.init();
             };
 
             _chart.tip.init();
@@ -2967,7 +2972,7 @@ if (!dc.utils.getAllFilters) {
                     _chart.redraw();
 
                     if (_chart.tip) {
-                        _chart.tip();
+                        _chart.tip.reinit();
                     }
                 }
             };
