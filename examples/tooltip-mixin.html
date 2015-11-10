@@ -61,7 +61,6 @@
                             .title(function(d) {
                                 return d.key;
                             })
-                            // .dashStyle([2,2]),
                         ,
                         dc.barChart(composite)
                             .dimension(dim)
@@ -70,13 +69,11 @@
                             .title(function(d) {
                                 return d.value;
                             })
-                            // .dashStyle([5,5])
                         ])
                     .brushOn(false)
                     .render();
 
                     dc.tooltipMixin(composite);
-
             });
         </script>
     </body>

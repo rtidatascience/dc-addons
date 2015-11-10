@@ -8,58 +8,85 @@
     dc.tooltipMixin = function (_chart) {
 
         if (_chart) {
-            _chart.tip = function () {
-                var svg = _chart.svg();
-                var wrapper = svg.selectAll('g.sub'); // if the chart has sub grouping (e.g. composite or series)
+            _chart.tip = {};
+            _chart.tip.tooltip = null;
 
-                // if no sub grouping then just use the chart svg
-                if (wrapper.empty()) {
-                    wrapper = svg;
-                }
+            _chart.tip.init = function () {
+                if (_chart.tip.tooltip === null) {
+                    var wrapper = _chart.svg().selectAll('g.sub'); // if the chart has sub grouping (e.g. composite or series)
 
-                // get all elements that want a tooltip
-                var elements = wrapper.selectAll('rect.bar,circle.dot,g.pie-slice path,circle.bubble,g.row rect');
+                    // if no sub grouping then just use the chart svg
+                    if (wrapper.empty()) {
+                        wrapper = _chart.svg();
+                    }
 
-                // nothing to tip so exit
-                if (elements.empty()) {
-                    return false;
-                }
+                    // get all elements that want a tooltip
+                    _chart.tip.elements = wrapper.selectAll('rect.bar,circle.dot,g.pie-slice path,circle.bubble,g.row rect');
 
-                // create the tip object
-                var tip = d3.tip()
-                    .attr('class', 'tip')
-                    .html(function (d, i, subI) {
-                        var title = _chart.title();
+                    // nothing to tip so exit
+                    if (_chart.tip.elements.empty()) {
+                        return false;
+                    }
 
-                        // if the chart is a composite chart
-                        if (_chart.children) {
-                            title = _chart.children()[subI].title();
-                        }
+                    // create the tip object
+                    _chart.tip.tooltip = d3.tip()
+                        .attr('class', 'tip')
+                        .html(function (d, i, subI) {
+                            var title = _chart.title();
 
-                        // if the chart is a paired row chart
-                        if (typeof title !== 'function') {
-                            title = title[subI];
-                        }
+                            // if the chart is a composite chart
+                            if (_chart.children) {
+                                title = _chart.children()[subI].title();
+                            }
 
-                        var data = d;
-                        if (d.data) {
-                            data = d.data;
-                        }
+                            // if the chart is a paired row chart
+                            if (typeof title !== 'function') {
+                                title = title[subI];
+                            }
 
-                        return title(data);
+                            var data = d;
+                            if (d.data) {
+                                data = d.data;
+                            }
+
+                            return title(data);
+                        });
+
+                    _chart.tip.tooltip.offset([-10, 0]);
+
+                    // add the tip to the elements
+                    _chart.tip.elements.call(_chart.tip.tooltip);
+                    _chart.tip.elements.on('mouseover', _chart.tip.tooltip.show).on('mouseleave', _chart.tip.tooltip.hide);
+
+                    // remove standard tooltip text values so they don't show
+                    _chart.svg().selectAll('title').each(function() {
+                        var title = d3.select(this);
+                        title.attr('data-text', title.text());
+                        title.text('');
                     });
+                }
 
-                tip.offset([-10, 0]);
-
-                // add the tip to the elements
-                elements.call(tip);
-                elements.on('mouseover', tip.show).on('mouseleave', tip.hide);
-
-                // remove standard tooltip
-                svg.selectAll('title').remove();
+                return _chart;
             };
 
-            _chart.tip();
+            _chart.tip.destroy = function() {
+                _chart.tip.elements.on('mouseover', null).on('mouseleave', null); // remove mouse events
+                _chart.tip.tooltip.destroy(); // destroy the tip
+                _chart.tip.tooltip = null; // and set it to null
+
+                // add the standard tooltip text values back in
+                _chart.svg().selectAll('title').each(function() {
+                    var title = d3.select(this);
+                    title.text(title.attr('data-text'));
+                });
+
+                return _chart;
+            };
+
+
+            composite.on('postRender', function() {
+                _chart.tip.init();
+            });
         }
 
         return _chart;
