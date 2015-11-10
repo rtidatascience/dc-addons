@@ -59,7 +59,7 @@
                     _chart.tip.elements.on('mouseover', _chart.tip.tooltip.show).on('mouseleave', _chart.tip.tooltip.hide);
 
                     // remove standard tooltips
-                    _chart.tip.elements.each(function() {
+                    _chart.tip.elements.each(function () {
                         var el = d3.select(this);
                         var title = el.select('title');
 
@@ -81,7 +81,7 @@
                 _chart.tip.tooltip = null; // and set it to null
 
                 // add the standard tooltips back in
-                _chart.tip.elements.each(function() {
+                _chart.tip.elements.each(function () {
                     var el = d3.select(this);
                     el.append('title').text(el.attr('data-title'));
                 });
