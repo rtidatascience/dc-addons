@@ -89,9 +89,7 @@
                 return _chart;
             };
 
-            _chart.on('postRender', function () {
-                _chart.tip.init();
-            });
+            _chart.tip.init();
         }
 
         return _chart;
