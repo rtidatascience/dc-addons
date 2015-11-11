@@ -76,15 +76,17 @@
             };
 
             _chart.tip.destroy = function () {
-                _chart.tip.elements.on('mouseover', null).on('mouseleave', null); // remove mouse events
-                _chart.tip.tooltip.destroy(); // destroy the tip
-                _chart.tip.tooltip = null; // and set it to null
+                if (_chart.tip.tooltip !== null) {
+                    _chart.tip.elements.on('mouseover', null).on('mouseleave', null); // remove mouse events
+                    _chart.tip.tooltip.destroy(); // destroy the tip
+                    _chart.tip.tooltip = null; // and set it to null
 
-                // add the standard tooltips back in
-                _chart.tip.elements.each(function () {
-                    var el = d3.select(this);
-                    el.append('title').text(el.attr('data-title'));
-                });
+                    // add the standard tooltips back in
+                    _chart.tip.elements.each(function () {
+                        var el = d3.select(this);
+                        el.append('title').text(el.attr('data-title'));
+                    });
+                }
 
                 return _chart;
             };
