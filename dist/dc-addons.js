@@ -1,7 +1,7 @@
 /*!
  * dc-addons v0.11.2
  *
- * 2015-11-11 15:19:14
+ * 2015-11-12 09:26:46
  *
  */
 if (!dc.utils.getAllFilters) {
@@ -2954,7 +2954,7 @@ if (!dc.utils.getAllFilters) {
 
             _chart.pagination = {};
             // data information
-            _chart.pagination.allData = _chart._computeOrderedGroups(_chart.group().all());
+            _chart.pagination.allData = _chart.group().all();
             // page information
             _chart.pagination.currentPage = 1;
             _chart.pagination.pageSize = 5;
@@ -2994,7 +2994,7 @@ if (!dc.utils.getAllFilters) {
             _chart.group().all = function () {
                 var pageStart = (_chart.pagination.currentPage - 1) * _chart.pagination.pageSize;
                 var pageEnd = _chart.pagination.currentPage * _chart.pagination.pageSize;
-                return _chart.pagination.allData.slice(pageStart, pageEnd);
+                return _chart._computeOrderedGroups(_chart.pagination.allData).slice(pageStart, pageEnd);
             };
 
             _chart.redraw();
