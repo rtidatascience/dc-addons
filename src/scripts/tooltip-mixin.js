@@ -44,6 +44,11 @@
                                 title = title[subI];
                             }
 
+                            // if a stackable chart
+                            if (_chart.stack) {
+                                title = _chart.title(d.layer);
+                            }
+
                             var data = d;
                             if (d.data) {
                                 data = d.data;

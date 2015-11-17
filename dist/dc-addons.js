@@ -1,7 +1,7 @@
 /*!
  * dc-addons v0.11.2
  *
- * 2015-11-12 09:26:46
+ * 2015-11-17 13:50:15
  *
  */
 if (!dc.utils.getAllFilters) {
@@ -1241,6 +1241,11 @@ if (!dc.utils.getAllFilters) {
                             // if the chart is a paired row chart
                             if (typeof title !== 'function') {
                                 title = title[subI];
+                            }
+
+                            // if a stackable chart
+                            if (_chart.stack) {
+                                title = _chart.title(d.layer);
                             }
 
                             var data = d;
