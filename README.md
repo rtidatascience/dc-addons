@@ -80,6 +80,7 @@ dc.leafletChoroplethChart(parent,chartGroup)
   .popup()                - function (d,feature) to return the string or DOM content of a popup
   .renderPopup(true)      - set if popups should be shown; Default: true
   .brushOn(true)          - if the map would select datapoints; Default: true
+  .legend(dc.leafletLegend().position('bottomright'))
 ```
 
 
