@@ -1,7 +1,7 @@
 /*!
- * dc-addons v0.11.0
+ * dc-addons v0.11.3
  *
- * 2015-10-23 09:25:32
+ * 2015-12-11 09:23:06
  *
  */
 (function () {
@@ -13,7 +13,7 @@
 (function () {
     'use strict';
 
-    var dcChart = function ($timeout) {
+    var dcChart = function ($timeout, $compile) {
         return {
             restrict: 'E',
             scope: {
@@ -22,6 +22,7 @@
                 group: '=',
                 options: '=',
                 filters: '=',
+                reset: '=',
             },
             link: function ($scope, element) {
                 $scope.drawChart = function () {
@@ -29,6 +30,15 @@
 
                     if (typeof $scope.type === 'string' && typeof $scope.options === 'object') {
                         $scope.cleanup();
+
+                        if ($scope.reset) {
+                            $scope.resetChart = function () {
+                                $scope.chart.filterAll();
+                                dc.redrawAll();
+                            };
+                            element.append('<span class="reset" style="visibility:hidden;">Current filter: <span class="filter"></span></span>');
+                            element.append($compile('<a class="reset" style="visibility:hidden;" ng-click="resetChart()">reset</a>')($scope));
+                        }
 
                         $scope.chart = dc[$scope.type](element[0], $scope.group || undefined);
 
@@ -113,7 +123,7 @@
         };
     };
 
-    dcChart.$inject = ['$timeout'];
+    dcChart.$inject = ['$timeout', '$compile'];
 
     angular.module('AngularDc').directive('dcChart', dcChart);
 

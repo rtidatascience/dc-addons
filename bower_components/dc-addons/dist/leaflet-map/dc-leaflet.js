@@ -1,7 +1,7 @@
 /*!
- * dc-addons v0.11.0
+ * dc-addons v0.11.3
  *
- * 2015-10-23 09:25:32
+ * 2015-12-11 09:23:06
  *
  */
 (function () {
@@ -299,21 +299,22 @@
     dc.leafletMarkerChart = function (parent, chartGroup) {
         var _chart = dc.baseLeafletChart({});
 
+        var _renderPopup = true;
         var _cluster = false; // requires leaflet.markerCluster
         var _clusterOptions = false;
         var _rebuildMarkers = false;
         var _brushOn = true;
         var _filterByArea = false;
-        var _fitOnRender = true;
-        var _fitOnRedraw = false;
-        var _disableFitOnRedraw = false;
 
         var _innerFilter = false;
         var _zooming = false;
         var _layerGroup = false;
-        var _markerList = [];
-        var _markerListFilterd = [];
+        var _markerList = {};
         var _currentGroups = false;
+
+        var _fitOnRender = true;
+        var _fitOnRedraw = false;
+        var _disableFitOnRedraw = false;
 
         _chart.renderTitle(true);
 
@@ -321,23 +322,23 @@
             return _chart.keyAccessor()(d);
         };
 
-        var _marker = function (d) {
-            var marker = new L.Marker(
-                _chart.toLocArray(_chart.locationAccessor()(d)),
-                    {
-                        title: _chart.renderTitle() ? _chart.title()(d) : '',
-                        alt: _chart.renderTitle() ? _chart.title()(d) : '',
-                        icon: _icon(),
-                        clickable: _chart.renderPopup() || (_chart.brushOn() && !_filterByArea),
-                        draggable: false
-                    }
-                );
-
+        var _marker = function (d,map) {
+            var marker = new L.Marker(_chart.toLocArray(_chart.locationAccessor()(d)),{
+                title: _chart.renderTitle() ? _chart.title()(d) : '',
+                alt: _chart.renderTitle() ? _chart.title()(d) : '',
+                icon: _icon(),
+                clickable: _chart.renderPopup() || (_chart.brushOn() && !_filterByArea),
+                draggable: false
+            });
             return marker;
         };
 
-        var _icon = function () {
+        var _icon = function (d,map) {
             return new L.Icon.Default();
+        };
+
+        var _popup = function (d,marker) {
+            return _chart.title()(d);
         };
 
         _chart._postRender = function () {
@@ -347,20 +348,18 @@
                 }
 
                 _chart.map().on('zoomend moveend', zoomFilter, this);
-
                 if (!_filterByArea) {
                     _chart.map().on('click', zoomFilter, this);
                 }
-
                 _chart.map().on('zoomstart', zoomStart, this);
             }
 
             if (_cluster) {
                 _layerGroup = new L.MarkerClusterGroup(_clusterOptions ? _clusterOptions : null);
-            } else {
+            }
+            else {
                 _layerGroup = new L.LayerGroup();
             }
-
             _chart.map().addLayer(_layerGroup);
         };
 
@@ -368,39 +367,31 @@
             var groups = _chart._computeOrderedGroups(_chart.data()).filter(function (d) {
                 return _chart.valueAccessor()(d) !== 0;
             });
-
+            if (_currentGroups && _currentGroups.toString() === groups.toString()) {
+                return;
+            }
             _currentGroups = groups;
 
             if (_rebuildMarkers) {
-                _markerList = [];
+                _markerList = {};
             }
-
             _layerGroup.clearLayers();
 
             var addList = [];
-            var featureGroup = [];
-            _markerListFilterd = [];
-
-            groups.forEach(function (v) {
-                if (v.value) {
-                    var key = _chart.keyAccessor()(v);
-                    var marker = null;
-
-                    if (!_rebuildMarkers && key in _markerList) {
-                        marker = _markerList[key];
-                    } else {
-                        marker = createmarker(v, key);
-                    }
-
-                    featureGroup.push(marker);
-
-                    if (!_chart.cluster()) {
-                        _layerGroup.addLayer(marker);
-                    } else {
-                        addList.push(marker);
-                    }
-
-                    _markerListFilterd.push(marker);
+            groups.forEach(function (v,i) {
+                var key = _chart.keyAccessor()(v);
+                var marker = null;
+                if (!_rebuildMarkers && key in _markerList) {
+                    marker = _markerList[key];
+                }
+                else {
+                    marker = createmarker(v,key);
+                }
+                if (!_chart.cluster()) {
+                    _layerGroup.addLayer(marker);
+                }
+                else {
+                    addList.push(marker);
                 }
             });
 
@@ -408,9 +399,9 @@
                 _layerGroup.addLayers(addList);
             }
 
-            if (featureGroup.length) {
+            if (addList.length > 0) {
                 if (_fitOnRender || (_fitOnRedraw && !_disableFitOnRedraw)) {
-                    featureGroup = new L.featureGroup(featureGroup);
+                    var featureGroup = new L.featureGroup(addList);
                     _chart.map().fitBounds(featureGroup.getBounds());//.pad(0.5));
                 }
             }
@@ -423,8 +414,7 @@
             if (!arguments.length) {
                 return _location;
             }
-
-            _location =  _;
+            _location = _;
             return _chart;
         };
 
@@ -432,7 +422,6 @@
             if (!arguments.length) {
                 return _marker;
             }
-
             _marker = _;
             return _chart;
         };
@@ -441,8 +430,23 @@
             if (!arguments.length) {
                 return _icon;
             }
-
             _icon = _;
+            return _chart;
+        };
+
+        _chart.popup = function (_) {
+            if (!arguments.length) {
+                return _popup;
+            }
+            _popup = _;
+            return _chart;
+        };
+
+        _chart.renderPopup = function (_) {
+            if (!arguments.length) {
+                return _renderPopup;
+            }
+            _renderPopup = _;
             return _chart;
         };
 
@@ -450,7 +454,6 @@
             if (!arguments.length) {
                 return _cluster;
             }
-
             _cluster = _;
             return _chart;
         };
@@ -459,7 +462,6 @@
             if (!arguments.length) {
                 return _clusterOptions;
             }
-
             _clusterOptions = _;
             return _chart;
         };
@@ -468,7 +470,6 @@
             if (!arguments.length) {
                 return _rebuildMarkers;
             }
-
             _rebuildMarkers = _;
             return _chart;
         };
@@ -477,7 +478,6 @@
             if (!arguments.length) {
                 return _brushOn;
             }
-
             _brushOn = _;
             return _chart;
         };
@@ -486,7 +486,6 @@
             if (!arguments.length) {
                 return _filterByArea;
             }
-
             _filterByArea = _;
             return _chart;
         };
@@ -513,32 +512,20 @@
             return _layerGroup;
         };
 
-        _chart.markers = function (filtered) {
-            if (filtered) {
-                return _markerListFilterd;
-            }
-
-            return _markerList;
-        };
-
-        var createmarker = function (v, k) {
+        var createmarker = function (v,k) {
             var marker = _marker(v);
             marker.key = k;
-
             if (_chart.renderPopup()) {
-                marker.bindPopup(_chart.popup()(v, marker));
+                marker.bindPopup(_chart.popup()(v,marker));
             }
-
             if (_chart.brushOn() && !_filterByArea) {
-                marker.on('click', selectFilter);
+                marker.on('click',selectFilter);
             }
-
             _markerList[k] = marker;
-
             return marker;
         };
 
-        var zoomStart = function () {
+        var zoomStart = function (e) {
             _zooming = true;
         };
 
@@ -546,7 +533,6 @@
             if (e.type === 'moveend' && (_zooming || e.hard)) {
                 return;
             }
-
             _zooming = false;
 
             _disableFitOnRedraw = true;
@@ -555,37 +541,27 @@
                 var filter;
                 if (_chart.map().getCenter().equals(_chart.center()) && _chart.map().getZoom() === _chart.zoom()) {
                     filter = null;
-                } else {
+                }
+                else {
                     filter = _chart.map().getBounds();
                 }
-
                 dc.events.trigger(function () {
                     _chart.filter(null);
-
                     if (filter) {
                         _innerFilter = true;
                         _chart.filter(filter);
                         _innerFilter = false;
                     }
-
                     dc.redrawAll(_chart.chartGroup());
                 });
-            } else if (
-                _chart.filter() &&
-                (
-                    e.type === 'click' ||
-                    (
-                        _chart.filter() in _markerList &&
-                        !_chart.map().getBounds().contains(_markerList[_chart.filter()].getLatLng())
-                    )
-                )
-            ) {
+            } else if (_chart.filter() && (e.type === 'click' ||
+                                           (_markerList.indexOf(_chart.filter()) !== -1 &&
+                                            !_chart.map().getBounds().contains(_markerList[_chart.filter()].getLatLng())))) {
                 dc.events.trigger(function () {
                     _chart.filter(null);
-                    if (_chart.renderPopup()) {
+                    if (_renderPopup) {
                         _chart.map().closePopup();
                     }
-
                     dc.redrawAll(_chart.chartGroup());
                 });
             }
@@ -594,16 +570,14 @@
         var doFilterByArea = function (dimension, filters) {
             _disableFitOnRedraw = true;
             _chart.dimension().filter(null);
-
             if (filters && filters.length > 0) {
-                _chart.dimension().filter(function (d) {
+                _chart.dimension().filterFunction(function (d) {
                     if (!(d in _markerList)) {
                         return false;
                     }
                     var locO = _markerList[d].getLatLng();
                     return locO && filters[0].contains(locO);
                 });
-
                 if (!_innerFilter && _chart.map().getBounds().toString !== filters[0].toString()) {
                     _chart.map().fitBounds(filters[0]);
                 }
@@ -617,7 +591,6 @@
 
             _disableFitOnRedraw = true;
             var filter = e.target.key;
-
             dc.events.trigger(function () {
                 _chart.filter(filter);
                 dc.redrawAll(_chart.chartGroup());
@@ -627,3 +600,99 @@
         return _chart.anchor(parent, chartGroup);
     };
 })();
+
+//Legend code adapted from http://leafletjs.com/examples/choropleth.html
+dc.leafletLegend = function () {
+    var _parent, _legend = {};
+    var _leafletLegend = null;
+    var _position = 'bottomleft';
+
+    _legend.parent = function (parent) {
+        if (!arguments.length) {
+            return _parent;
+        }
+        _parent = parent;
+        return this;
+    };
+
+    function _LegendClass() {
+        return L.Control.extend({
+            options: {position: _position},
+            onAdd: function (map) {
+                this._div = L.DomUtil.create('div', 'info legend');
+                map.on('moveend',this._update,this);
+                this._update();
+                return this._div;
+            },
+            _update: function () {
+                if (_parent.colorDomain()) { // check because undefined for marker charts
+                    var minValue = _parent.colorDomain()[0],
+                        maxValue = _parent.colorDomain()[1],
+                        palette = _parent.colors().range(),
+                        colorLength = _parent.colors().range().length,
+                        delta = (maxValue - minValue) / colorLength,
+                        i;
+
+                    // define grades for legend colours
+                    // based on equation in dc.js colorCalculator (before version based on colorMixin)
+                    var grades = [];
+                    grades[0] = Math.round(minValue);
+                    for (i = 1; i < colorLength; i++) {
+                        grades[i] = Math.round((0.5 + (i - 1)) * delta + minValue);
+                    }
+
+                    // var div = L.DomUtil.create('div', 'info legend');
+                    // loop through our density intervals and generate a label with a colored
+                    // square for each interval
+                    this._div.innerHTML = ''; //reset so that legend is not plotted multiple times
+                    for (i = 0; i < grades.length; i++) {
+                        this._div.innerHTML +=
+                            '<i style="background:' + palette[i] + '"></i> ' +
+                            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+                    }
+                }
+            }
+        });
+    }
+
+    _legend.LegendClass = function (LegendClass) {
+        if (!arguments.length) {
+            return _LegendClass;
+        }
+
+        _LegendClass = LegendClass;
+        return _legend;
+    };
+
+    _legend.render = function () {
+        // unfortunately the dc.js legend has no concept of redraw, it's always render
+        if (!_leafletLegend) {
+            // fetch the legend class creator, invoke it
+            var Legend = _legend.LegendClass()();
+            // and constuct that class
+            _leafletLegend = new Legend();
+            _leafletLegend.addTo(_parent.map());
+        }
+
+        return _legend.redraw();
+    };
+
+    _legend.redraw = function () {
+        _leafletLegend._update();
+        return _legend;
+    };
+
+    _legend.leafletLegend = function () {
+        return _leafletLegend;
+    };
+
+    _legend.position = function (position) {
+        if (!arguments.length) {
+            return _position;
+        }
+        _position = position;
+        return _legend;
+    };
+
+    return _legend;
+};

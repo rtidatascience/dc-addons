@@ -5,6 +5,7 @@
 
         <link rel="stylesheet" href="../bower_components/dcjs/dc.css">
         <link rel="stylesheet" href="../bower_components/leaflet/dist/leaflet.css">
+        <link rel="stylesheet" href="../bower_components/dc-addons/dist/leaflet/dc-leaflet-legend.css">
 
         <script src="../bower_components/d3/d3.min.js"></script>
         <script src="../bower_components/crossfilter/crossfilter.min.js"></script>
@@ -143,7 +144,8 @@
                         })
                         .title(function (d) {
                             return "State: " + d.key + "\nTotal Amount Raised: " + numberFormat(d.value ? d.value : 0) + "M";
-                        });
+                        })
+                        .legend(dc.leafletLegend().position('bottomright'));
 
                     industryChart.width(990)
                             .height(200)

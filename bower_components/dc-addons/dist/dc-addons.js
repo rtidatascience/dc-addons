@@ -1,7 +1,7 @@
 /*!
- * dc-addons v0.11.0
+ * dc-addons v0.11.3
  *
- * 2015-10-23 09:25:32
+ * 2015-12-11 09:23:06
  *
  */
 if (!dc.utils.getAllFilters) {
@@ -313,21 +313,22 @@ if (!dc.utils.getAllFilters) {
     dc.leafletMarkerChart = function (parent, chartGroup) {
         var _chart = dc.baseLeafletChart({});
 
+        var _renderPopup = true;
         var _cluster = false; // requires leaflet.markerCluster
         var _clusterOptions = false;
         var _rebuildMarkers = false;
         var _brushOn = true;
         var _filterByArea = false;
-        var _fitOnRender = true;
-        var _fitOnRedraw = false;
-        var _disableFitOnRedraw = false;
 
         var _innerFilter = false;
         var _zooming = false;
         var _layerGroup = false;
-        var _markerList = [];
-        var _markerListFilterd = [];
+        var _markerList = {};
         var _currentGroups = false;
+
+        var _fitOnRender = true;
+        var _fitOnRedraw = false;
+        var _disableFitOnRedraw = false;
 
         _chart.renderTitle(true);
 
@@ -335,23 +336,23 @@ if (!dc.utils.getAllFilters) {
             return _chart.keyAccessor()(d);
         };
 
-        var _marker = function (d) {
-            var marker = new L.Marker(
-                _chart.toLocArray(_chart.locationAccessor()(d)),
-                    {
-                        title: _chart.renderTitle() ? _chart.title()(d) : '',
-                        alt: _chart.renderTitle() ? _chart.title()(d) : '',
-                        icon: _icon(),
-                        clickable: _chart.renderPopup() || (_chart.brushOn() && !_filterByArea),
-                        draggable: false
-                    }
-                );
-
+        var _marker = function (d,map) {
+            var marker = new L.Marker(_chart.toLocArray(_chart.locationAccessor()(d)),{
+                title: _chart.renderTitle() ? _chart.title()(d) : '',
+                alt: _chart.renderTitle() ? _chart.title()(d) : '',
+                icon: _icon(),
+                clickable: _chart.renderPopup() || (_chart.brushOn() && !_filterByArea),
+                draggable: false
+            });
             return marker;
         };
 
-        var _icon = function () {
+        var _icon = function (d,map) {
             return new L.Icon.Default();
+        };
+
+        var _popup = function (d,marker) {
+            return _chart.title()(d);
         };
 
         _chart._postRender = function () {
@@ -361,20 +362,18 @@ if (!dc.utils.getAllFilters) {
                 }
 
                 _chart.map().on('zoomend moveend', zoomFilter, this);
-
                 if (!_filterByArea) {
                     _chart.map().on('click', zoomFilter, this);
                 }
-
                 _chart.map().on('zoomstart', zoomStart, this);
             }
 
             if (_cluster) {
                 _layerGroup = new L.MarkerClusterGroup(_clusterOptions ? _clusterOptions : null);
-            } else {
+            }
+            else {
                 _layerGroup = new L.LayerGroup();
             }
-
             _chart.map().addLayer(_layerGroup);
         };
 
@@ -382,39 +381,31 @@ if (!dc.utils.getAllFilters) {
             var groups = _chart._computeOrderedGroups(_chart.data()).filter(function (d) {
                 return _chart.valueAccessor()(d) !== 0;
             });
-
+            if (_currentGroups && _currentGroups.toString() === groups.toString()) {
+                return;
+            }
             _currentGroups = groups;
 
             if (_rebuildMarkers) {
-                _markerList = [];
+                _markerList = {};
             }
-
             _layerGroup.clearLayers();
 
             var addList = [];
-            var featureGroup = [];
-            _markerListFilterd = [];
-
-            groups.forEach(function (v) {
-                if (v.value) {
-                    var key = _chart.keyAccessor()(v);
-                    var marker = null;
-
-                    if (!_rebuildMarkers && key in _markerList) {
-                        marker = _markerList[key];
-                    } else {
-                        marker = createmarker(v, key);
-                    }
-
-                    featureGroup.push(marker);
-
-                    if (!_chart.cluster()) {
-                        _layerGroup.addLayer(marker);
-                    } else {
-                        addList.push(marker);
-                    }
-
-                    _markerListFilterd.push(marker);
+            groups.forEach(function (v,i) {
+                var key = _chart.keyAccessor()(v);
+                var marker = null;
+                if (!_rebuildMarkers && key in _markerList) {
+                    marker = _markerList[key];
+                }
+                else {
+                    marker = createmarker(v,key);
+                }
+                if (!_chart.cluster()) {
+                    _layerGroup.addLayer(marker);
+                }
+                else {
+                    addList.push(marker);
                 }
             });
 
@@ -422,9 +413,9 @@ if (!dc.utils.getAllFilters) {
                 _layerGroup.addLayers(addList);
             }
 
-            if (featureGroup.length) {
+            if (addList.length > 0) {
                 if (_fitOnRender || (_fitOnRedraw && !_disableFitOnRedraw)) {
-                    featureGroup = new L.featureGroup(featureGroup);
+                    var featureGroup = new L.featureGroup(addList);
                     _chart.map().fitBounds(featureGroup.getBounds());//.pad(0.5));
                 }
             }
@@ -437,8 +428,7 @@ if (!dc.utils.getAllFilters) {
             if (!arguments.length) {
                 return _location;
             }
-
-            _location =  _;
+            _location = _;
             return _chart;
         };
 
@@ -446,7 +436,6 @@ if (!dc.utils.getAllFilters) {
             if (!arguments.length) {
                 return _marker;
             }
-
             _marker = _;
             return _chart;
         };
@@ -455,8 +444,23 @@ if (!dc.utils.getAllFilters) {
             if (!arguments.length) {
                 return _icon;
             }
-
             _icon = _;
+            return _chart;
+        };
+
+        _chart.popup = function (_) {
+            if (!arguments.length) {
+                return _popup;
+            }
+            _popup = _;
+            return _chart;
+        };
+
+        _chart.renderPopup = function (_) {
+            if (!arguments.length) {
+                return _renderPopup;
+            }
+            _renderPopup = _;
             return _chart;
         };
 
@@ -464,7 +468,6 @@ if (!dc.utils.getAllFilters) {
             if (!arguments.length) {
                 return _cluster;
             }
-
             _cluster = _;
             return _chart;
         };
@@ -473,7 +476,6 @@ if (!dc.utils.getAllFilters) {
             if (!arguments.length) {
                 return _clusterOptions;
             }
-
             _clusterOptions = _;
             return _chart;
         };
@@ -482,7 +484,6 @@ if (!dc.utils.getAllFilters) {
             if (!arguments.length) {
                 return _rebuildMarkers;
             }
-
             _rebuildMarkers = _;
             return _chart;
         };
@@ -491,7 +492,6 @@ if (!dc.utils.getAllFilters) {
             if (!arguments.length) {
                 return _brushOn;
             }
-
             _brushOn = _;
             return _chart;
         };
@@ -500,7 +500,6 @@ if (!dc.utils.getAllFilters) {
             if (!arguments.length) {
                 return _filterByArea;
             }
-
             _filterByArea = _;
             return _chart;
         };
@@ -527,32 +526,20 @@ if (!dc.utils.getAllFilters) {
             return _layerGroup;
         };
 
-        _chart.markers = function (filtered) {
-            if (filtered) {
-                return _markerListFilterd;
-            }
-
-            return _markerList;
-        };
-
-        var createmarker = function (v, k) {
+        var createmarker = function (v,k) {
             var marker = _marker(v);
             marker.key = k;
-
             if (_chart.renderPopup()) {
-                marker.bindPopup(_chart.popup()(v, marker));
+                marker.bindPopup(_chart.popup()(v,marker));
             }
-
             if (_chart.brushOn() && !_filterByArea) {
-                marker.on('click', selectFilter);
+                marker.on('click',selectFilter);
             }
-
             _markerList[k] = marker;
-
             return marker;
         };
 
-        var zoomStart = function () {
+        var zoomStart = function (e) {
             _zooming = true;
         };
 
@@ -560,7 +547,6 @@ if (!dc.utils.getAllFilters) {
             if (e.type === 'moveend' && (_zooming || e.hard)) {
                 return;
             }
-
             _zooming = false;
 
             _disableFitOnRedraw = true;
@@ -569,37 +555,27 @@ if (!dc.utils.getAllFilters) {
                 var filter;
                 if (_chart.map().getCenter().equals(_chart.center()) && _chart.map().getZoom() === _chart.zoom()) {
                     filter = null;
-                } else {
+                }
+                else {
                     filter = _chart.map().getBounds();
                 }
-
                 dc.events.trigger(function () {
                     _chart.filter(null);
-
                     if (filter) {
                         _innerFilter = true;
                         _chart.filter(filter);
                         _innerFilter = false;
                     }
-
                     dc.redrawAll(_chart.chartGroup());
                 });
-            } else if (
-                _chart.filter() &&
-                (
-                    e.type === 'click' ||
-                    (
-                        _chart.filter() in _markerList &&
-                        !_chart.map().getBounds().contains(_markerList[_chart.filter()].getLatLng())
-                    )
-                )
-            ) {
+            } else if (_chart.filter() && (e.type === 'click' ||
+                                           (_markerList.indexOf(_chart.filter()) !== -1 &&
+                                            !_chart.map().getBounds().contains(_markerList[_chart.filter()].getLatLng())))) {
                 dc.events.trigger(function () {
                     _chart.filter(null);
-                    if (_chart.renderPopup()) {
+                    if (_renderPopup) {
                         _chart.map().closePopup();
                     }
-
                     dc.redrawAll(_chart.chartGroup());
                 });
             }
@@ -608,16 +584,14 @@ if (!dc.utils.getAllFilters) {
         var doFilterByArea = function (dimension, filters) {
             _disableFitOnRedraw = true;
             _chart.dimension().filter(null);
-
             if (filters && filters.length > 0) {
-                _chart.dimension().filter(function (d) {
+                _chart.dimension().filterFunction(function (d) {
                     if (!(d in _markerList)) {
                         return false;
                     }
                     var locO = _markerList[d].getLatLng();
                     return locO && filters[0].contains(locO);
                 });
-
                 if (!_innerFilter && _chart.map().getBounds().toString !== filters[0].toString()) {
                     _chart.map().fitBounds(filters[0]);
                 }
@@ -631,7 +605,6 @@ if (!dc.utils.getAllFilters) {
 
             _disableFitOnRedraw = true;
             var filter = e.target.key;
-
             dc.events.trigger(function () {
                 _chart.filter(filter);
                 dc.redrawAll(_chart.chartGroup());
@@ -641,6 +614,102 @@ if (!dc.utils.getAllFilters) {
         return _chart.anchor(parent, chartGroup);
     };
 })();
+
+//Legend code adapted from http://leafletjs.com/examples/choropleth.html
+dc.leafletLegend = function () {
+    var _parent, _legend = {};
+    var _leafletLegend = null;
+    var _position = 'bottomleft';
+
+    _legend.parent = function (parent) {
+        if (!arguments.length) {
+            return _parent;
+        }
+        _parent = parent;
+        return this;
+    };
+
+    function _LegendClass() {
+        return L.Control.extend({
+            options: {position: _position},
+            onAdd: function (map) {
+                this._div = L.DomUtil.create('div', 'info legend');
+                map.on('moveend',this._update,this);
+                this._update();
+                return this._div;
+            },
+            _update: function () {
+                if (_parent.colorDomain()) { // check because undefined for marker charts
+                    var minValue = _parent.colorDomain()[0],
+                        maxValue = _parent.colorDomain()[1],
+                        palette = _parent.colors().range(),
+                        colorLength = _parent.colors().range().length,
+                        delta = (maxValue - minValue) / colorLength,
+                        i;
+
+                    // define grades for legend colours
+                    // based on equation in dc.js colorCalculator (before version based on colorMixin)
+                    var grades = [];
+                    grades[0] = Math.round(minValue);
+                    for (i = 1; i < colorLength; i++) {
+                        grades[i] = Math.round((0.5 + (i - 1)) * delta + minValue);
+                    }
+
+                    // var div = L.DomUtil.create('div', 'info legend');
+                    // loop through our density intervals and generate a label with a colored
+                    // square for each interval
+                    this._div.innerHTML = ''; //reset so that legend is not plotted multiple times
+                    for (i = 0; i < grades.length; i++) {
+                        this._div.innerHTML +=
+                            '<i style="background:' + palette[i] + '"></i> ' +
+                            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+                    }
+                }
+            }
+        });
+    }
+
+    _legend.LegendClass = function (LegendClass) {
+        if (!arguments.length) {
+            return _LegendClass;
+        }
+
+        _LegendClass = LegendClass;
+        return _legend;
+    };
+
+    _legend.render = function () {
+        // unfortunately the dc.js legend has no concept of redraw, it's always render
+        if (!_leafletLegend) {
+            // fetch the legend class creator, invoke it
+            var Legend = _legend.LegendClass()();
+            // and constuct that class
+            _leafletLegend = new Legend();
+            _leafletLegend.addTo(_parent.map());
+        }
+
+        return _legend.redraw();
+    };
+
+    _legend.redraw = function () {
+        _leafletLegend._update();
+        return _legend;
+    };
+
+    _legend.leafletLegend = function () {
+        return _leafletLegend;
+    };
+
+    _legend.position = function (position) {
+        if (!arguments.length) {
+            return _position;
+        }
+        _position = position;
+        return _legend;
+    };
+
+    return _legend;
+};
 
 (function () {
     'use strict';
@@ -1207,27 +1276,100 @@ if (!dc.utils.getAllFilters) {
     dc.tooltipMixin = function (_chart) {
 
         if (_chart) {
-            _chart.tip = function () {
-                var selector = 'rect.bar,circle.dot,g.pie-slice path,circle.bubble,g.row rect',
-                    svg = _chart.svg(),
-                    tip = d3.tip()
+            _chart.tip = {};
+            _chart.tip.tooltip = null;
+
+            _chart.tip.init = function () {
+                if (_chart.tip.tooltip === null) {
+                    var wrapper = _chart.svg().selectAll('g.sub'); // if the chart has sub grouping (e.g. composite or series)
+
+                    // if no sub grouping then just use the chart svg
+                    if (wrapper.empty()) {
+                        wrapper = _chart.svg();
+                    }
+
+                    // get all elements that want a tooltip
+                    _chart.tip.elements = wrapper.selectAll('rect.bar,circle.dot,g.pie-slice path,circle.bubble,g.row rect');
+
+                    // nothing to tip so exit
+                    if (_chart.tip.elements.empty()) {
+                        return false;
+                    }
+
+                    // create the tip object
+                    _chart.tip.tooltip = d3.tip()
                         .attr('class', 'tip')
-                        .html(function (d) {
-                            if (d.data) {
-                                return _chart.title()(d.data);
+                        .html(function (d, i, subI) {
+                            var title = _chart.title();
+
+                            // if the chart is a composite chart
+                            if (_chart.children) {
+                                title = _chart.children()[subI].title();
                             }
 
-                            return _chart.title()(d);
+                            // if the chart is a paired row chart
+                            if (typeof title !== 'function') {
+                                title = title[subI];
+                            }
+
+                            // if a stackable chart
+                            if (_chart.stack) {
+                                title = _chart.title(d.layer);
+                            }
+
+                            var data = d;
+                            if (d.data) {
+                                data = d.data;
+                            }
+
+                            return title(data);
                         });
 
-                svg.selectAll(selector).call(tip);
-                svg.selectAll(selector).on('mouseover', tip.show).on('mouseleave', tip.hide);
+                    _chart.tip.tooltip.offset([-10, 0]);
 
-                // remove standard tooltip
-                svg.selectAll('title').remove();
+                    // add the tip to the elements
+                    _chart.tip.elements.call(_chart.tip.tooltip);
+                    _chart.tip.elements.on('mouseover', _chart.tip.tooltip.show).on('mouseleave', _chart.tip.tooltip.hide);
+
+                    // remove standard tooltips
+                    _chart.tip.elements.each(function () {
+                        var el = d3.select(this);
+                        var title = el.select('title');
+
+                        if (title.empty()) {
+                            return false;
+                        }
+
+                        el.attr('data-title', title.text());
+                        title.remove();
+                    });
+                }
+
+                return _chart;
             };
 
-            _chart.tip();
+            _chart.tip.destroy = function () {
+                if (_chart.tip.tooltip !== null) {
+                    _chart.tip.elements.on('mouseover', null).on('mouseleave', null); // remove mouse events
+                    _chart.tip.tooltip.destroy(); // destroy the tip
+                    _chart.tip.tooltip = null; // and set it to null
+
+                    // add the standard tooltips back in
+                    _chart.tip.elements.each(function () {
+                        var el = d3.select(this);
+                        el.append('title').text(el.attr('data-title'));
+                    });
+                }
+
+                return _chart;
+            };
+
+            _chart.tip.reinit = function () {
+                _chart.tip.destroy();
+                _chart.tip.init();
+            };
+
+            _chart.tip.init();
         }
 
         return _chart;
@@ -2716,7 +2858,7 @@ if (!dc.utils.getAllFilters) {
 (function () {
     'use strict';
 
-    var dcChart = function ($timeout) {
+    var dcChart = function ($timeout, $compile) {
         return {
             restrict: 'E',
             scope: {
@@ -2725,6 +2867,7 @@ if (!dc.utils.getAllFilters) {
                 group: '=',
                 options: '=',
                 filters: '=',
+                reset: '=',
             },
             link: function ($scope, element) {
                 $scope.drawChart = function () {
@@ -2732,6 +2875,15 @@ if (!dc.utils.getAllFilters) {
 
                     if (typeof $scope.type === 'string' && typeof $scope.options === 'object') {
                         $scope.cleanup();
+
+                        if ($scope.reset) {
+                            $scope.resetChart = function () {
+                                $scope.chart.filterAll();
+                                dc.redrawAll();
+                            };
+                            element.append('<span class="reset" style="visibility:hidden;">Current filter: <span class="filter"></span></span>');
+                            element.append($compile('<a class="reset" style="visibility:hidden;" ng-click="resetChart()">reset</a>')($scope));
+                        }
 
                         $scope.chart = dc[$scope.type](element[0], $scope.group || undefined);
 
@@ -2816,7 +2968,7 @@ if (!dc.utils.getAllFilters) {
         };
     };
 
-    dcChart.$inject = ['$timeout'];
+    dcChart.$inject = ['$timeout', '$compile'];
 
     angular.module('AngularDc').directive('dcChart', dcChart);
 
@@ -2868,6 +3020,12 @@ if (!dc.utils.getAllFilters) {
     dc.paginationMixin = function (_chart) {
 
         if (_chart) {
+            // chart does not have a y axis if it is a row chart, so don't make it elastic
+            if (_chart.y) {
+                // chart is a bar chart so we need it to be elastic for it to work
+                _chart.elasticX(true);
+            }
+
             _chart.pagination = {};
             // data information
             _chart.pagination.allData = _chart.group().all();
@@ -2888,6 +3046,10 @@ if (!dc.utils.getAllFilters) {
                 if (page !== _chart.pagination.currentPage) {
                     _chart.pagination.currentPage = page;
                     _chart.redraw();
+
+                    if (_chart.tip) {
+                        _chart.tip.reinit();
+                    }
                 }
             };
             _chart.pagination.previous = function () {
@@ -2906,11 +3068,11 @@ if (!dc.utils.getAllFilters) {
             _chart.group().all = function () {
                 var pageStart = (_chart.pagination.currentPage - 1) * _chart.pagination.pageSize;
                 var pageEnd = _chart.pagination.currentPage * _chart.pagination.pageSize;
-                return _chart.pagination.allData.slice(pageStart, pageEnd);
+                return _chart._computeOrderedGroups(_chart.pagination.allData).slice(pageStart, pageEnd);
             };
-        }
 
-        _chart.redraw();
+            _chart.redraw();
+        }
 
         return _chart;
     };

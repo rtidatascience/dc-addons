@@ -1,7 +1,7 @@
 /*!
- * dc-addons v0.11.0
+ * dc-addons v0.11.3
  *
- * 2015-10-23 09:25:32
+ * 2015-12-11 09:23:06
  *
  */
 (function () {
@@ -14,6 +14,12 @@
     dc.paginationMixin = function (_chart) {
 
         if (_chart) {
+            // chart does not have a y axis if it is a row chart, so don't make it elastic
+            if (_chart.y) {
+                // chart is a bar chart so we need it to be elastic for it to work
+                _chart.elasticX(true);
+            }
+
             _chart.pagination = {};
             // data information
             _chart.pagination.allData = _chart.group().all();
@@ -34,6 +40,10 @@
                 if (page !== _chart.pagination.currentPage) {
                     _chart.pagination.currentPage = page;
                     _chart.redraw();
+
+                    if (_chart.tip) {
+                        _chart.tip.reinit();
+                    }
                 }
             };
             _chart.pagination.previous = function () {
@@ -52,11 +62,11 @@
             _chart.group().all = function () {
                 var pageStart = (_chart.pagination.currentPage - 1) * _chart.pagination.pageSize;
                 var pageEnd = _chart.pagination.currentPage * _chart.pagination.pageSize;
-                return _chart.pagination.allData.slice(pageStart, pageEnd);
+                return _chart._computeOrderedGroups(_chart.pagination.allData).slice(pageStart, pageEnd);
             };
-        }
 
-        _chart.redraw();
+            _chart.redraw();
+        }
 
         return _chart;
     };
