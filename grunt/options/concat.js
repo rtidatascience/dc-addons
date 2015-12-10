@@ -12,6 +12,7 @@ module.exports = {
             '<%= config.src %>/<%= config.scripts %>/base-leaflet-chart.js',
             '<%= config.src %>/<%= config.scripts %>/leaflet-choropleth-chart.js',
             '<%= config.src %>/<%= config.scripts %>/leaflet-marker-chart.js',
+            '<%= config.src %>/<%= config.scripts %>/leaflet-legend.js',
         ]
     },
     google: {
@@ -106,6 +107,7 @@ module.exports = {
             '<%= config.src %>/<%= config.scripts %>/base-leaflet-chart.js',
             '<%= config.src %>/<%= config.scripts %>/leaflet-choropleth-chart.js',
             '<%= config.src %>/<%= config.scripts %>/leaflet-marker-chart.js',
+            '<%= config.src %>/<%= config.scripts %>/leaflet-legend.js',
             '<%= config.src %>/<%= config.scripts %>/base-google-chart.js',
             '<%= config.src %>/<%= config.scripts %>/google-choropleth-chart.js',
             '<%= config.src %>/<%= config.scripts %>/google-marker-chart.js',
