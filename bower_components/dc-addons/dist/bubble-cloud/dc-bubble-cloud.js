@@ -1,7 +1,7 @@
 /*!
- * dc-addons v0.11.3
+ * dc-addons v0.11.4
  *
- * 2015-12-11 09:23:06
+ * 2015-12-14 08:35:54
  *
  */
 // Code copied and changed from https://github.com/vlandham/gates_bubbles
@@ -14,7 +14,7 @@
     }
 
     dc.bubbleCloud = function (parent, chartGroup) {
-        var _chart = dc.bubbleMixin(dc.capMixin(dc.bubbleChart()));
+        var _chart = dc.bubbleMixin(dc.capMixin(dc.bubbleChart(parent)));
 
         var LAYOUT_GRAVITY = 0.2;
         var RADIUS_TRANSITION = 1500;
