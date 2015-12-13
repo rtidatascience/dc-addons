@@ -10,7 +10,7 @@ module.exports = function () {
             ]
         },
         leaflet: {
-            dest: '<%= config.dist %>/leaflet/dc-leaflet-legend.css',
+            dest: '<%= config.dist %>/leaflet-map/dc-leaflet-legend.css',
             src: [
                 '<%= config.src %>/<%= config.less %>/leaflet-legend.less'
             ]
