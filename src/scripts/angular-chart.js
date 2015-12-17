@@ -74,6 +74,10 @@
 
                 $scope.cleanup = function () {
                     if ($scope.chart) {
+                        if ($scope.chart && $scope.chart.destroy) {
+                            $scope.chart.destroy();
+                        }
+
                         dc.deregisterChart($scope.chart);
                     }
                 };

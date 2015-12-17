@@ -1,7 +1,7 @@
 /*!
  * dc-addons v0.11.4
  *
- * 2015-12-14 08:35:54
+ * 2015-12-17 15:06:51
  *
  */
 (function () {
@@ -86,6 +86,10 @@
 
                 $scope.cleanup = function () {
                     if ($scope.chart) {
+                        if ($scope.chart && $scope.chart.destroy) {
+                            $scope.chart.destroy();
+                        }
+
                         dc.deregisterChart($scope.chart);
                     }
                 };
