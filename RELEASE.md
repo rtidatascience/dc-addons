@@ -11,7 +11,7 @@ The build steps to releasing a new version. Before you can do this you need to t
   * Commit and push with the message "Bumping to v\*.\*.\*"
   * [Create a new release](https://github.com/intellipharm/dc-addons/releases/new)
     * Tag version is v\*.\*.\*
-    * Release title is "Angular CakePHP v\*.\*.\*"
+    * Release title is "dc-addons v\*.\*.\*"
     * The comment section should be a list of commits and the changes the commit made. See below for an example
     * If it is under v1.0.0 then mark "This is a pre-release" as true
 

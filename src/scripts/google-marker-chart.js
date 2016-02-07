@@ -96,7 +96,6 @@
                 return _chart.valueAccessor()(d) !== 0;
             });
 
-
             if (_rebuildMarkers) {
                 _markerList = {};
             } else {

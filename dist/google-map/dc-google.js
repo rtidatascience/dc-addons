@@ -1,7 +1,7 @@
 /*!
- * dc-addons v0.11.4
+ * dc-addons v0.11.5
  *
- * 2015-12-17 15:06:51
+ * 2016-02-08 09:21:40
  *
  */
 (function () {
@@ -333,7 +333,6 @@
         var _layerGroup = false;
         var _markerList = {};
         var _markerListFilterd = [];
-        var _currentGroups = false;
         var _icon = false;
         var _infoWindow = null;
         var _zoom = null;
@@ -409,10 +408,12 @@
                 return _chart.valueAccessor()(d) !== 0;
             });
 
-            _currentGroups = groups;
-
             if (_rebuildMarkers) {
                 _markerList = {};
+            } else {
+                for (var key in _markerList) {
+                    _markerList[key].setVisible(false);
+                }
             }
 
             if (_cluster) {

@@ -1,7 +1,7 @@
 /*!
- * dc-addons v0.11.4
+ * dc-addons v0.11.5
  *
- * 2015-12-17 15:06:51
+ * 2016-02-08 09:21:40
  *
  */
 var moment = require('moment'),
