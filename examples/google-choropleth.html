@@ -140,7 +140,7 @@
                         .colorCalculator(function (d) { return d ? usChart.colors()(d.value) : '#ccc'; })
                         .geojson(statesJson)
                         .featureKeyAccessor(function(feature) {
-                            return feature.H.name;
+                            return feature.R.name;
                         })
                         .title(function (d) {
                             return "State: " + d.key + "\nTotal Amount Raised: " + numberFormat(d.value ? d.value : 0) + "M";

@@ -1,7 +1,7 @@
 /*!
- * dc-addons v0.11.4
+ * dc-addons v0.11.5
  *
- * 2015-12-14 08:35:54
+ * 2016-02-08 09:21:40
  *
  */
 (function () {
@@ -331,11 +331,11 @@
 
         var _innerFilter = false;
         var _layerGroup = false;
-        var _markerList = [];
+        var _markerList = {};
         var _markerListFilterd = [];
-        var _currentGroups = false;
         var _icon = false;
         var _infoWindow = null;
+        var _zoom = null;
 
         _chart.renderTitle(true);
 
@@ -362,7 +362,10 @@
                 }
 
                 google.maps.event.addListener(_chart.map(), 'zoom_changed', function () {
-                    zoomFilter('zoom');
+                    if (_chart.map().getZoom() !== _zoom) {
+                        _zoom = _chart.map().getZoom();
+                        zoomFilter('zoom');
+                    }
                 }, this);
                 google.maps.event.addListener(_chart.map(), 'dragend', function () {
                     zoomFilter('drag');
@@ -405,10 +408,12 @@
                 return _chart.valueAccessor()(d) !== 0;
             });
 
-            _currentGroups = groups;
-
             if (_rebuildMarkers) {
-                _markerList = [];
+                _markerList = {};
+            } else {
+                for (var key in _markerList) {
+                    _markerList[key].setVisible(false);
+                }
             }
 
             if (_cluster) {
@@ -465,6 +470,21 @@
 
             _disableFitOnRedraw = false;
             _fitOnRender = false;
+        };
+
+        _chart.destroy = function () {
+            // clear markers and their events
+            for (var marker in _markerList) {
+                if (_markerList.hasOwnProperty(marker)) {
+                    google.maps.event.clearInstanceListeners(_markerList[marker]);
+                    _markerList[marker].setMap(null);
+                    delete _markerList[marker];
+                }
+            }
+
+            // clear map and it's events
+            google.maps.event.clearInstanceListeners(_chart.map());
+            _chart.map(null);
         };
 
         _chart.locationAccessor = function (_) {
