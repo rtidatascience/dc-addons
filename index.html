@@ -14,17 +14,18 @@
       <h1 class="project-name">DC Addons</h1>
       <h2 class="project-tagline">dc.js chart addons</h2>
       <a href="https://github.com/Intellipharm/dc-addons" class="btn">View on GitHub</a>
-      <a href="http://intellipharm.github.io/dc-addons/examples" class="btn">Examples</a>
+      <a href="https://github.com/Intellipharm/dc-addons/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/Intellipharm/dc-addons/tarball/master" class="btn">Download .tar.gz</a>
     </section>
 
     <section class="main-content">
       <h1>
-<a id="dc-addons" class="anchor" href="#dc-addons" aria-hidden="true"><span class="octicon octicon-link"></span></a>dc-addons</h1>
+<a id="dc-addons" class="anchor" href="#dc-addons" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>dc-addons</h1>
 
 <p>These <a href="http://dc-js.github.io/dc.js/">dc.js</a> addons provide new charts for the dc namespace.</p>
 
 <h2>
-<a id="addons" class="anchor" href="#addons" aria-hidden="true"><span class="octicon octicon-link"></span></a>Addons</h2>
+<a id="addons" class="anchor" href="#addons" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Addons</h2>
 
 <ul>
 <li><a href="#leafletjs">Leaflet.js</a></li>
@@ -34,17 +35,20 @@
 <li><a href="#bubble-cloud">Bubble Cloud</a></li>
 <li><a href="#paired-row">Paired Row</a></li>
 <li><a href="#server">Server</a></li>
+<li><a href="#angularjs-directives">AngularJS Directives</a></li>
+<li><a href="#crossfilter-server">Crossfilter Server</a></li>
+<li><a href="#crossfilter-server-with-elastic-search">Crossfilter Server With Elastic Search</a></li>
 </ul>
 
 <h2>
-<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h2>
 
-<div class="highlight highlight-js"><pre>bower install dc<span class="pl-k">-</span>addons <span class="pl-k">--</span>save
+<div class="highlight highlight-source-js"><pre>bower install dc<span class="pl-k">-</span>addons <span class="pl-k">--</span>save
 npm install dc<span class="pl-k">-</span>addons <span class="pl-k">--</span>save</pre></div>
 
 <p>You can either include all addons or each on individually as you need them.  To see examples of individual addons see each addon below. The following example will include all addons.</p>
 
-<div class="highlight highlight-html"><pre><span class="pl-c">&lt;!-- dc-addons requirements --&gt;</span>
+<div class="highlight highlight-text-html-basic"><pre><span class="pl-c">&lt;!-- dc-addons requirements --&gt;</span>
 &lt;<span class="pl-ent">link</span> <span class="pl-e">rel</span>=<span class="pl-s"><span class="pl-pds">"</span>stylesheet<span class="pl-pds">"</span></span> <span class="pl-e">href</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/leaflet/dist/leaflet.css<span class="pl-pds">"</span></span> /&gt;
 &lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/leaflet/dist/leaflet.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;
 &lt;<span class="pl-ent">link</span> <span class="pl-e">rel</span>=<span class="pl-s"><span class="pl-pds">"</span>stylesheet<span class="pl-pds">"</span></span> <span class="pl-e">href</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/leaflet.markercluster/dist/MarkerCluster.css<span class="pl-pds">"</span></span> /&gt;
@@ -59,18 +63,18 @@ npm install dc<span class="pl-k">-</span>addons <span class="pl-k">--</span>save
 &lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/dc-addons/dist/dc-addons.min.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
 
 <h2>
-<a id="leafletjs" class="anchor" href="#leafletjs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Leaflet.js</h2>
+<a id="leafletjs" class="anchor" href="#leafletjs" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Leaflet.js</h2>
 
 <p>This extension provides support for dc.js charts in a <a href="http://leafletjs.com/">leaflet.js</a> map. This is an extension of <a href="https://github.com/yurukov/dc.leaflet.js">https://github.com/yurukov/dc.leaflet.js</a> updated to work with dc.js version 2.</p>
 
 <h4>
-<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h4>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h4>
 
 <p>There are two charts currently implemented - markers and choropleth. They extend the base abstract leaflet chart. Both support selection of datapoints and update in real time. Styling and map options can be set directly to the map object and though functions in the chart. Check the <a href="http://leafletjs.com/reference.html#map-options">Leaflet reference</a> for more information on the specific map, marker and geojson options.
 Location can be set as either 'lat,lng' string or as an array [lat,lng].</p>
 
 <h6>
-<a id="marker-chart" class="anchor" href="#marker-chart" aria-hidden="true"><span class="octicon octicon-link"></span></a>Marker Chart</h6>
+<a id="marker-chart" class="anchor" href="#marker-chart" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Marker Chart</h6>
 
 <p>Each group is presented as one marker on the map.</p>
 
@@ -93,7 +97,7 @@ Location can be set as either 'lat,lng' string or as an array [lat,lng].</p>
 </code></pre>
 
 <h6>
-<a id="choropleth-chart" class="anchor" href="#choropleth-chart" aria-hidden="true"><span class="octicon octicon-link"></span></a>Choropleth Chart</h6>
+<a id="choropleth-chart" class="anchor" href="#choropleth-chart" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Choropleth Chart</h6>
 
 <p>Each group is mapped to an feature on the map</p>
 
@@ -111,18 +115,32 @@ Location can be set as either 'lat,lng' string or as an array [lat,lng].</p>
   .legend(dc.leafletLegend().position('bottomright'))
 </code></pre>
 
-<h4>
-<a id="examples" class="anchor" href="#examples" aria-hidden="true"><span class="octicon octicon-link"></span></a>Examples</h4>
+<h6>
+<a id="custom-chart" class="anchor" href="#custom-chart" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Custom Chart</h6>
 
-<p>
-    <ul>
-        <li><a href="http://intellipharm.github.io/dc-addons/examples/leaflet-marker.html">Leaflet Marker</a></li>
-        <li><a href="http://intellipharm.github.io/dc-addons/examples/leaflet-choropleth.html">Leaflet Choropleth</a></li>
-    </ul>
-</p>
+<p>Gives you full control over what is displayed on the map</p>
+
+<pre><code>dc.leafletCustomChart(parent,chartGroup)
+  .mapOptions({..})       - set leaflet specific options to the map object; Default: Leaflet default options
+  .center([1.1,1.1])      - initial location
+  .zoom(7)                - initial zoom level
+  .map()                  - get map object
+  .locationAccessor()     - function (d) to access the property indicating the latlng (string or array); Default: keyAccessor
+  .renderItem()           - function (chart, map, d, i) the initial rendering of the map
+  .redrawItem()           - function (chart, map, d, i) run on every crossfilter. The d object will have a filtered value added to it.
+</code></pre>
 
 <h4>
-<a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Requirements</h4>
+<a id="examples" class="anchor" href="#examples" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Examples</h4>
+
+<ul>
+<li><a href="http://intellipharm.github.io/dc-addons/examples/leaflet-marker.html">Leaflet Marker</a></li>
+<li><a href="http://intellipharm.github.io/dc-addons/examples/leaflet-choropleth.html">Leaflet Choropleth</a></li>
+<li><a href="http://intellipharm.github.io/dc-addons/examples/leaflet-custom.html">Leaflet Custom</a></li>
+</ul>
+
+<h4>
+<a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h4>
 
 <p>These are the requirements for the dc leaflet charts. Ther version number supplied is the version supported when created. It could work with later versions.</p>
 
@@ -130,7 +148,7 @@ Location can be set as either 'lat,lng' string or as an array [lat,lng].</p>
 <li> <a href="https://github.com/Leaflet/Leaflet">leaflet.js</a> v0.7.2</li>
 </ul>
 
-<div class="highlight highlight-html"><pre><span class="pl-c">&lt;!--- through bower --&gt;</span>
+<div class="highlight highlight-text-html-basic"><pre><span class="pl-c">&lt;!--- through bower --&gt;</span>
 &lt;<span class="pl-ent">link</span> <span class="pl-e">rel</span>=<span class="pl-s"><span class="pl-pds">"</span>stylesheet<span class="pl-pds">"</span></span> <span class="pl-e">href</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/leaflet/dist/leaflet.css<span class="pl-pds">"</span></span> /&gt;
 &lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/leaflet/dist/leaflet.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;
 
@@ -142,7 +160,7 @@ Location can be set as either 'lat,lng' string or as an array [lat,lng].</p>
 <li> <a href="https://github.com/Leaflet/Leaflet.markercluster">leaflet.markercluster.js</a> v0.4.0 (in case you use the cluster option)</li>
 </ul>
 
-<div class="highlight highlight-html"><pre><span class="pl-c">&lt;!--- through bower --&gt;</span>
+<div class="highlight highlight-text-html-basic"><pre><span class="pl-c">&lt;!--- through bower --&gt;</span>
 &lt;<span class="pl-ent">link</span> <span class="pl-e">rel</span>=<span class="pl-s"><span class="pl-pds">"</span>stylesheet<span class="pl-pds">"</span></span> <span class="pl-e">href</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/leaflet.markercluster/dist/MarkerCluster.css<span class="pl-pds">"</span></span> /&gt;
 &lt;<span class="pl-ent">link</span> <span class="pl-e">rel</span>=<span class="pl-s"><span class="pl-pds">"</span>stylesheet<span class="pl-pds">"</span></span> <span class="pl-e">href</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/leaflet.markercluster/dist/MarkerCluster.Default.css<span class="pl-pds">"</span></span> /&gt;
 &lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/leaflet.markercluster/dist/leaflet.markercluster.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;
@@ -154,21 +172,21 @@ Location can be set as either 'lat,lng' string or as an array [lat,lng].</p>
 
 <p>If you want to include individually</p>
 
-<div class="highlight highlight-html"><pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/dc-addons/dist/leaflet-map/dc-leaflet.min.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
+<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/dc-addons/dist/leaflet-map/dc-leaflet.min.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
 
 <h2>
-<a id="google-maps" class="anchor" href="#google-maps" aria-hidden="true"><span class="octicon octicon-link"></span></a>Google Maps</h2>
+<a id="google-maps" class="anchor" href="#google-maps" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Google Maps</h2>
 
 <p>This extension provides support for dc.js charts in a <a href="https://developers.google.com/maps/documentation/javascript/">google</a> map. This is an extension of <a href="https://github.com/yurukov/dc.leaflet.js">https://github.com/yurukov/dc.leaflet.js</a> modified to work with google maps and dc.js version 2.</p>
 
 <h4>
-<a id="usage-1" class="anchor" href="#usage-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h4>
+<a id="usage-1" class="anchor" href="#usage-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h4>
 
 <p>There are two charts currently implemented - markers and choropleth. They extend the base abstract google chart. Both support selection of datapoints and update in real time. Styling and map options can be set directly to the map object and though functions in the chart. Check the <a href="https://developers.google.com/maps/documentation/javascript/reference">Google maps reference</a> for more information on the specific map, marker and geojson options.
 Location can be set as either 'lat,lng' string or as an array [lat,lng].</p>
 
 <h6>
-<a id="marker-chart-1" class="anchor" href="#marker-chart-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Marker Chart</h6>
+<a id="marker-chart-1" class="anchor" href="#marker-chart-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Marker Chart</h6>
 
 <p>Each group is presented as one marker on the map.</p>
 
@@ -191,7 +209,7 @@ Location can be set as either 'lat,lng' string or as an array [lat,lng].</p>
 </code></pre>
 
 <h6>
-<a id="choropleth-chart-1" class="anchor" href="#choropleth-chart-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Choropleth Chart</h6>
+<a id="choropleth-chart-1" class="anchor" href="#choropleth-chart-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Choropleth Chart</h6>
 
 <p>Each group is mapped to an feature on the map</p>
 
@@ -208,247 +226,254 @@ Location can be set as either 'lat,lng' string or as an array [lat,lng].</p>
   .brushOn(true)          - if the map would select datapoints; Default: true
 </code></pre>
 
-<h4>
-<a id="examples-1" class="anchor" href="#examples-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Examples</h4>
+<h6>
+<a id="custom-chart-1" class="anchor" href="#custom-chart-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Custom Chart</h6>
 
-<p>
-    <ul>
-        <li><a href="http://intellipharm.github.io/dc-addons/examples/google-marker.html">Google Marker</a></li>
-        <li><a href="http://intellipharm.github.io/dc-addons/examples/google-choropleth.html">Google Choropleth</a></li>
-    </ul>
-</p>
+<p>Gives you full control over what is displayed on the map</p>
+
+<pre><code>dc.googleCustomChart(parent,chartGroup)
+  .mapOptions({..})       - set google specific options to the map object; Default: Google default options
+  .center([1.1,1.1])      - initial location
+  .zoom(7)                - initial zoom level
+  .map()                  - get map object
+  .locationAccessor()     - function (d) to access the property indicating the latlng (string or array); Default: keyAccessor
+  .renderItem()           - function (chart, map, d, i) the initial rendering of the map
+  .redrawItem()           - function (chart, map, d, i) run on every crossfilter. The d object will have a filtered value added to it.
+</code></pre>
 
 <h4>
-<a id="requirements-1" class="anchor" href="#requirements-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Requirements</h4>
+<a id="examples-1" class="anchor" href="#examples-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Examples</h4>
+
+<ul>
+<li><a href="http://intellipharm.github.io/dc-addons/examples/google-marker.html">Google Marker</a></li>
+<li><a href="http://intellipharm.github.io/dc-addons/examples/google-choropleth.html">Google Choropleth</a></li>
+<li><a href="http://intellipharm.github.io/dc-addons/examples/google-custom.html">Google Custom</a></li>
+</ul>
+
+<h4>
+<a id="requirements-1" class="anchor" href="#requirements-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h4>
 
 <ul>
 <li><a href="https://developers.google.com/maps/documentation/javascript/">google maps</a></li>
 </ul>
 
-<div class="highlight highlight-html"><pre><span class="pl-c">&lt;!--- through cdn --&gt;</span>
+<div class="highlight highlight-text-html-basic"><pre><span class="pl-c">&lt;!--- through cdn --&gt;</span>
 &lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>https://maps.googleapis.com/maps/api/js?key=API_KEY<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
 
 <ul>
 <li><a href="https://code.google.com/p/google-maps-utility-library-v3/">google maps marker clusterer</a></li>
 </ul>
 
-<div class="highlight highlight-html"><pre><span class="pl-c">&lt;!--- through cdn --&gt;</span>
+<div class="highlight highlight-text-html-basic"><pre><span class="pl-c">&lt;!--- through cdn --&gt;</span>
 &lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;script&gt;</pre></div>
 
 <p>If you want to include individually</p>
 
-<div class="highlight highlight-html"><pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/dc-addons/dist/google-map/dc-google.min.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
+<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/dc-addons/dist/google-map/dc-google.min.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
 
 <h2>
-<a id="tooltip-mixin" class="anchor" href="#tooltip-mixin" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tooltip Mixin</h2>
+<a id="tooltip-mixin" class="anchor" href="#tooltip-mixin" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Tooltip Mixin</h2>
 
 <p>This allows you to add html and style the chart title</p>
 
 <h4>
-<a id="usage-2" class="anchor" href="#usage-2" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h4>
+<a id="usage-2" class="anchor" href="#usage-2" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h4>
 
 <p>After you have rendered the chart than run the tooltip mixin on the chart</p>
 
-<div class="highlight highlight-js"><pre><span class="pl-k">var</span> chart <span class="pl-k">=</span> dc.<span class="pl-c1">barChart</span>(<span class="pl-s"><span class="pl-pds">'</span>#chart<span class="pl-pds">'</span></span>);
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> chart <span class="pl-k">=</span> <span class="pl-smi">dc</span>.<span class="pl-en">barChart</span>(<span class="pl-s"><span class="pl-pds">'</span>#chart<span class="pl-pds">'</span></span>);
 <span class="pl-c">// set options...</span>
-chart.<span class="pl-c1">render</span>();
+<span class="pl-smi">chart</span>.<span class="pl-en">render</span>();
 
-dc.<span class="pl-c1">tooltipMixin</span>(chart);</pre></div>
+<span class="pl-smi">dc</span>.<span class="pl-en">tooltipMixin</span>(chart);</pre></div>
 
 <h4>
-<a id="examples-2" class="anchor" href="#examples-2" aria-hidden="true"><span class="octicon octicon-link"></span></a>Examples</h4>
+<a id="examples-2" class="anchor" href="#examples-2" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Examples</h4>
 
 <p>Coming soon...</p>
 
 <h4>
-<a id="requirements-2" class="anchor" href="#requirements-2" aria-hidden="true"><span class="octicon octicon-link"></span></a>Requirements</h4>
+<a id="requirements-2" class="anchor" href="#requirements-2" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h4>
 
 <ul>
 <li><a href="https://github.com/Caged/d3-tip">d3-tip</a></li>
 </ul>
 
-<div class="highlight highlight-html"><pre><span class="pl-c">&lt;!-- through bower --&gt;</span>
+<div class="highlight highlight-text-html-basic"><pre><span class="pl-c">&lt;!-- through bower --&gt;</span>
 &lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/d3-tip/index.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;
 <span class="pl-c">&lt;!-- through cdn --&gt;</span>
 &lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.6.3/d3-tip.min.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
 
 <p>If you want to include individually</p>
 
-<div class="highlight highlight-html"><pre>&lt;<span class="pl-ent">link</span> <span class="pl-e">type</span>=<span class="pl-s"><span class="pl-pds">"</span>stylesheet<span class="pl-pds">"</span></span> <span class="pl-e">href</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/dc-addons/dist/tooltip/dc-tooltip-mixin.min.css<span class="pl-pds">"</span></span> /&gt;
+<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">link</span> <span class="pl-e">type</span>=<span class="pl-s"><span class="pl-pds">"</span>stylesheet<span class="pl-pds">"</span></span> <span class="pl-e">href</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/dc-addons/dist/tooltip/dc-tooltip-mixin.min.css<span class="pl-pds">"</span></span> /&gt;
 &lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/dc-addons/dist/tooltip/dc-tooltip-mixin.min.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
 
 <h2>
-<a id="pagination-mixin" class="anchor" href="#pagination-mixin" aria-hidden="true"><span class="octicon octicon-link"></span></a>Pagination Mixin</h2>
+<a id="pagination-mixin" class="anchor" href="#pagination-mixin" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Pagination Mixin</h2>
 
 <p>This allows you to paginate a chart</p>
 
 <h4>
-<a id="usage-6" class="anchor" href="#usage-6" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h4>
+<a id="usage-3" class="anchor" href="#usage-3" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h4>
 
 <p>After you have rendered the chart than run the pagination mixin on the chart</p>
 
-<div class="highlight highlight-js"><pre><span class="pl-k">var</span> chart <span class="pl-k">=</span> dc.<span class="pl-c1">barChart</span>(<span class="pl-s"><span class="pl-pds">'</span>#chart<span class="pl-pds">'</span></span>);
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> chart <span class="pl-k">=</span> <span class="pl-smi">dc</span>.<span class="pl-en">barChart</span>(<span class="pl-s"><span class="pl-pds">'</span>#chart<span class="pl-pds">'</span></span>);
 <span class="pl-c">// set options...</span>
-chart.<span class="pl-c1">render</span>();
+<span class="pl-smi">chart</span>.<span class="pl-en">render</span>();
 
-dc.<span class="pl-c1">paginationMixin</span>(chart);</pre></div>
-
-<h4>
-<a id="examples-6" class="anchor" href="#examples-6" aria-hidden="true"><span class="octicon octicon-link"></span></a>Examples</h4>
-
-<p>
-    <ul>
-        <li><a href="http://intellipharm.github.io/dc-addons/examples/pagination.html">Pagination</a></li>
-    </ul>
-</p>
+<span class="pl-smi">dc</span>.<span class="pl-en">paginationMixin</span>(chart);</pre></div>
 
 <h4>
-<a id="requirements-6" class="anchor" href="#requirements-6" aria-hidden="true"><span class="octicon octicon-link"></span></a>Requirements</h4>
+<a id="examples-3" class="anchor" href="#examples-3" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Examples</h4>
+
+<ul>
+<li><a href="http://intellipharm.github.io/dc-addons/examples/pagination.html">Pagination</a></li>
+</ul>
+
+<h4>
+<a id="requirements-3" class="anchor" href="#requirements-3" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h4>
 
 <p>None</p>
 
 <p>If you want to include individually</p>
 
-<div class="highlight highlight-html"><pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/dc-addons/dist/pagination/dc-pagination-mixin.min.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
-
+<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/dc-addons/dist/pagination/dc-pagination-mixin.min.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
 
 <h2>
-<a id="bubble-cloud" class="anchor" href="#bubble-cloud" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bubble Cloud</h2>
+<a id="bubble-cloud" class="anchor" href="#bubble-cloud" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Bubble Cloud</h2>
 
 <h4>
-<a id="usage-3" class="anchor" href="#usage-3" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h4>
+<a id="usage-4" class="anchor" href="#usage-4" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h4>
 
-<div class="highlight highlight-js"><pre><span class="pl-k">var</span> chart <span class="pl-k">=</span> dc.<span class="pl-c1">bubbleCloud</span>(<span class="pl-s"><span class="pl-pds">'</span>#chart<span class="pl-pds">'</span></span>);
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> chart <span class="pl-k">=</span> <span class="pl-smi">dc</span>.<span class="pl-en">bubbleCloud</span>(<span class="pl-s"><span class="pl-pds">'</span>#chart<span class="pl-pds">'</span></span>);
 
 <span class="pl-c">// required options</span>
 chart
     .<span class="pl-c1">width</span>(<span class="pl-c1">500</span>)
     .<span class="pl-c1">height</span>(<span class="pl-c1">500</span>)
-    .<span class="pl-c1">dimension</span>(dimension)
-    .<span class="pl-c1">group</span>(group)
-    .<span class="pl-c1">x</span>(d3.<span class="pl-c1">scale</span>.<span class="pl-c1">ordinal</span>())
-    .<span class="pl-c1">r</span>(d3.<span class="pl-c1">scale</span>.<span class="pl-c1">linear</span>())
-    .<span class="pl-c1">radiusValueAccessor</span>(<span class="pl-k">function</span>(<span class="pl-smi">d</span>) {
-        <span class="pl-k">return</span> d.<span class="pl-c1">value</span>;
+    .<span class="pl-en">dimension</span>(dimension)
+    .<span class="pl-en">group</span>(group)
+    .<span class="pl-c1">x</span>(<span class="pl-smi">d3</span>.<span class="pl-smi">scale</span>.<span class="pl-en">ordinal</span>())
+    .<span class="pl-en">r</span>(<span class="pl-smi">d3</span>.<span class="pl-smi">scale</span>.<span class="pl-en">linear</span>())
+    .<span class="pl-en">radiusValueAccessor</span>(<span class="pl-k">function</span>(<span class="pl-smi">d</span>) {
+        <span class="pl-k">return</span> <span class="pl-smi">d</span>.<span class="pl-c1">value</span>;
     })
 
 <span class="pl-c">// optional options</span>
 chart
-    <span class="pl-c1">valueAccessor</span>(<span class="pl-k">function</span>(<span class="pl-smi">d</span>) {
-        <span class="pl-k">return</span> d.<span class="pl-c1">value</span>;
+    <span class="pl-en">valueAccessor</span>(<span class="pl-k">function</span>(<span class="pl-smi">d</span>) {
+        <span class="pl-k">return</span> <span class="pl-smi">d</span>.<span class="pl-c1">value</span>;
     })
-    .<span class="pl-c1">colorAccessor</span>(<span class="pl-k">function</span>(<span class="pl-smi">d</span>) {
-        <span class="pl-k">return</span> d.<span class="pl-c1">value</span>;
+    .<span class="pl-en">colorAccessor</span>(<span class="pl-k">function</span>(<span class="pl-smi">d</span>) {
+        <span class="pl-k">return</span> <span class="pl-smi">d</span>.<span class="pl-c1">value</span>;
     })
     .<span class="pl-c1">label</span>(<span class="pl-k">function</span>(<span class="pl-smi">d</span>) {
-        <span class="pl-k">return</span> d.<span class="pl-c1">key</span>;
+        <span class="pl-k">return</span> <span class="pl-smi">d</span>.<span class="pl-smi">key</span>;
     })
-    .<span class="pl-c1">renderLabel</span>(<span class="pl-c1">true</span>)
+    .<span class="pl-en">renderLabel</span>(<span class="pl-c1">true</span>)
     .<span class="pl-c1">title</span>(<span class="pl-k">function</span>(<span class="pl-smi">d</span>) {
-        <span class="pl-k">return</span> d.<span class="pl-c1">key</span> <span class="pl-k">+</span> <span class="pl-s"><span class="pl-pds">'</span>: <span class="pl-pds">'</span></span> <span class="pl-k">+</span> d.<span class="pl-c1">value</span>;
+        <span class="pl-k">return</span> <span class="pl-smi">d</span>.<span class="pl-smi">key</span> <span class="pl-k">+</span> <span class="pl-s"><span class="pl-pds">'</span>: <span class="pl-pds">'</span></span> <span class="pl-k">+</span> <span class="pl-smi">d</span>.<span class="pl-c1">value</span>;
     })
-    .<span class="pl-c1">renderTitle</span>(<span class="pl-c1">true</span>)
+    .<span class="pl-en">renderTitle</span>(<span class="pl-c1">true</span>)
 </pre></div>
 
 <h4>
-<a id="examples-3" class="anchor" href="#examples-3" aria-hidden="true"><span class="octicon octicon-link"></span></a>Examples</h4>
+<a id="examples-4" class="anchor" href="#examples-4" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Examples</h4>
 
-<p>
-    <ul>
-        <li><a href="http://intellipharm.github.io/dc-addons/examples/bubble-cloud.html">Bubble Cloud</a></li>
-    </ul>
-</p>
+<ul>
+<li><a href="http://intellipharm.github.io/dc-addons/examples/bubble-cloud.html">Bubble Cloud</a></li>
+</ul>
 
 <h4>
-<a id="requirements-3" class="anchor" href="#requirements-3" aria-hidden="true"><span class="octicon octicon-link"></span></a>Requirements</h4>
+<a id="requirements-4" class="anchor" href="#requirements-4" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h4>
 
 <p>None</p>
 
 <p>If you want to include individually</p>
 
-<div class="highlight highlight-html"><pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/dc-addons/dist/bubble-cloud/dc-bubble-cloud.min.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
+<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/dc-addons/dist/bubble-cloud/dc-bubble-cloud.min.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
 
 <h2>
-<a id="paired-row" class="anchor" href="#paired-row" aria-hidden="true"><span class="octicon octicon-link"></span></a>Paired Row</h2>
+<a id="paired-row" class="anchor" href="#paired-row" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Paired Row</h2>
 
 <p>Two row charts beside each other, usually used for gender/age breakdowns</p>
 
 <h4>
-<a id="usage-4" class="anchor" href="#usage-4" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h4>
+<a id="usage-5" class="anchor" href="#usage-5" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h4>
 
-<div class="highlight highlight-js"><pre><span class="pl-k">var</span> chart <span class="pl-k">=</span> dc.<span class="pl-c1">pairedRowChart</span>(<span class="pl-s"><span class="pl-pds">'</span>#chart<span class="pl-pds">'</span></span>);
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> chart <span class="pl-k">=</span> <span class="pl-smi">dc</span>.<span class="pl-en">pairedRowChart</span>(<span class="pl-s"><span class="pl-pds">'</span>#chart<span class="pl-pds">'</span></span>);
 
 <span class="pl-c">// the dimension is required to return an array</span>
-<span class="pl-k">var</span> ndx <span class="pl-k">=</span> <span class="pl-c1">crossfilter</span>(experiments),
-    ageGenderDimension <span class="pl-k">=</span> ndx.<span class="pl-c1">dimension</span>(<span class="pl-k">function</span>(<span class="pl-smi">d</span>) {
+<span class="pl-k">var</span> ndx <span class="pl-k">=</span> <span class="pl-en">crossfilter</span>(experiments),
+    ageGenderDimension <span class="pl-k">=</span> <span class="pl-smi">ndx</span>.<span class="pl-en">dimension</span>(<span class="pl-k">function</span>(<span class="pl-smi">d</span>) {
         <span class="pl-k">var</span> age_range <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>Unknown<span class="pl-pds">'</span></span>;
 
-        <span class="pl-k">if</span> (d.<span class="pl-c1">age</span> <span class="pl-k">&lt;=</span> <span class="pl-c1">9</span>) {
+        <span class="pl-k">if</span> (<span class="pl-smi">d</span>.<span class="pl-smi">age</span> <span class="pl-k">&lt;=</span> <span class="pl-c1">9</span>) {
             age_range <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>0 - 9<span class="pl-pds">'</span></span>;
-        } <span class="pl-k">else</span> <span class="pl-k">if</span> (d.<span class="pl-c1">age</span> <span class="pl-k">&lt;=</span> <span class="pl-c1">19</span>) {
+        } <span class="pl-k">else</span> <span class="pl-k">if</span> (<span class="pl-smi">d</span>.<span class="pl-smi">age</span> <span class="pl-k">&lt;=</span> <span class="pl-c1">19</span>) {
             age_range <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>10 - 19<span class="pl-pds">'</span></span>;
-        } <span class="pl-k">else</span> <span class="pl-k">if</span> (d.<span class="pl-c1">age</span> <span class="pl-k">&lt;=</span> <span class="pl-c1">29</span>) {
+        } <span class="pl-k">else</span> <span class="pl-k">if</span> (<span class="pl-smi">d</span>.<span class="pl-smi">age</span> <span class="pl-k">&lt;=</span> <span class="pl-c1">29</span>) {
             age_range <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>20 - 29<span class="pl-pds">'</span></span>;
-        } <span class="pl-k">else</span> <span class="pl-k">if</span> (d.<span class="pl-c1">age</span> <span class="pl-k">&lt;=</span> <span class="pl-c1">39</span>) {
+        } <span class="pl-k">else</span> <span class="pl-k">if</span> (<span class="pl-smi">d</span>.<span class="pl-smi">age</span> <span class="pl-k">&lt;=</span> <span class="pl-c1">39</span>) {
             age_range <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>30 - 39<span class="pl-pds">'</span></span>;
-        } <span class="pl-k">else</span> <span class="pl-k">if</span> (d.<span class="pl-c1">age</span> <span class="pl-k">&lt;=</span> <span class="pl-c1">49</span>) {
+        } <span class="pl-k">else</span> <span class="pl-k">if</span> (<span class="pl-smi">d</span>.<span class="pl-smi">age</span> <span class="pl-k">&lt;=</span> <span class="pl-c1">49</span>) {
             age_range <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>40 - 49<span class="pl-pds">'</span></span>;
-        } <span class="pl-k">else</span> <span class="pl-k">if</span> (d.<span class="pl-c1">age</span> <span class="pl-k">&lt;=</span> <span class="pl-c1">59</span>) {
+        } <span class="pl-k">else</span> <span class="pl-k">if</span> (<span class="pl-smi">d</span>.<span class="pl-smi">age</span> <span class="pl-k">&lt;=</span> <span class="pl-c1">59</span>) {
             age_range <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>50 - 59<span class="pl-pds">'</span></span>;
-        } <span class="pl-k">else</span> <span class="pl-k">if</span> (d.<span class="pl-c1">age</span> <span class="pl-k">&lt;=</span> <span class="pl-c1">69</span>) {
+        } <span class="pl-k">else</span> <span class="pl-k">if</span> (<span class="pl-smi">d</span>.<span class="pl-smi">age</span> <span class="pl-k">&lt;=</span> <span class="pl-c1">69</span>) {
             age_range <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>60 - 69<span class="pl-pds">'</span></span>;
-        } <span class="pl-k">else</span> <span class="pl-k">if</span> (d.<span class="pl-c1">age</span> <span class="pl-k">&lt;=</span> <span class="pl-c1">79</span>) {
+        } <span class="pl-k">else</span> <span class="pl-k">if</span> (<span class="pl-smi">d</span>.<span class="pl-smi">age</span> <span class="pl-k">&lt;=</span> <span class="pl-c1">79</span>) {
             age_range <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>70 - 79<span class="pl-pds">'</span></span>;
-        } <span class="pl-k">else</span> <span class="pl-k">if</span> (d.<span class="pl-c1">age</span> <span class="pl-k">&lt;=</span> <span class="pl-c1">89</span>) {
+        } <span class="pl-k">else</span> <span class="pl-k">if</span> (<span class="pl-smi">d</span>.<span class="pl-smi">age</span> <span class="pl-k">&lt;=</span> <span class="pl-c1">89</span>) {
             age_range <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>80 - 89<span class="pl-pds">'</span></span>;
-        } <span class="pl-k">else</span> <span class="pl-k">if</span> (d.<span class="pl-c1">age</span> <span class="pl-k">&lt;=</span> <span class="pl-c1">99</span>) {
+        } <span class="pl-k">else</span> <span class="pl-k">if</span> (<span class="pl-smi">d</span>.<span class="pl-smi">age</span> <span class="pl-k">&lt;=</span> <span class="pl-c1">99</span>) {
             age_range <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>90 - 99<span class="pl-pds">'</span></span>;
-        } <span class="pl-k">else</span> <span class="pl-k">if</span> (d.<span class="pl-c1">age</span> <span class="pl-k">&gt;=</span> <span class="pl-c1">100</span>) {
+        } <span class="pl-k">else</span> <span class="pl-k">if</span> (<span class="pl-smi">d</span>.<span class="pl-smi">age</span> <span class="pl-k">&gt;=</span> <span class="pl-c1">100</span>) {
             age_range <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>100+<span class="pl-pds">'</span></span>;
         }
 
-        <span class="pl-k">return</span> [d.<span class="pl-c1">gender</span>, age_range];
+        <span class="pl-k">return</span> [<span class="pl-smi">d</span>.<span class="pl-smi">gender</span>, age_range];
     }),
-    ageGenderGroup <span class="pl-k">=</span> ageGenderDimension.<span class="pl-c1">group</span>().<span class="pl-c1">reduceCount</span>();
+    ageGenderGroup <span class="pl-k">=</span> <span class="pl-smi">ageGenderDimension</span>.<span class="pl-en">group</span>().<span class="pl-en">reduceCount</span>();
 
 <span class="pl-c">// required options</span>
 chart
     .<span class="pl-c1">width</span>(<span class="pl-c1">500</span>)
     .<span class="pl-c1">height</span>(<span class="pl-c1">500</span>)
-    .<span class="pl-c1">dimension</span>(dimension)
-    .<span class="pl-c1">group</span>(group)
+    .<span class="pl-en">dimension</span>(dimension)
+    .<span class="pl-en">group</span>(group)
     <span class="pl-c">// tells the left chart to filter the data based on this function</span>
-    .<span class="pl-c1">leftKeyFilter</span>(<span class="pl-k">function</span>(<span class="pl-smi">d</span>) {
-        <span class="pl-k">return</span> d.<span class="pl-c1">key</span>[<span class="pl-c1">0</span>] <span class="pl-k">===</span> <span class="pl-s"><span class="pl-pds">'</span>Male<span class="pl-pds">'</span></span>;
+    .<span class="pl-en">leftKeyFilter</span>(<span class="pl-k">function</span>(<span class="pl-smi">d</span>) {
+        <span class="pl-k">return</span> <span class="pl-smi">d</span>.<span class="pl-smi">key</span>[<span class="pl-c1">0</span>] <span class="pl-k">===</span> <span class="pl-s"><span class="pl-pds">'</span>Male<span class="pl-pds">'</span></span>;
     })
     <span class="pl-c">// tells the right chart to filter the data based on this function</span>
-    .<span class="pl-c1">rightKeyFilter</span>(<span class="pl-k">function</span>(<span class="pl-smi">d</span>) {
-        <span class="pl-k">return</span> d.<span class="pl-c1">key</span>[<span class="pl-c1">0</span>] <span class="pl-k">===</span> <span class="pl-s"><span class="pl-pds">'</span>Female<span class="pl-pds">'</span></span>;
+    .<span class="pl-en">rightKeyFilter</span>(<span class="pl-k">function</span>(<span class="pl-smi">d</span>) {
+        <span class="pl-k">return</span> <span class="pl-smi">d</span>.<span class="pl-smi">key</span>[<span class="pl-c1">0</span>] <span class="pl-k">===</span> <span class="pl-s"><span class="pl-pds">'</span>Female<span class="pl-pds">'</span></span>;
     })
 
 <span class="pl-c">// optional options - this chart extends dc.rowChart, so it has all the same options.</span>
 </pre></div>
 
 <h4>
-<a id="examples-4" class="anchor" href="#examples-4" aria-hidden="true"><span class="octicon octicon-link"></span></a>Examples</h4>
+<a id="demo" class="anchor" href="#demo" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Demo</h4>
 
-<p>
-    <ul>
-        <li><a href="http://intellipharm.github.io/dc-addons/examples/paired-row-chart.html">Paired Row Chart</a></li>
-    </ul>
-</p>
+<ul>
+<li><a href="http://intellipharm.github.io/dc-addons/examples/paired-row-chart.html">Paired Row Chart</a></li>
+</ul>
 
 <h4>
-<a id="requirements-4" class="anchor" href="#requirements-4" aria-hidden="true"><span class="octicon octicon-link"></span></a>Requirements</h4>
+<a id="requirements-5" class="anchor" href="#requirements-5" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h4>
 
 <p>None</p>
 
 <p>If you want to include individually</p>
 
-<div class="highlight highlight-html"><pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/dc-addons/dist/paired-row/dc-paired-row-chart.min.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
+<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/dc-addons/dist/paired-row/dc-paired-row-chart.min.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
 
 <h2>
-<a id="server" class="anchor" href="#server" aria-hidden="true"><span class="octicon octicon-link"></span></a>Server</h2>
+<a id="server" class="anchor" href="#server" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Server</h2>
 
 <p>Charts generated on the server for large datasets. Only the following charts currently work:</p>
 
@@ -460,9 +485,9 @@ chart
 </ul>
 
 <h4>
-<a id="usage-5" class="anchor" href="#usage-5" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h4>
+<a id="usage-6" class="anchor" href="#usage-6" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h4>
 
-<div class="highlight highlight-js"><pre><span class="pl-k">var</span> chart <span class="pl-k">=</span> dc.<span class="pl-c1">serverChart</span>(<span class="pl-s"><span class="pl-pds">'</span>#chart<span class="pl-pds">'</span></span>);
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> chart <span class="pl-k">=</span> <span class="pl-smi">dc</span>.<span class="pl-en">serverChart</span>(<span class="pl-s"><span class="pl-pds">'</span>#chart<span class="pl-pds">'</span></span>);
 
 chart
     .<span class="pl-c1">options</span>({
@@ -476,7 +501,7 @@ chart
         reconnectingMessage<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>There appears to be a problem connecting to the server. Retyring...<span class="pl-pds">'</span></span>,
         connectionErrorMessage<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>Could not connect to the server.<span class="pl-pds">'</span></span>,
     })
-    .<span class="pl-c1">render</span>();</pre></div>
+    .<span class="pl-en">render</span>();</pre></div>
 
 <p>To get the server running</p>
 
@@ -485,9 +510,9 @@ chart
 
 <p>The server-config.js file should look something like this.</p>
 
-<div class="highlight highlight-js"><pre><span class="pl-k">var</span> dc <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>dc<span class="pl-pds">'</span></span>);
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> dc <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>dc<span class="pl-pds">'</span></span>);
 
-<span class="pl-c1">module</span>.<span class="pl-c1">exports</span> <span class="pl-k">=</span> {
+<span class="pl-c1">module</span>.<span class="pl-smi">exports</span> <span class="pl-k">=</span> {
     <span class="pl-s"><span class="pl-pds">'</span>my-chart<span class="pl-pds">'</span></span><span class="pl-k">:</span> {
         connection<span class="pl-k">:</span>  {
             host<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>localhost<span class="pl-pds">'</span></span>,
@@ -509,16 +534,16 @@ chart
                         left<span class="pl-k">:</span> <span class="pl-c1">40</span>
                     },
                     <span class="pl-en">dimension</span><span class="pl-k">:</span> <span class="pl-k">function</span> (<span class="pl-smi">d</span>) {
-                        <span class="pl-k">if</span> (d.<span class="pl-c1">gender</span> <span class="pl-k">===</span> <span class="pl-c1">0</span>) {
+                        <span class="pl-k">if</span> (<span class="pl-smi">d</span>.<span class="pl-smi">gender</span> <span class="pl-k">===</span> <span class="pl-c1">0</span>) {
                             <span class="pl-k">return</span> <span class="pl-s"><span class="pl-pds">'</span>Male<span class="pl-pds">'</span></span>;
-                        } <span class="pl-k">else</span> <span class="pl-k">if</span> (d.<span class="pl-c1">gender</span> <span class="pl-k">===</span> <span class="pl-c1">1</span>) {
+                        } <span class="pl-k">else</span> <span class="pl-k">if</span> (<span class="pl-smi">d</span>.<span class="pl-smi">gender</span> <span class="pl-k">===</span> <span class="pl-c1">1</span>) {
                             <span class="pl-k">return</span> <span class="pl-s"><span class="pl-pds">'</span>Female<span class="pl-pds">'</span></span>;
                         }
 
                         <span class="pl-k">return</span> <span class="pl-s"><span class="pl-pds">'</span>Unknown<span class="pl-pds">'</span></span>;
                     },
                     <span class="pl-en">group</span><span class="pl-k">:</span> <span class="pl-k">function</span> (<span class="pl-smi">dimension</span>) {
-                        <span class="pl-k">return</span> dimension.<span class="pl-c1">group</span>().<span class="pl-c1">reduceCount</span>();
+                        <span class="pl-k">return</span> <span class="pl-smi">dimension</span>.<span class="pl-en">group</span>().<span class="pl-en">reduceCount</span>();
                     }
                 }
             }
@@ -527,12 +552,12 @@ chart
 };</pre></div>
 
 <h4>
-<a id="examples-5" class="anchor" href="#examples-5" aria-hidden="true"><span class="octicon octicon-link"></span></a>Examples</h4>
+<a id="demo-1" class="anchor" href="#demo-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Demo</h4>
 
 <p>You will need to clone and run the server locally for an example</p>
 
 <h4>
-<a id="requirements-5" class="anchor" href="#requirements-5" aria-hidden="true"><span class="octicon octicon-link"></span></a>Requirements</h4>
+<a id="requirements-6" class="anchor" href="#requirements-6" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h4>
 
 <ul>
 <li><a href="https://iojs.org">iojs</a></li>
@@ -550,7 +575,131 @@ chart
 
 <p>If you want to include individually</p>
 
-<div class="highlight highlight-html"><pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/dc-addons/dist/server/dc-server-chart-with-animations.min.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
+<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/dc-addons/dist/server/dc-server-chart-with-animations.min.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
+
+<h2>
+<a id="angularjs-directives" class="anchor" href="#angularjs-directives" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>AngularJS Directives</h2>
+
+<p>Angular directives for creating charts</p>
+
+<h4>
+<a id="usage-7" class="anchor" href="#usage-7" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h4>
+
+<p>Include the angular module <code>AngularDc</code></p>
+
+<div class="highlight highlight-source-js"><pre>    <span class="pl-smi">angular</span>.<span class="pl-en">module</span>(<span class="pl-s"><span class="pl-pds">'</span>App<span class="pl-pds">'</span></span>, [<span class="pl-s"><span class="pl-pds">'</span>AngularDc<span class="pl-pds">'</span></span>]);</pre></div>
+
+<p>Create the chart. Chart options will be an object of all the charts settings.</p>
+
+<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">dc</span><span class="pl-e">-chart</span> <span class="pl-e">chart-type</span>=<span class="pl-s"><span class="pl-pds">"</span>chartType<span class="pl-pds">"</span></span> <span class="pl-e">chart-group</span>=<span class="pl-s"><span class="pl-pds">"</span>chartGroup<span class="pl-pds">"</span></span> <span class="pl-e">chart-options</span>=<span class="pl-s"><span class="pl-pds">"</span>chartOptions<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">dc</span><span class="pl-e">-chart</span>&gt;</pre></div>
+
+<h4>
+<a id="demo-2" class="anchor" href="#demo-2" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Demo</h4>
+
+<p>Coming soon...</p>
+
+<h4>
+<a id="requirements-7" class="anchor" href="#requirements-7" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h4>
+
+<ul>
+<li><a href="https://angularjs.org/">AngularJS</a></li>
+</ul>
+
+<pre><code>bower install angularjs --save
+</code></pre>
+
+<p>If you want to include individually</p>
+
+<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/dc-addons/dist/angular/angular-dc.min.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
+
+<h2>
+<a id="crossfilter-server" class="anchor" href="#crossfilter-server" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Crossfilter Server</h2>
+
+<p>A shell for crossfilter to allow all calculations to happen on the server.</p>
+
+<h4>
+<a id="usage-8" class="anchor" href="#usage-8" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h4>
+
+<p>If the normal crossfilter library is not included, this library will take the crossfilter namespace.</p>
+
+<div class="highlight highlight-source-js"><pre>    <span class="pl-smi">chart</span>.<span class="pl-en">dimension</span>(<span class="pl-smi">crossfilterServer</span>.<span class="pl-smi">dimension</span>);
+    <span class="pl-smi">chart</span>.<span class="pl-en">group</span>(<span class="pl-smi">crossfilterServer</span>.<span class="pl-en">group</span>(<span class="pl-k">function</span>(<span class="pl-smi">filters</span>, <span class="pl-smi">chartId</span>, <span class="pl-smi">callback</span>) {
+        <span class="pl-c">// send a request to the server and return the data in the callback</span>
+        <span class="pl-en">ajax</span>(<span class="pl-k">function</span>(<span class="pl-smi">response</span>) {
+            <span class="pl-en">callback</span>(data);
+        });
+    }));</pre></div>
+
+<h4>
+<a id="demo-3" class="anchor" href="#demo-3" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Demo</h4>
+
+<p>You will need to clone and run the server locally for an example</p>
+
+<h4>
+<a id="requirements-8" class="anchor" href="#requirements-8" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h4>
+
+<p>None</p>
+
+<p>If you want to include individually</p>
+
+<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/dc-addons/dist/crossfilter-server/crossfilter-server.min.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
+
+<h2>
+<a id="crossfilter-server-with-elastic-search" class="anchor" href="#crossfilter-server-with-elastic-search" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Crossfilter Server With Elastic Search</h2>
+
+<p>Helper functions to integration dc.js charts with elastic search.</p>
+
+<h4>
+<a id="usage-9" class="anchor" href="#usage-9" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h4>
+
+<p>If the normal crossfilter library is not included, this library will take the crossfilter namespace.</p>
+
+<div class="highlight highlight-source-js"><pre>    <span class="pl-k">var</span> query <span class="pl-k">=</span> {
+        aggs<span class="pl-k">:</span> {
+            date<span class="pl-k">:</span> {
+                date_histogram<span class="pl-k">:</span> {
+                    field<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>date_field<span class="pl-pds">'</span></span>,
+                    interval<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>1d<span class="pl-pds">'</span></span>,
+                }
+            },
+            site<span class="pl-k">:</span> {
+                histogram<span class="pl-k">:</span> {
+                    field<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>site_id<span class="pl-pds">'</span></span>,
+                    interval<span class="pl-k">:</span> <span class="pl-c1">1</span>,
+                }
+            }
+        }
+    };
+    <span class="pl-c">// when filtering a chart, the chart with the integer id will filter the values base on the given field</span>
+    <span class="pl-k">var</span> mapping <span class="pl-k">=</span> {
+        <span class="pl-c1">1</span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>date_field<span class="pl-pds">'</span></span>,
+        <span class="pl-c1">2</span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>site_id<span class="pl-pds">'</span></span>,
+    };
+
+    <span class="pl-k">var</span> url <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>http://localhost:9200/_search<span class="pl-pds">'</span></span>;
+
+    <span class="pl-smi">chart</span>.<span class="pl-en">dimension</span>(<span class="pl-smi">crossfilterServer</span>.<span class="pl-smi">dimension</span>);
+    <span class="pl-smi">chart</span>.<span class="pl-en">group</span>(<span class="pl-smi">crossfilterServer</span>.<span class="pl-en">group</span>(<span class="pl-k">function</span>(<span class="pl-smi">filters</span>, <span class="pl-smi">chartId</span>, <span class="pl-smi">callback</span>) {
+        <span class="pl-c">// send a request to the server and return the data in the callback</span>
+        <span class="pl-smi">crossfilterServer</span>.<span class="pl-smi">elasticSearch</span>.<span class="pl-c1">send</span>(filters, chartId, url, query, mapping, <span class="pl-k">function</span>(<span class="pl-smi">data</span>) {
+            <span class="pl-en">callback</span>(<span class="pl-smi">data</span>.<span class="pl-smi">aggregations</span>.<span class="pl-smi">date</span>.<span class="pl-smi">buckets</span>);
+        });
+    }));</pre></div>
+
+<h4>
+<a id="demo-4" class="anchor" href="#demo-4" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Demo</h4>
+
+<p>You will need to clone and run the server locally for an example</p>
+
+<h4>
+<a id="requirements-9" class="anchor" href="#requirements-9" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h4>
+
+<p>None</p>
+
+<p>If you want to include individually</p>
+
+<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/dc-addons/dist/crossfilter-server/crossfilter-server.min.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;
+&lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>bower_components/dc-addons/dist/elastic-search/elastic-search.min.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;</pre></div>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/Intellipharm/dc-addons">DC Addons</a> is maintained by <a href="https://github.com/Intellipharm">Intellipharm</a>.</span>
@@ -560,6 +709,6 @@ chart
 
     </section>
 
-
+  
   </body>
 </html>
