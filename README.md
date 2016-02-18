@@ -83,10 +83,24 @@ dc.leafletChoroplethChart(parent,chartGroup)
   .legend(dc.leafletLegend().position('bottomright'))
 ```
 
+###### Custom Chart
+Gives you full control over what is displayed on the map
+```
+dc.leafletCustomChart(parent,chartGroup)
+  .mapOptions({..})       - set leaflet specific options to the map object; Default: Leaflet default options
+  .center([1.1,1.1])      - initial location
+  .zoom(7)                - initial zoom level
+  .map()                  - get map object
+  .locationAccessor()     - function (d) to access the property indicating the latlng (string or array); Default: keyAccessor
+  .renderItem()           - function (chart, map, d, i) the initial rendering of the map
+  .redrawItem()           - function (chart, map, d, i) run on every crossfilter. The d object will have a filtered value added to it.
+```
+
 
 #### Examples
   * [Leaflet Marker](http://intellipharm.github.io/dc-addons/examples/leaflet-marker.html)
   * [Leaflet Choropleth](http://intellipharm.github.io/dc-addons/examples/leaflet-choropleth.html)
+  * [Leaflet Custom](http://intellipharm.github.io/dc-addons/examples/leaflet-custom.html)
 
 
 #### Requirements
@@ -166,10 +180,24 @@ dc.googleChoroplethChart(parent,chartGroup)
   .brushOn(true)          - if the map would select datapoints; Default: true
 ```
 
+###### Custom Chart
+Gives you full control over what is displayed on the map
+```
+dc.googleCustomChart(parent,chartGroup)
+  .mapOptions({..})       - set google specific options to the map object; Default: Google default options
+  .center([1.1,1.1])      - initial location
+  .zoom(7)                - initial zoom level
+  .map()                  - get map object
+  .locationAccessor()     - function (d) to access the property indicating the latlng (string or array); Default: keyAccessor
+  .renderItem()           - function (chart, map, d, i) the initial rendering of the map
+  .redrawItem()           - function (chart, map, d, i) run on every crossfilter. The d object will have a filtered value added to it.
+```
+
 
 #### Examples
   * [Google Marker](http://intellipharm.github.io/dc-addons/examples/google-marker.html)
   * [Google Choropleth](http://intellipharm.github.io/dc-addons/examples/google-choropleth.html)
+  * [Google Custom](http://intellipharm.github.io/dc-addons/examples/google-custom.html)
 
 
 #### Requirements
