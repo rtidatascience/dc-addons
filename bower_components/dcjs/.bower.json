@@ -25,12 +25,12 @@
     "crossfilter": "1.x"
   },
   "homepage": "https://github.com/dc-js/dc.js",
-  "version": "2.0.0-beta.25",
-  "_release": "2.0.0-beta.25",
+  "version": "2.0.0-beta.26",
+  "_release": "2.0.0-beta.26",
   "_resolution": {
     "type": "version",
-    "tag": "2.0.0-beta.25",
-    "commit": "1a664e95a506207c256cbb2f6c3765720d834fa2"
+    "tag": "2.0.0-beta.26",
+    "commit": "2f4ed81f920f315d3cb16536526e6826b38918f1"
   },
   "_source": "git://github.com/dc-js/dc.js.git",
   "_target": "~2.0.0",
