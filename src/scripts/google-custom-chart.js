@@ -8,14 +8,6 @@
     dc.googleCustomChart = function (parent, chartGroup) {
         var _chart = dc.baseGoogleChart({});
 
-        var _filterByArea = false;
-        var _fitOnRender = true;
-        var _fitOnRedraw = false;
-        var _disableFitOnRedraw = false;
-
-        var _innerFilter = false;
-        var _zoom = null;
-
         var _redrawItem = null;
         var _renderItem = null;
 

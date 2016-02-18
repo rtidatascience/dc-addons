@@ -14,6 +14,7 @@ The build steps to releasing a new version. Before you can do this you need to t
     * Release title is "dc-addons v\*.\*.\*"
     * The comment section should be a list of commits and the changes the commit made. See below for an example
     * If it is under v1.0.0 then mark "This is a pre-release" as true
+  * Push to npm ```npm publish```
 
 
 ## Example github release comment
