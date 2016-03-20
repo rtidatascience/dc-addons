@@ -82,6 +82,12 @@
                     // we need this becuase we used d3 to load the data and we are outside the angular space
                     $scope.$apply();
                 });
+
+                $scope.$watch('mapChart', function() {
+                    if ($scope.mapChart) {
+                        console.log($scope.mapChart.map());
+                    }
+                });
             });
         </script>
     </body>

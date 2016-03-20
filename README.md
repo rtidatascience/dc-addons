@@ -504,13 +504,18 @@ Angular directives for creating charts
 Include the angular module `AngularDc`
 
 ```js
-    angular.module('App', ['AngularDc']);
+angular.module('App', ['AngularDc']);
 ```
 
 Create the chart. Chart options will be an object of all the charts settings.
 
 ```html
-<dc-chart chart-type="chartType" chart-group="chartGroup" chart-options="chartOptions"></dc-chart>
+<dc-chart
+    chart="chartObject"
+    type="chartType"
+    group="chartGroup"
+    options="chartOptions"
+></dc-chart>
 ```
 
 #### Demo
