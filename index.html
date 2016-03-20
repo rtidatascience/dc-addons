@@ -14,7 +14,8 @@
       <h1 class="project-name">DC Addons</h1>
       <h2 class="project-tagline">dc.js chart addons</h2>
       <a href="https://github.com/Intellipharm/dc-addons" class="btn">View on GitHub</a>
-      <a href="http://intellipharm.github.io/dc-addons/examples/" class="btn">Examples</a>
+      <a href="https://github.com/Intellipharm/dc-addons/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/Intellipharm/dc-addons/tarball/master" class="btn">Download .tar.gz</a>
     </section>
 
     <section class="main-content">
@@ -586,11 +587,16 @@ chart
 
 <p>Include the angular module <code>AngularDc</code></p>
 
-<div class="highlight highlight-source-js"><pre>    <span class="pl-smi">angular</span>.<span class="pl-en">module</span>(<span class="pl-s"><span class="pl-pds">'</span>App<span class="pl-pds">'</span></span>, [<span class="pl-s"><span class="pl-pds">'</span>AngularDc<span class="pl-pds">'</span></span>]);</pre></div>
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">angular</span>.<span class="pl-en">module</span>(<span class="pl-s"><span class="pl-pds">'</span>App<span class="pl-pds">'</span></span>, [<span class="pl-s"><span class="pl-pds">'</span>AngularDc<span class="pl-pds">'</span></span>]);</pre></div>
 
 <p>Create the chart. Chart options will be an object of all the charts settings.</p>
 
-<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">dc</span><span class="pl-e">-chart</span> <span class="pl-e">chart-type</span>=<span class="pl-s"><span class="pl-pds">"</span>chartType<span class="pl-pds">"</span></span> <span class="pl-e">chart-group</span>=<span class="pl-s"><span class="pl-pds">"</span>chartGroup<span class="pl-pds">"</span></span> <span class="pl-e">chart-options</span>=<span class="pl-s"><span class="pl-pds">"</span>chartOptions<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">dc</span><span class="pl-e">-chart</span>&gt;</pre></div>
+<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">dc</span><span class="pl-e">-chart</span>
+    <span class="pl-e">chart</span>=<span class="pl-s"><span class="pl-pds">"</span>chartObject<span class="pl-pds">"</span></span>
+    <span class="pl-e">type</span>=<span class="pl-s"><span class="pl-pds">"</span>chartType<span class="pl-pds">"</span></span>
+    <span class="pl-e">group</span>=<span class="pl-s"><span class="pl-pds">"</span>chartGroup<span class="pl-pds">"</span></span>
+    <span class="pl-e">options</span>=<span class="pl-s"><span class="pl-pds">"</span>chartOptions<span class="pl-pds">"</span></span>
+&gt;&lt;/<span class="pl-ent">dc</span><span class="pl-e">-chart</span>&gt;</pre></div>
 
 <h4>
 <a id="demo-2" class="anchor" href="#demo-2" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Demo</h4>
