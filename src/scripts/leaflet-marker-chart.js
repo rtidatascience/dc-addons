@@ -31,11 +31,11 @@
             return _chart.keyAccessor()(d);
         };
 
-        var _marker = function (d,map) {
+        var _marker = function (d) {
             var marker = new L.Marker(_chart.toLocArray(_chart.locationAccessor()(d)),{
                 title: _chart.renderTitle() ? _chart.title()(d) : '',
                 alt: _chart.renderTitle() ? _chart.title()(d) : '',
-                icon: _icon(),
+                icon: _icon(d, _chart.map()),
                 clickable: _chart.renderPopup() || (_chart.brushOn() && !_filterByArea),
                 draggable: false
             });
