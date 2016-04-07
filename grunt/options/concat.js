@@ -101,6 +101,12 @@ module.exports = {
             '<%= config.src %>/<%= config.scripts %>/pagination-mixin.js',
         ]
     },
+    hexbin: {
+        dest: '<%= config.dist %>/hexbin/dc-hexbin.js',
+        src: [
+            '<%= config.src %>/<%= config.scripts %>/hexbin-chart.js',
+        ]
+    },
     build: {
         dest: '<%= config.dist %>/dc-addons.js',
         src: [
@@ -124,6 +130,7 @@ module.exports = {
             '<%= config.src %>/<%= config.scripts %>/angular-chart.js',
             '<%= config.src %>/<%= config.scripts %>/angular-server-chart.js',
             '<%= config.src %>/<%= config.scripts %>/pagination-mixin.js',
+            '<%= config.src %>/<%= config.scripts %>/hexbin-chart.js',
         ]
     },
 };

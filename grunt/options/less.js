@@ -15,11 +15,18 @@ module.exports = function () {
                 '<%= config.src %>/<%= config.less %>/leaflet-legend.less'
             ]
         },
+        hexbin: {
+            dest: '<%= config.dist %>/hexbin/dc-hexbin-chart.css',
+            src: [
+                '<%= config.src %>/<%= config.less %>/hexbin-chart.less',
+            ]
+        },
         build: {
             dest: '<%= config.dist %>/dc-addons.css',
             src: [
                 '<%= config.src %>/<%= config.less %>/tooltip-mixin.less',
                 '<%= config.src %>/<%= config.less %>/leaflet-legend.less',
+                '<%= config.src %>/<%= config.less %>/hexbin-chart.less',
             ]
         },
     };
