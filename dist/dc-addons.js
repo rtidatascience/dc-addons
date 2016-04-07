@@ -1,7 +1,7 @@
 /*!
- * dc-addons v0.12.0
+ * dc-addons v0.13.0
  *
- * 2016-04-08 08:37:45
+ * 2016-04-08 09:01:49
  *
  */
 if (!dc.utils.getAllFilters) {
@@ -685,7 +685,7 @@ dc.leafletLegend = function () {
         return this;
     };
 
-    function _LegendClass() {
+    var _LegendClass = function () {
         return L.Control.extend({
             options: {position: _position},
             onAdd: function (map) {
@@ -723,7 +723,7 @@ dc.leafletLegend = function () {
                 }
             }
         });
-    }
+    };
 
     _legend.LegendClass = function (LegendClass) {
         if (!arguments.length) {

@@ -12,7 +12,7 @@ dc.leafletLegend = function () {
         return this;
     };
 
-    function _LegendClass() {
+    var _LegendClass = function () {
         return L.Control.extend({
             options: {position: _position},
             onAdd: function (map) {
@@ -50,7 +50,7 @@ dc.leafletLegend = function () {
                 }
             }
         });
-    }
+    };
 
     _legend.LegendClass = function (LegendClass) {
         if (!arguments.length) {

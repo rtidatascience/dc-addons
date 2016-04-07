@@ -5,7 +5,7 @@
     "eqeqeq": true,
     "evil": false,
     "immed": true,
-    "latedef": true,
+    "latedef": false,
     "loopfunc": true,
     "maxlen": 150,
     "multistr": true,
