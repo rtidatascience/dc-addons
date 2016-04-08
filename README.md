@@ -64,6 +64,10 @@ dc.leafletMarkerChart(parent,chartGroup)
   .brushOn(true)          - if the map would select datapoints; Default: true
   .filterByArea(false)    - if the map should filter data based on the markers inside the zoomed in area instead of the user clicking on individual markers; Default: false
   .markerGroup()          - get the Leaflet group object containing all shown markers (regular group or cluster)
+  .popupOnHover(false)    - whether or not to display the popup when hovering the marker instead of click; Default: false
+  .title()                - The html title attribute of the markers
+  .fitOnRender(true)      - Whether or not to automatically position the map to fit all markers on the display after the initial rendering; Default: true
+  .fitOnRedraw(false)     - Whether or not to automatically position the map to fit all markers on the display after the markers have been cross filtered; Default: false
 ```
 
 ###### Choropleth Chart
@@ -162,6 +166,9 @@ dc.googleMarkerChart(parent,chartGroup)
   .brushOn(true)          - if the map would select datapoints; Default: true
   .filterByArea(false)    - if the map should filter data based on the markers inside the zoomed in area instead of the user clicking on individual markers; Default: false
   .markerGroup()          - get the Google maps group object containing all shown markers (regular group or cluster)
+  .title()                - The html title attribute of the markers
+  .fitOnRender(true)      - Whether or not to automatically position the map to fit all markers on the display after the initial rendering; Default: true
+  .fitOnRedraw(false)     - Whether or not to automatically position the map to fit all markers on the display after the markers have been cross filtered; Default: false
 ```
 
 ###### Choropleth Chart
