@@ -238,11 +238,11 @@
                 marker.bindPopup(_chart.popup()(v,marker));
 
                 if (_chart.popupOnHover()) {
-                    marker.on('mouseover', function() {
+                    marker.on('mouseover', function () {
                         marker.openPopup();
                     });
 
-                    marker.on('mouseout', function() {
+                    marker.on('mouseout', function () {
                         marker.closePopup();
                     });
                 }

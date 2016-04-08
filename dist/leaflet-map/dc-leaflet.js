@@ -1,7 +1,7 @@
 /*!
- * dc-addons v0.13.0
+ * dc-addons v0.13.1
  *
- * 2016-04-08 09:01:49
+ * 2016-04-08 11:34:39
  *
  */
 (function () {
@@ -299,7 +299,6 @@
     dc.leafletMarkerChart = function (parent, chartGroup) {
         var _chart = dc.baseLeafletChart({});
 
-        var _renderPopup = true;
         var _cluster = false; // requires leaflet.markerCluster
         var _clusterOptions = false;
         var _rebuildMarkers = false;
@@ -315,6 +314,9 @@
         var _fitOnRender = true;
         var _fitOnRedraw = false;
         var _disableFitOnRedraw = false;
+
+        var _renderPopup = true;
+        var _popupOnHover = false;
 
         _chart.renderTitle(true);
 
@@ -450,6 +452,14 @@
             return _chart;
         };
 
+        _chart.popupOnHover = function (_) {
+            if (!arguments.length) {
+                return _popupOnHover;
+            }
+            _popupOnHover = _;
+            return _chart;
+        };
+
         _chart.cluster = function (_) {
             if (!arguments.length) {
                 return _cluster;
@@ -517,7 +527,18 @@
             marker.key = k;
             if (_chart.renderPopup()) {
                 marker.bindPopup(_chart.popup()(v,marker));
+
+                if (_chart.popupOnHover()) {
+                    marker.on('mouseover', function () {
+                        marker.openPopup();
+                    });
+
+                    marker.on('mouseout', function () {
+                        marker.closePopup();
+                    });
+                }
             }
+
             if (_chart.brushOn() && !_filterByArea) {
                 marker.on('click',selectFilter);
             }
