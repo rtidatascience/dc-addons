@@ -68,6 +68,7 @@ dc.leafletMarkerChart(parent,chartGroup)
   .title()                - The html title attribute of the markers
   .fitOnRender(true)      - Whether or not to automatically position the map to fit all markers on the display after the initial rendering; Default: true
   .fitOnRedraw(false)     - Whether or not to automatically position the map to fit all markers on the display after the markers have been cross filtered; Default: false
+  .tiles()                - function (map) return a new L.tileLayer object to set a custom tile;
 ```
 
 ###### Choropleth Chart
