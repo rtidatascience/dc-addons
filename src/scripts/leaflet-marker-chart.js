@@ -285,7 +285,7 @@
                     dc.redrawAll(_chart.chartGroup());
                 });
             } else if (_chart.filter() && (e.type === 'click' ||
-                                           (_markerList.indexOf(_chart.filter()) !== -1 &&
+                                           (_markerList.hasOwnProperty(_chart.filter()) &&
                                             !_chart.map().getBounds().contains(_markerList[_chart.filter()].getLatLng())))) {
                 dc.events.trigger(function () {
                     _chart.filter(null);
