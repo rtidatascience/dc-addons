@@ -1,7 +1,7 @@
 /*!
  * dc-addons v0.13.1
  *
- * 2016-04-08 11:34:39
+ * 2016-07-13 10:55:50
  *
  */
 (function () {
@@ -576,7 +576,7 @@
                     dc.redrawAll(_chart.chartGroup());
                 });
             } else if (_chart.filter() && (e.type === 'click' ||
-                                           (_markerList.indexOf(_chart.filter()) !== -1 &&
+                                           (_markerList.hasOwnProperty(_chart.filter()) &&
                                             !_chart.map().getBounds().contains(_markerList[_chart.filter()].getLatLng())))) {
                 dc.events.trigger(function () {
                     _chart.filter(null);
