@@ -314,6 +314,40 @@
             }
         };
 
+        dc.override(_chart, 'filter', function (filter) {
+            if (!arguments.length) {
+                handleMarkerSelection();
+                return _chart._filter();
+            }
+
+            handleMarkerSelection(filter);
+            _chart._filter(filter);
+        });
+
+        var handleMarkerSelection = function (eventFilter) {
+            if (!arguments.length || eventFilter === null) {
+                Object.keys(_markerList).forEach(function (k) {
+                    _markerList[k].setOpacity(1);
+                });
+            }
+            else if (!_chart.filters().length) {
+                Object.keys(_markerList).forEach(function (k) {
+                    if (k !== eventFilter) {
+                        _markerList[k].setOpacity(0.3);
+                    }
+                });
+            }
+            else {
+                var removingFilter = false;
+                _chart.filters().forEach(function (filter) {
+                    if (filter === eventFilter) {
+                        removingFilter = true;
+                    }
+                });
+                _markerList[eventFilter].setOpacity(removingFilter ? 0.3 : 1.0);
+            }
+        };
+
         var selectFilter = function (e) {
             if (!e.target) {
                 return;

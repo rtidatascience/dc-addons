@@ -1,7 +1,7 @@
 /*!
  * dc-addons v0.13.1
  *
- * 2016-07-13 10:55:50
+ * 2016-07-19 12:52:56
  *
  */
 (function () {
@@ -602,6 +602,40 @@
                 if (!_innerFilter && _chart.map().getBounds().toString !== filters[0].toString()) {
                     _chart.map().fitBounds(filters[0]);
                 }
+            }
+        };
+
+        dc.override(_chart, 'filter', function (filter) {
+            if (!arguments.length) {
+                handleMarkerSelection();
+                return _chart._filter();
+            }
+
+            handleMarkerSelection(filter);
+            _chart._filter(filter);
+        });
+
+        var handleMarkerSelection = function (eventFilter) {
+            if (!arguments.length || eventFilter === null) {
+                Object.keys(_markerList).forEach(function (k) {
+                    _markerList[k].setOpacity(1);
+                });
+            }
+            else if (!_chart.filters().length) {
+                Object.keys(_markerList).forEach(function (k) {
+                    if (k !== eventFilter) {
+                        _markerList[k].setOpacity(0.3);
+                    }
+                });
+            }
+            else {
+                var removingFilter = false;
+                _chart.filters().forEach(function (filter) {
+                    if (filter === eventFilter) {
+                        removingFilter = true;
+                    }
+                });
+                _markerList[eventFilter].setOpacity(removingFilter ? 0.3 : 1.0);
             }
         };
 
